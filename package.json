@@ -1,0 +1,26 @@
+{
+  "name": "amazonmonitor",
+  "version": "1.0.0",
+  "description": "A Discord bot that monitors Amazon items for price drops/restocks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spikegd/AmazonMonitor.git"
+  },
+  "author": "SpikeGD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spikegd/AmazonMonitor/issues"
+  },
+  "homepage": "https://github.com/spikegd/AmazonMonitor#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "discord.js": "^12.1.1",
+    "mysql": "^2.18.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
+  }
+}
