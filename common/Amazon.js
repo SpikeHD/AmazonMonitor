@@ -48,6 +48,7 @@ function find(q) {
  * Takes a link and inserts it into the database for watching
  * 
  * @param {Discord.Client} bot 
+ * @param {string} channel
  * @param {string} l
  */
 function watch(bot, channel, l) {
