@@ -29,17 +29,17 @@ function run(bot, guild, message, args) {
       
       m.channel.awaitMessages(filter, {limit: 1, time: 30000}).then(col => {
         if (command) {
-          var command = col.content.split(prefix)[1].split(" ")[0],
-            thisArgs = col.content.split(' ')
+          var link = amazon.getLink(res[parseInt(command)].prod_code, 'ca')
+          var command = col.content.split(prefix)[1].split(" ")[0]
           
           switch (command) {
             case 'quickwatch':
-              bot.commands.get('watch').run(bot, message.guild, m, thisArgs)
+              bot.commands.get('watch').run(bot, message.guild, m, [command, link])
               break
             case parseInt(command):
-              var link = amazon.getLink(res[parseInt(command)].prod_code, 'ca')
               bot.commands.get('details').run(bot, message.guild, m, [command, link])
-              break;
+              break
+            default: return
           }
         }
       })
