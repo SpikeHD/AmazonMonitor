@@ -5,6 +5,7 @@ const request = require('request-promise')
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
   find: (q) => find(q),
+  details: (bot, l) => details(bot, l),
   watch: (bot, channel, link) => watch(bot, channel, link)
 }
 
@@ -28,7 +29,7 @@ function getLink(code, suffix) {
  * @returns {array}
  */
 function find(q) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
     var url = `https://www.amazon.ca/s?k=${sanq}/`
     var results = []
@@ -58,7 +59,47 @@ function find(q) {
           }
         }
       })
-    })
+    }).catch(e => reject(e))
+  })
+}
+
+/**
+ * Takes a product link or code and spits out some useful details
+ * 
+ * @param {string} l 
+ */
+function details(bot, l) {
+  return new Promise((resolve, reject) => {
+    var url;
+    if(!l.startsWith('https://www.amazon')) url = `https://www.amazon.ca/dp/${l}/`
+    else url = l
+    var options = {
+      uri: url,
+      transform: function(body) {
+        return cheerio.load(body)
+      }
+    }
+  
+    request(options).then(($) => {
+      var features = $('#feature-bullets').find('li').find('span').toArray()
+      var parsedFeatures = []
+      features.forEach(f => {
+        parsedFeatures.push(` - ${$(f).text().trim()}\n`)
+      });
+
+      var obj = {
+        full_title: $('#productTitle').text().trim(),
+        seller: $('#bylineInfo').text().trim(),
+        price: $('#priceblock_ourprice').text().trim(),
+        shipping: $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
+        rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
+        features: parsedFeatures,
+        availability: $('#availability').first().find('span').text().trim(),
+        image: $('#landingImage').attr('data-old-hires')
+      }
+
+      resolve(obj)
+    }).catch(e => reject(e))
   })
 }
 
