@@ -18,7 +18,7 @@ function run(bot, guild, message, args) {
   amazon.find(phrase, '.ca').then((res) => {
     var n = 1
     res.forEach(r => {
-      embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length < 2 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
+      embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
       n++
     })
 
@@ -30,13 +30,15 @@ function run(bot, guild, message, args) {
         if (col.first().content.startsWith(bot.prefix)) {
           var command = col.first().content.split(bot.prefix)[1].split(' ')[0]
           if (command) {
-            var link = res[parseInt(command)-1 || parseInt(col.first().content.split(' ')[1])-1].prod_link
+            var link;
 
             if (parseInt(command)) {
+              link = res[parseInt(command)-1].prod_link
               return bot.commands.get('details').run(bot, message.guild, m, [command, link])
             } else {
               switch (command) {
                 case 'quickwatch':
+                  link = res[parseInt(col.first().content.split(' ')[1])-1].prod_link
                   bot.commands.get('watch').run(bot, message.guild, m, [command, link])
                   break
                 default:

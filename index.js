@@ -18,6 +18,8 @@ const con = mysql.createPool({
 });
 
 bot.on('ready', function () {
+  bot.prefix = prefix
+  bot.con = con
   const str = `
   ##########################################################################
    _____                                        __      __         __         .__                  
@@ -41,8 +43,11 @@ bot.on('ready', function () {
       bot.commands.set(command.replace('.js', ''), props);
   });
 
-  bot.prefix = prefix
-  bot.con = con
+  // Populate watchlist
+  bot.con.query(`SELECT guild_id, channel_id, link FROM watchlist`, (err, rows) => {
+    if(err) throw err
+    bot.watchlist = Object.values(JSON.parse(JSON.stringify(rows)))
+  })
 });
 
 bot.on('message', function (message) {

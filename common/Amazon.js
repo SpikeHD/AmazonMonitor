@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const cheerio = require('cheerio')
 const request = require('request-promise')
+const fs = require('fs')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
@@ -29,8 +30,9 @@ function find(q, suffix) {
     }
   
     request(options).then(($) => {
+      var lim = $('.s-result-list').find('.s-result-item').length
       $('.s-result-list').find('.s-result-item').each(function(){
-        if(results.length >= 10) {
+        if(results.length >= 10 || results.length >= lim) {
           resolve(results)
         } else {
           var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
@@ -76,6 +78,7 @@ function details(bot, l) {
 
       var obj = {
         full_title: $('#productTitle').text().trim(),
+        full_link: l,
         seller: $('#bylineInfo').text().trim(),
         price: $('#priceblock_ourprice').text().trim(),
         shipping: $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
