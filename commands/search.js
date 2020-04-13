@@ -15,31 +15,34 @@ function run(bot, guild, message, args) {
     .setDescription(`(respond with **${bot.prefix}[num]** to get the full link and some additional details, or **${bot.prefix}quickwatch [num]** to quick-watch an item)`)
   
   // Search using term
-  amazon.find(phrase).then((res) => {
+  amazon.find(phrase, '.ca').then((res) => {
     var n = 1
     res.forEach(r => {
-      embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length < 2 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none'}`)
+      embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length < 2 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
       n++
     })
 
     message.channel.send(embed).then(m => {
       var filter = (msg => msg.author.id === message.author.id &&
-        msg.channel.id === message.channel.id &&
-        msg.content.startsWith(bot.prefix))
+        msg.channel.id === message.channel.id)
       
-      m.channel.awaitMessages(filter, {limit: 1, time: 30000}).then(col => {
-        if (command) {
-          var link = amazon.getLink(res[parseInt(command) || parseInt(col.content.split(' ')[1])].prod_code, 'ca')
-          var command = col.content.split(prefix)[1].split(" ")[0]
-          
-          switch (command) {
-            case 'quickwatch':
-              bot.commands.get('watch').run(bot, message.guild, m, [command, link])
-              break
-            case parseInt(command):
-              bot.commands.get('details').run(bot, message.guild, m, [command, link])
-              break
-            default: return
+      m.channel.awaitMessages(filter, { max: 1, time: 20000 }).then(col => {
+        if (col.first().content.startsWith(bot.prefix)) {
+          var command = col.first().content.split(bot.prefix)[1].split(' ')[0]
+          if (command) {
+            var link = res[parseInt(command)-1 || parseInt(col.first().content.split(' ')[1])-1].prod_link
+
+            if (parseInt(command)) {
+              return bot.commands.get('details').run(bot, message.guild, m, [command, link])
+            } else {
+              switch (command) {
+                case 'quickwatch':
+                  bot.commands.get('watch').run(bot, message.guild, m, [command, link])
+                  break
+                default:
+                  return
+              }
+            }
           }
         }
       })

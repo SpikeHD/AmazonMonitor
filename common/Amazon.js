@@ -4,21 +4,9 @@ const request = require('request-promise')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
-  find: (q) => find(q),
+  find: (q, suffix) => find(q, suffix),
   details: (bot, l) => details(bot, l),
   watch: (bot, channel, link) => watch(bot, channel, link)
-}
-
-/**
- * Return a full Amazon link using a product code and country suffix
- * 
- * @param {string} code 
- * @param {string} suffix 
- * 
- * @returns {string} 
- */
-function getLink(code, suffix) {
-  return `https://amazon${suffix}/dp/${code}`
 }
 
 /**
@@ -28,7 +16,7 @@ function getLink(code, suffix) {
  * 
  * @returns {array}
  */
-function find(q) {
+function find(q, suffix) {
   return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
     var url = `https://www.amazon.ca/s?k=${sanq}/`
@@ -52,7 +40,7 @@ function find(q) {
               ratings: $(this).find('.a-icon-alt').text().trim(),
               price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
               sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-              prod_code: prodLink.split('/dp/')[1].split('/')[0]
+              prod_link: `https://www.amazon${suffix}${prodLink}`
             }
           
             results.push(obj)
@@ -70,11 +58,10 @@ function find(q) {
  */
 function details(bot, l) {
   return new Promise((resolve, reject) => {
-    var url;
-    if(!l.startsWith('https://www.amazon')) url = `https://www.amazon.ca/dp/${l}/`
-    else url = l
+    if(!l.startsWith('https://www.amazon')) return new Error('Not a valid link')
     var options = {
-      uri: url,
+      uri: l,
+      followAllRedirects: true,
       transform: function(body) {
         return cheerio.load(body)
       }
@@ -84,7 +71,7 @@ function details(bot, l) {
       var features = $('#feature-bullets').find('li').find('span').toArray()
       var parsedFeatures = []
       features.forEach(f => {
-        parsedFeatures.push(` - ${$(f).text().trim()}\n`)
+        parsedFeatures.push(` - ${$(f).text().trim()}`)
       });
 
       var obj = {
