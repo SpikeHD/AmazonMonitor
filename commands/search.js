@@ -29,7 +29,7 @@ function run(bot, guild, message, args) {
       
       m.channel.awaitMessages(filter, {limit: 1, time: 30000}).then(col => {
         if (command) {
-          var link = amazon.getLink(res[parseInt(command)].prod_code, 'ca')
+          var link = amazon.getLink(res[parseInt(command) || parseInt(col.content.split(' ')[1])].prod_code, 'ca')
           var command = col.content.split(prefix)[1].split(" ")[0]
           
           switch (command) {
