@@ -2,11 +2,10 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const fs = require("fs");
 const mysql = require('mysql');
-var { prefix, token, sql } = require("./cfg.json");
+var { prefix, token, sql } = require("./config.json");
 bot.commands = new Discord.Collection()
 
 bot.login(token)
-token = ''
 
 // Establish Connection to SQL
 const con = mysql.createPool({
@@ -21,7 +20,7 @@ const con = mysql.createPool({
 bot.on('ready', function () {
   const str = `
   ##########################################################################
-  _____                                        __      __         __         .__                  
+   _____                                        __      __         __         .__                  
   /  _  \\   _____ _____  ____________   ____   /  \\    /  \\_____ _/  |_  ____ |  |__   ___________ 
  /  /_\\  \\ /     \\\\__  \\ \\___   /  _ \\ /    \\  \\   \\/\\/   /\\__  \\\\   __\\/ ___\\|  |  \\_/ __ \\_  __ \\
 /    |    \\  Y Y  \\/ __ \\_/    (  <_> )   |  \\  \\        /  / __ \\|  | \\  \\___|   Y  \\  ___/|  | \\/
@@ -41,6 +40,9 @@ bot.on('ready', function () {
       let props = require(`./commands/${command}`)
       bot.commands.set(command.replace('.js', ''), props);
   });
+
+  bot.prefix = prefix
+  bot.con = con
 });
 
 bot.on('message', function (message) {
@@ -51,5 +53,5 @@ bot.on('message', function (message) {
     args = message.content.split(' '),
     cmd = bot.commands.get(command)
 
-  if (cmd) cmd.run(bot, message.guild, message, args, con);
+  if (cmd) cmd.run(bot, message.guild, message, args);
 });
