@@ -50,6 +50,7 @@ function run(bot, guild, message, args) {
       })
     })
   }).catch(e => {
+    console.log(e)
     return message.channel.send('I encountered an error while trying to process that URL. Was it correct?')
   })
 }

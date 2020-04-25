@@ -1,3 +1,4 @@
+const util = require('./common/util')
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const fs = require("fs");
@@ -48,6 +49,8 @@ bot.on('ready', function () {
     if(err) throw err
     bot.watchlist = Object.values(JSON.parse(JSON.stringify(rows)))
   })
+
+  util.startPup()
 });
 
 bot.on('message', function (message) {

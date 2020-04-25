@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js')
+const util = require('./util')
 const cheerio = require('cheerio')
-const request = require('request-promise')
+const pup = require('puppeteer')
 const fs = require('fs')
 
 module.exports = {
@@ -22,21 +23,15 @@ function find(q, suffix) {
     var sanq = q.replace(' ', '+')
     var url = `https://www.amazon.ca/s?k=${sanq}/`
     var results = []
-    var options = {
-      uri: url,
-      transform: function(body) {
-        return cheerio.load(body)
-      }
-    }
-  
-    request(options).then(($) => {
+
+    util.getPage(url).then($ => {
       var lim = $('.s-result-list').find('.s-result-item').length
-      $('.s-result-list').find('.s-result-item').each(function(){
-        if(results.length >= 10 || results.length >= lim) {
+      $('.s-result-list').find('.s-result-item').each(function () {
+        if (results.length >= 10 || results.length >= lim) {
           resolve(results)
         } else {
           var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
-          if(prodLink) {
+          if (prodLink) {
             var obj = {
               title: $(this).find('span.a-text-normal').text().trim(),
               ratings: $(this).find('.a-icon-alt').text().trim(),
@@ -44,12 +39,12 @@ function find(q, suffix) {
               sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
               prod_link: `https://www.amazon${suffix}${prodLink}`
             }
-          
+
             results.push(obj)
           }
         }
       })
-    }).catch(e => reject(e))
+    })
   })
 }
 
@@ -61,15 +56,8 @@ function find(q, suffix) {
 function details(bot, l) {
   return new Promise((resolve, reject) => {
     if(!l.startsWith('https://www.amazon')) return new Error('Not a valid link')
-    var options = {
-      uri: l,
-      followAllRedirects: true,
-      transform: function(body) {
-        return cheerio.load(body)
-      }
-    }
   
-    request(options).then(($) => {
+    util.getPage(l).then(($) => {
       var features = $('#feature-bullets').find('li').find('span').toArray()
       var parsedFeatures = []
       features.forEach(f => {
