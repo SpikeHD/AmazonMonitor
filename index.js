@@ -1,4 +1,3 @@
-const util = require('./common/util')
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const fs = require("fs");
@@ -19,6 +18,7 @@ const con = mysql.createPool({
 });
 
 bot.on('ready', function () {
+  bot.util = require('./common/util')
   bot.prefix = prefix
   bot.con = con
   const str = `
@@ -50,7 +50,8 @@ bot.on('ready', function () {
     bot.watchlist = Object.values(JSON.parse(JSON.stringify(rows)))
   })
 
-  util.startPup()
+  bot.util.startPup()
+  bot.util.startWatcher(bot)
 });
 
 bot.on('message', function (message) {

@@ -15,7 +15,7 @@ function run(bot, guild, message, args) {
     .setDescription(`(respond with **${bot.prefix}[num]** to get the full link and some additional details, or **${bot.prefix}quickwatch [num]** to quick-watch an item)`)
   
   // Search using term
-  amazon.find(phrase, '.ca').then((res) => {
+  amazon.find(bot, phrase, '.ca').then((res) => {
     var n = 1
     res.forEach(r => {
       embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)

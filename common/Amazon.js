@@ -1,9 +1,8 @@
 const { MessageEmbed } = require('discord.js')
-const util = require('./util')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
-  find: (q, suffix) => find(q, suffix),
+  find: (bot, q, suffix) => find(bot, q, suffix),
   details: (bot, l) => details(bot, l),
   watch: (bot, channel, link) => watch(bot, channel, link)
 }
@@ -15,13 +14,13 @@ module.exports = {
  * 
  * @returns {array}
  */
-function find(q, suffix) {
+function find(bot, q, suffix) {
   return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
     var url = `https://www.amazon.ca/s?k=${sanq}/`
     var results = []
 
-    util.getPage(url).then($ => {
+    bot.util.getPage(url).then($ => {
       var lim = $('.s-result-list').find('.s-result-item').length
       $('.s-result-list').find('.s-result-item').each(function () {
         if (results.length >= 10 || results.length >= lim) {
@@ -52,9 +51,9 @@ function find(q, suffix) {
  */
 function details(bot, l) {
   return new Promise((resolve, reject) => {
-    if(!l.startsWith('https://www.amazon')) return new Error('Not a valid link')
+    if(!l || !l.startsWith('https://www.amazon')) reject('Not a valid link')
   
-    util.getPage(l).then(($) => {
+    bot.util.getPage(l).then(($) => {
       var features = $('#feature-bullets').find('li').find('span').toArray()
       var parsedFeatures = []
       features.forEach(f => {
