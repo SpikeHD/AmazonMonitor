@@ -44,6 +44,7 @@ bot.on('ready', function () {
       bot.commands.set(command.replace('.js', ''), props);
   });
 
+  // Start services
   bot.util.startPup()
   bot.util.startWatcher(bot)
 });

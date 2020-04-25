@@ -7,18 +7,22 @@ module.exports = {
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
+    // Get an array of all existing entrie to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
     var asin;
     var exists = false
   
+    // Compare asins for duplicate
     try {
       asin = args[1].split("/dp/")[1].split("/")[0]
     } catch(e) {
       resolve(message.channel.send('Not a valid link'))
     }
   
+    // If there isn't one, it's probably just a bad URL
     if (!asin) message.channel.send('Not a valid link')
     else {
+      // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
         if (itm.link.includes(asin)) {
           exists = true
@@ -30,9 +34,11 @@ function run(bot, guild, message, args) {
   
     amazon.details(bot, args[1]).then(item => {
       var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.split(" ")[1] || 0))]
+
+      // Push the values to the database
       bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
         if (err) throw err
-        // Also add it to the existing watchlist obj so we don't have to re-do the request to get them all
+        // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
         bot.watchlist.push({
           guild_id: values[0],
           channel_id: values[1],

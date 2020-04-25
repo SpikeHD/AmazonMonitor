@@ -20,13 +20,17 @@ function find(bot, q, suffix) {
     var url = `https://www.amazon.ca/s?k=${sanq}/`
     var results = []
 
+    // Get parsed page with puppeteer/cheerio
     bot.util.getPage(url).then($ => {
       var lim = $('.s-result-list').find('.s-result-item').length
       $('.s-result-list').find('.s-result-item').each(function () {
         if (results.length >= 10 || results.length >= lim) {
+          // We're done!
           resolve(results)
         } else {
           var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
+          
+          // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
           if (prodLink) {
             var obj = {
               title: $(this).find('span.a-text-normal').text().trim(),
@@ -51,15 +55,20 @@ function find(bot, q, suffix) {
  */
 function details(bot, l) {
   return new Promise((resolve, reject) => {
+    // Lazy link check
     if(!l || !l.startsWith('https://www.amazon')) reject('Not a valid link')
   
+    // Get parsed page with puppeteer/cheerio
     bot.util.getPage(l).then(($) => {
+      // Most items have feature lists
       var features = $('#feature-bullets').find('li').find('span').toArray()
       var parsedFeatures = []
       features.forEach(f => {
+        // Get features in a more normal format
         parsedFeatures.push(` - ${$(f).text().trim()}`)
       });
 
+      // Big ol' object full o' stuff
       var obj = {
         full_title: $('#productTitle').text().trim(),
         full_link: l,
@@ -75,17 +84,4 @@ function details(bot, l) {
       resolve(obj)
     }).catch(e => reject(e))
   })
-}
-
-/**
- * Takes a link and inserts it into the database for watching
- * 
- * @param {Discord.Client} bot 
- * @param {string} channel
- * @param {string} l
- * 
- * @returns {string}
- */
-function watch(bot, channel, l) {
-  
 }

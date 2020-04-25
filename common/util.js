@@ -58,13 +58,18 @@ function startWatcher(bot) {
     }, 30000)
   })
 }
-
+/**
+ * Loops through all watchlist items, looking for price drops
+ */
 function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
     var obj = bot.watchlist[i]
+
+    // Get details
     amazon.details(bot, obj.link).then(item => {
       var price = item.price.replace(/^\D+/g, "")
 
+      // Compare prices
       if (obj.lastPrice > (parseFloat(price) || 0)) sendPriceAlert(bot, obj, item)
       if (obj.lastPrice < (parseFloat(price) || 0)) pushPriceChange(bot, obj, item)
     })
