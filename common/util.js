@@ -59,14 +59,13 @@ function startWatcher(bot) {
 function doCheck(bot, i) {
   if (i+1 < bot.watchlist.length) {
     var obj = bot.watchlist[i]
-    amazon.details(obj.link).then(item => {
-      if (obj.lastPrice < parseFloat(item.price)) sendPriceAlert(bot, obj, item)
+    amazon.details(bot, obj.link).then(item => {
+      if (obj.lastPrice < (parseFloat(item.price) || 0)) sendPriceAlert(bot, obj, item)
     })
 
     setTimeout(() => doCheck(bot, i + 1), 2000)
   }
 }
-
 
 /**
  * Sends an alert to the guildChannel specified in the DB entry

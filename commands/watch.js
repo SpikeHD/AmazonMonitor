@@ -28,7 +28,7 @@ function run(bot, guild, message, args) {
   if(exists) return message.channel.send('I\'m already watching that link somewhere else!');
 
   amazon.details(bot, args[1]).then(item => {
-    var values = [guild.id, message.channel.id, item.full_link, parseFloat(item.price.split(" ")[1])]
+    var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.split(" ")[1] || 0))]
     bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
       if (err) throw err
       // Also add it to the existing watchlist obj so we don't have to re-do the request to get them all
