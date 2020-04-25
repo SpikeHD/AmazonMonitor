@@ -46,13 +46,16 @@ function load(html) {
  */
 function startWatcher(bot) {
   bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
+    if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
     console.log("Watchlist loaded")
+
+    bot.user.setActivity(`${rows.length} items!`, { type: 'WATCHING' })
 
     // Set an interval with an offset so we don't decimate Amazon with requests
     setInterval(() => {
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 5000)
+    }, 30000)
   })
 }
 
@@ -72,6 +75,8 @@ function doCheck(bot, i) {
   bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
     if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
+
+    bot.user.setActivity(`${rows.length} items!`, { type: 'WATCHING' })
     console.log('Watchlist Updated!')
   })
 }
@@ -84,9 +89,10 @@ function doCheck(bot, i) {
 function sendPriceAlert(bot, obj, item) {
   var channel = bot.channels.cache.get(obj.channel_id)
   var embed = new MessageEmbed()
-    .setTitle(`Price alert for ${item.full_title}`)
+    .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
     .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: ${item.price}`)
+    .setColor('GREEN')
 
   if(channel) channel.send(embed)
 

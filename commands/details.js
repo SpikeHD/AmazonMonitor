@@ -6,23 +6,29 @@ module.exports = {
 }
 
 function run(bot, guild, message, args) {
-  amazon.details(bot, args[1]).then(res => {
-    // Replace empty values
-    Object.keys(res).forEach(k => {
-      if(res[k].length <= 1) res[k] = 'none'
+  return new Promise((resolve, reject) => {
+    amazon.details(bot, args[1]).then(res => {
+      // Replace empty values
+      Object.keys(res).forEach(k => {
+        if(!res[k] ||
+          res[k].length <= 1) res[k] = 'none'
+      })
+  
+      var embed = new MessageEmbed()
+        .setColor('ORANGE')
+        .setTitle(res.full_title)
+        .setAuthor(res.seller.includes('\n') ? 'invalid':res.seller)
+        .setImage(res.image)
+        .setDescription(`${res.full_link}\n${res.features != 'none' ? res.features.join('\n\n'):''}`)
+        .addField('Price', res.price, true)
+        .addField('Rating', res.rating, true)
+        .addField('Shipping', res.shipping, true)
+        .addField('Availability', res.availability)
+  
+      resolve(message.channel.send(embed))
+    }).catch(e => {
+      console.log(e)
+      reject(e)
     })
-
-    var embed = new MessageEmbed()
-      .setColor('ORANGE')
-      .setTitle(res.full_title)
-      .setAuthor(res.seller)
-      .setImage(res.image)
-      .setDescription(`${res.full_link}\n${res.features.join('\n\n')}`)
-      .addField('Price', res.price, true)
-      .addField('Rating', res.rating, true)
-      .addField('Shipping', res.shipping, true)
-      .addField('Availability', res.availability)
-
-    message.channel.send(embed)
   })
 }

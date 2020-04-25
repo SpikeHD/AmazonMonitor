@@ -69,7 +69,7 @@ function details(bot, l) {
         rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
         features: parsedFeatures,
         availability: $('#availability').first().find('span').text().trim(),
-        image: $('#landingImage').attr('data-old-hires')
+        image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
       }
 
       resolve(obj)

@@ -44,12 +44,6 @@ bot.on('ready', function () {
       bot.commands.set(command.replace('.js', ''), props);
   });
 
-  // Populate watchlist
-  bot.con.query(`SELECT guild_id, channel_id, link FROM watchlist`, (err, rows) => {
-    if(err) throw err
-    bot.watchlist = Object.values(JSON.parse(JSON.stringify(rows)))
-  })
-
   bot.util.startPup()
   bot.util.startWatcher(bot)
 });
@@ -62,5 +56,13 @@ bot.on('message', function (message) {
     args = message.content.split(' '),
     cmd = bot.commands.get(command)
 
-  if (cmd) cmd.run(bot, message.guild, message, args);
+  if (cmd) {
+    message.channel.startTyping()
+    cmd.run(bot, message.guild, message, args).then(() =>  {
+      message.channel.stopTyping(true)
+    }).catch(e => {
+      console.log(e)
+      message.channel.stopTyping(true)
+    })
+  }
 });
