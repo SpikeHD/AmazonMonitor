@@ -1,8 +1,5 @@
 const { MessageEmbed } = require('discord.js')
 const util = require('./util')
-const cheerio = require('cheerio')
-const pup = require('puppeteer')
-const fs = require('fs')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
