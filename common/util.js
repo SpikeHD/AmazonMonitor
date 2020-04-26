@@ -55,7 +55,7 @@ function startWatcher(bot) {
     // Set an interval with an offset so we don't decimate Amazon with requests
     setInterval(() => {
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 30000)
+    }, 5000)
   })
 }
 /**
@@ -70,7 +70,8 @@ function doCheck(bot, i) {
       var price = item.price.replace(/^\D+/g, "")
 
       // Compare prices
-      if (obj.lastPrice > (parseFloat(price) || 0)) sendPriceAlert(bot, obj, item)
+      if (obj.lastPrice === 0 && (parseFloat(price) || 0) !== 0) sendInStockAlert(bot, obj, item)
+      if ((obj.lastPrice > (parseFloat(price) || 0)) && (parseFloat(price) !== 0)) sendPriceAlert(bot, obj, item)
       if (obj.lastPrice < (parseFloat(price) || 0)) pushPriceChange(bot, obj, item)
     })
 
@@ -95,7 +96,7 @@ function sendPriceAlert(bot, obj, item) {
   var embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
-    .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: ${item.price}`)
+    .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: $${item.price}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
@@ -112,4 +113,20 @@ function pushPriceChange(bot, obj, item) {
     if (err) throw err
     console.log("Price in DB updated!")
   })
+}
+
+/**
+ * Sends an alert that an item that wasn't in stock now is
+ */
+function sendInStockAlert(bot, obj, item) {
+  var channel = bot.channels.cache.get(obj.channel_id)
+  var embed = new MessageEmbed()
+    .setTitle(`"${item.full_title}" is now in stock!`)
+    .setAuthor(item.seller)
+    .setDescription(`Current Price: $${item.price}`)
+    .setColor('GREEN')
+
+  if(channel) channel.send(embed)
+
+  pushPriceChange(bot, obj, item)
 }
