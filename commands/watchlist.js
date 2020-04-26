@@ -6,9 +6,9 @@ module.exports = {
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
-    bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [message.guild.id], (err, rows) => {
-      if (err) throw err
-      var links = rows.map(x => x.link)
+    bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
+      if (err) reject(console.log(err))
+      var links = rows.map((x, i) => `${i+1}. ${x.link}`)
       var embed = new MessageEmbed()
         .setTitle('List of Amazon items currently being watched')
         .setDescription(links.join('\n\n'))

@@ -37,7 +37,7 @@ function run(bot, guild, message, args) {
 
       // Push the values to the database
       bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
-        if (err) throw err
+        if (err) reject(console.log(err))
         // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
         bot.watchlist.push({
           guild_id: values[0],
