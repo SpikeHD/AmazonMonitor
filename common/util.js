@@ -67,12 +67,12 @@ function doCheck(bot, i) {
 
     // Get details
     amazon.details(bot, obj.link).then(item => {
-      var price = item.price.replace(/^\D+/g, "")
+      var curPrice = parseFloat(item.price.replace(/^\D+/g, "")) || 0
 
       // Compare prices
-      if (obj.lastPrice === 0 && (parseFloat(price) || 0) !== 0) sendInStockAlert(bot, obj, item)
-      if ((obj.lastPrice > (parseFloat(price) || 0)) && (parseFloat(price) !== 0)) sendPriceAlert(bot, obj, item)
-      if (obj.lastPrice < (parseFloat(price) || 0)) pushPriceChange(bot, obj, item)
+      if (obj.lastPrice === 0 && curPrice !== 0) sendInStockAlert(bot, obj, item)
+      if (obj.lastPrice > curPrice && curPrice !== 0) sendPriceAlert(bot, obj, item)
+      if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
     })
 
     setTimeout(() => doCheck(bot, i + 1), 2000)

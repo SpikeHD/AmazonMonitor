@@ -2,8 +2,9 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const fs = require("fs");
 const mysql = require('mysql');
-var { prefix, token, sql } = require("./config.json");
+var { prefix, token, sql, guild_item_limit } = require("./config.json");
 bot.commands = new Discord.Collection()
+bot.itemLimit = guild_item_limit
 
 bot.login(token)
 

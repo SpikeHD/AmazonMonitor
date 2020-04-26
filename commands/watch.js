@@ -33,24 +33,30 @@ function run(bot, guild, message, args) {
       })
     }
   
-    if(exists) resolve(message.channel.send('I\'m already watching that link somewhere else!'))
+    if(exists) {
+      message.channel.send('I\'m already watching that link somewhere else!')
+      reject()
+    }else if(existing.length >= bot.itemLimit) {
+      message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
+      reject()
+    } else {
+      amazon.details(bot, args[1]).then(item => {
+        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0)]
   
-    amazon.details(bot, args[1]).then(item => {
-      var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.split(" ")[1] || 0))]
-
-      // Push the values to the database
-      bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
-        if (err) reject(console.log(err))
-        // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
-        bot.watchlist.push({
-          guild_id: values[0],
-          channel_id: values[1],
-          link: values[2],
-          lastPrice: values[3]
+        // Push the values to the database
+        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
+          if (err) reject(console.log(err))
+          // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
+          bot.watchlist.push({
+            guild_id: values[0],
+            channel_id: values[1],
+            link: values[2],
+            lastPrice: values[3]
+          })
+    
+          resolve(message.channel.send(`Now watching "${item.full_title}", I'll send updates in this channel from now on!`))
         })
-  
-        resolve(message.channel.send(`Now watching "${item.full_title}", I'll send updates in this channel from now on!`))
-      })
-    }).catch(e => reject(e))
+      }).catch(e => reject(e))
+    }
   })
 }
