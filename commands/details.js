@@ -10,7 +10,16 @@ module.exports = {
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
-    amazon.details(bot, args[1]).then(res => {
+    var asin;
+  
+    // Try to see if there is a valid asin
+    try {
+      asin = args[1].split("/dp/")[1].split("/")[0]
+    } catch(e) {
+      reject(message.channel.send('Not a valid link'))
+    }
+
+    amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(res => {
       // Replace empty values
       Object.keys(res).forEach(k => {
         if(!res[k] ||
@@ -30,7 +39,6 @@ function run(bot, guild, message, args) {
   
       resolve(message.channel.send(embed))
     }).catch(e => {
-      console.log(e)
       reject(e)
     })
   })

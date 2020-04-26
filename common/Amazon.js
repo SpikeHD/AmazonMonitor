@@ -55,11 +55,17 @@ function find(bot, q, suffix) {
  */
 function details(bot, l) {
   return new Promise((resolve, reject) => {
-    // Lazy link check
-    if(!l || !l.startsWith('https://www.amazon')) reject('Not a valid link')
+    var asin;
+  
+    // Try to see if there is a valid asin
+    try {
+      asin = l.split("/dp/")[1].split("/")[0]
+    } catch(e) {
+      reject('Not a valid link')
+    }
   
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(l).then(($) => {
+    bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(($) => {
       // Most items have feature lists
       var features = $('#feature-bullets').find('li').find('span').toArray()
       var parsedFeatures = []

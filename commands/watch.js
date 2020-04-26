@@ -19,11 +19,11 @@ function run(bot, guild, message, args) {
     try {
       asin = args[1].split("/dp/")[1].split("/")[0]
     } catch(e) {
-      resolve(message.channel.send('Not a valid link'))
+      reject(message.channel.send('Not a valid link'))
     }
   
     // If there isn't one, it's probably just a bad URL
-    if (!asin) message.channel.send('Not a valid link')
+    if (!asin) reject(message.channel.send('Not a valid link'))
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
@@ -40,18 +40,21 @@ function run(bot, guild, message, args) {
       message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
       reject()
     } else {
-      amazon.details(bot, args[1]).then(item => {
-        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0)]
+      amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
+        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title]
+
+        console.log(item)
   
         // Push the values to the database
-        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice) VALUES (?, ?, ?, ?)`, values, (err) => {
-          if (err) reject(console.log(err))
+        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name) VALUES (?, ?, ?, ?, ?)`, values, (err) => {
+          if (err) reject(err)
           // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
           bot.watchlist.push({
             guild_id: values[0],
             channel_id: values[1],
             link: values[2],
-            lastPrice: values[3]
+            lastPrice: values[3],
+            item_name: values[4]
           })
     
           resolve(message.channel.send(`Now watching "${item.full_title}", I'll send updates in this channel from now on!`))
