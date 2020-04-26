@@ -50,7 +50,7 @@ function startWatcher(bot) {
     bot.watchlist = JSON.parse(JSON.stringify(rows))
     console.log("Watchlist loaded")
 
-    bot.user.setActivity(`${rows.length} items!`, { type: 'WATCHING' })
+    bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
 
     // Set an interval with an offset so we don't decimate Amazon with requests
     setInterval(() => {
@@ -81,8 +81,7 @@ function doCheck(bot, i) {
     if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
 
-    bot.user.setActivity(`${rows.length} items!`, { type: 'WATCHING' })
-    console.log('Watchlist Updated!')
+    bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
   })
 }
 
