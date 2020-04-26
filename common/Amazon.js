@@ -17,7 +17,7 @@ module.exports = {
 function find(bot, q, suffix) {
   return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
-    var url = `https://www.amazon.ca/s?k=${sanq}/`
+    var url = `https://www.amazon${suffix}/s?k=${sanq}/`
     var results = []
 
     // Get parsed page with puppeteer/cheerio

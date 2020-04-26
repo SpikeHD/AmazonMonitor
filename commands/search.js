@@ -19,7 +19,7 @@ function run(bot, guild, message, args) {
       .setDescription(`(respond with **${bot.prefix}[num]** to get the full link and some additional details, or **${bot.prefix}quickwatch [num]** to quick-watch an item)`)
     
     // Search using term
-    amazon.find(bot, phrase, '.ca').then((res) => {
+    amazon.find(bot, phrase, '.com').then((res) => {
       var n = 1
       res.forEach(r => {
         // Add an embed field for each item
