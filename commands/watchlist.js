@@ -1,7 +1,10 @@
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
-  run: (b, g, m, a) => run(b, g, m, a)
+  run: (b, g, m, a) => run(b, g, m, a),
+  name: "watchlist",
+  desc: "Display a list of each Amazon link currenty being watched in this server",
+  usage: "watchlist"
 }
 
 function run(bot, guild, message, args) {

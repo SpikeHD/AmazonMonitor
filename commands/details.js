@@ -2,7 +2,10 @@ const { MessageEmbed } = require('discord.js')
 const amazon = require('../common/Amazon')
 
 module.exports = {
-  run: (b, g, m, a) => run(b, g, m, a)
+  run: (b, g, m, a) => run(b, g, m, a),
+  name: "details",
+  desc: "Return details using an amazon link",
+  usage: "details [amazon link]"
 }
 
 function run(bot, guild, message, args) {
