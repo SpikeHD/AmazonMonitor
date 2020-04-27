@@ -49,4 +49,4 @@ Once that's done, all you (should) need to do is run `node index` in the root pr
 ## Something not working?
 Google it!
 
-Unless it's like, *super* broken, which then you should create and issue.
+Unless it's like, *super* broken, which then you should create an issue.
