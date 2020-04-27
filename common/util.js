@@ -2,6 +2,12 @@ const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
 const cheerio = require('cheerio')
 const amazon = require('./Amazon')
+var userAgents = [
+  'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.3538.77 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.62 Safari/537.36 Edg/81.0.416.31'
+]
 var browser
 
 module.exports = {
@@ -34,10 +40,13 @@ async function startPup() {
 function getPage(url) {
   return new Promise(res => {
     browser.newPage().then(page => {
-      page.goto(url).then(() => {
-        page.evaluate(() => document.body.innerHTML).then(html => {
-          res(load(html))
-          page.close()
+      var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+      page.setUserAgent(uAgent).then(() => {
+        page.goto(url).then(() => {
+          page.evaluate(() => document.body.innerHTML).then(html => {
+            res(load(html))
+            page.close()
+          })
         })
       })
     })
