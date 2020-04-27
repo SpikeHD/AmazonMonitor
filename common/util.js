@@ -75,7 +75,7 @@ function startWatcher(bot) {
     // Set an interval with an offset so we don't decimate Amazon with requests
     setInterval(() => {
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 5000)
+    }, 60000)
   })
 }
 /**
