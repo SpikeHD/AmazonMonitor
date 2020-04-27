@@ -42,8 +42,6 @@ function run(bot, guild, message, args) {
     } else {
       amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
         var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title]
-
-        console.log(item)
   
         // Push the values to the database
         bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name) VALUES (?, ?, ?, ?, ?)`, values, (err) => {
@@ -57,7 +55,7 @@ function run(bot, guild, message, args) {
             item_name: values[4]
           })
     
-          resolve(message.channel.send(`Now watching "${item.full_title}", I'll send updates in this channel from now on!`))
+          resolve(message.channel.send(`Now watching ${item.full_link}, I'll send updates in this channel from now on!`))
         })
       }).catch(e => reject(e))
     }

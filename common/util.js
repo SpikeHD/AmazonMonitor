@@ -5,9 +5,19 @@ const amazon = require('./Amazon')
 var browser
 
 module.exports = {
+  trim: (s, lim) => trim(s, lim),
   startPup: () => startPup(),
   getPage: (url) => getPage(url),
   startWatcher: (bot) => startWatcher(bot)
+}
+
+/*
+ *  Appends ... to long strings
+ */
+function trim(s, lim) {
+  if(s.length > 70) {
+    return s.substr(0, 70) + '...'
+  } else return s
 }
 
 /**
@@ -26,13 +36,14 @@ function getPage(url) {
     browser.newPage().then(page => {
       page.goto(url).then(() => {
         page.evaluate(() => document.body.innerHTML).then(html => {
-          page.close()
           res(load(html))
+          page.close()
         })
       })
     })
   })
 }
+
 
 /**
  * Load HTML with cheerio
@@ -111,7 +122,6 @@ function pushPriceChange(bot, obj, item) {
   var price = item.price.replace(/^\D+/g, "")
   bot.con.query(`UPDATE watchlist SET lastPrice=? WHERE link=?`, [(parseFloat(price) || 0), obj.link], (err) => {
     if (err) throw err
-    console.log("Price in DB updated!")
   })
 }
 

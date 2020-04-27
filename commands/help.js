@@ -7,8 +7,8 @@ module.exports = {
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
     var embed = new MessageEmbed()
-      .setTitle('Commands and help!')
-      .setDescription('This will describe each function and what it does.\n Some commands take a little while, but 99% of the time it isn\'t broken, so don\'t worry')
+      .setTitle('AmazonMonitor: Commands and Help')
+      .setDescription('This will describe each function and what it does.\n Some commands take a hot second while, but 90% of the time it isn\'t broken, so don\'t worry')
       .setColor('RED')
     
     bot.commands.forEach(c => {

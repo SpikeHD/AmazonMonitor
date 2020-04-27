@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js')
+const { trim } = require('../common/util')
 const amazon = require('../common/Amazon')
 
 module.exports = {
@@ -23,7 +24,7 @@ function run(bot, guild, message, args) {
       var n = 1
       res.forEach(r => {
         // Add an embed field for each item
-        embed.addField(`[${n}] ${trim(r.title)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
+        embed.addField(`[${n}] ${trim(r.title, 70)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
         n++
       })
   
@@ -78,13 +79,7 @@ function run(bot, guild, message, args) {
     }).catch(e => {
       console.log(e)
       // Generic "I'm bad therefore I failed" message
-      reject(message.channel.send('I encountered an error while trying to process that URL. Was it correct?'))
+      reject(message.channel.send(e))
     })
   })
-}
-
-function trim(s) {
-  if(s.length > 70) {
-    return s.substr(0, 70) + '...'
-  } else return s
 }

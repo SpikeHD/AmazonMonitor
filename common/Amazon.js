@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js')
+const fs = require('fs')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
@@ -22,7 +23,10 @@ function find(bot, q, suffix) {
 
     // Get parsed page with puppeteer/cheerio
     bot.util.getPage(url).then($ => {
+
       var lim = $('.s-result-list').find('.s-result-item').length
+      if(!lim || lim === 0) reject('No Results')
+
       $('.s-result-list').find('.s-result-item').each(function () {
         if (results.length >= 10 || results.length >= lim) {
           // We're done!
@@ -73,6 +77,8 @@ function details(bot, l) {
         // Get features in a more normal format
         parsedFeatures.push(` - ${$(f).text().trim()}`)
       });
+
+      fs.writeFileSync('test.html', $.html())
 
       // Big ol' object full o' stuff
       var obj = {
