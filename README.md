@@ -47,7 +47,7 @@ Now that everything is set up config-wise, you now need to install the dependanc
 Once that's done, all you (should) need to do is run `node index` in the root project folder and it should come to life!
 
 ## Inviting it to your server
-Once you've got the bot running properly, you can invite it to your server by going to the `OAuth2` tab on the application page you set up previously. Once you're there, under `scopes` check the box that says `bot`, and copy/paste the link it generates into your browser.
+Once you've got the bot running properly, you can invite it to your server by going to the `OAuth2` tab on the bots application page you set up previously. Once you're there, under `scopes` check the box that says `bot`, and copy/paste the link it generates into your browser.
 
 ## Something not working?
 Google it!
