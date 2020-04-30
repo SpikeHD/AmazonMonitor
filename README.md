@@ -1,12 +1,12 @@
 # AmazonMonitor
 A Discord bot that monitors Amazon items, and notifies you on price drops/restocks
 
-## Disclaimer
-As much as I would love for this to be publicly hosted, watching *that many* Amazon items would surely not be feasible, which is why it has to be self-hosted.
+## Before you start
+"Why isn't this public?" you may ask. Well, the simple answer is that Amazon doesn't really like bots. When a program like this sends a ton of requests to Amazon all at once, they tend to catch on and start sking for human verification. Having 5 watched items per server, in even just 10 servers, is **50 requests per minute** (not accounting for the 2-second buffer per request that is used to deter said verification). This *also* means that this can break at basically any moment, so if it all of a sudden stops working without any code changes, *please* don't make an issue for it, just maybe give the bot a rest and lower your watchlist.
 
 ## Requirements
-* NodeJS v12.2 or higher
-* MySQL
+* [NodeJS v12.2 or higher](https://nodejs.org/en/)
+* MySQL ([Windows](https://www.wikihow.com/Install-the-MySQL-Database-Server-on-Your-Windows-PC), [Ubuntu](https://itsfoss.com/install-mysql-ubuntu/), [Mac](https://www.thoughtco.com/installing-mysql-on-mac-2693866))
 
 ## Setup
 Setup is easy enough. Clone the repo somewhere and create a file in the main folder (the one with `index.js` in it) named `config.json`. Fill in the contents of `config.json` using this:
