@@ -81,7 +81,9 @@ function parse($, l) {
 
   switch (category) {
     default: obj = getRegularItem($, l)
+    break;
     case "books": obj = getBookItem($, l)
+    break;
   }
 
   return obj
