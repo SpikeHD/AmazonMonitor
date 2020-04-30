@@ -2,7 +2,7 @@
 A Discord bot that monitors Amazon items, and notifies you on price drops/restocks
 
 ## Before you start
-"Why isn't this public?" you may ask. Well, the simple answer is that Amazon doesn't really like bots. When a program like this sends a ton of requests to Amazon all at once, they tend to catch on and start sking for human verification. Having 5 watched items per server, in even just 10 servers, is **50 requests per minute** (not accounting for the 2-second buffer per request that is used to deter said verification). This *also* means that this can break at basically any moment, so if it all of a sudden stops working without any code changes, *please* don't make an issue for it, just maybe give the bot a rest and lower your watchlist.
+"Why isn't this public?" you may ask. Well, the simple answer is that Amazon doesn't really like bots. When a program like this sends a ton of requests to Amazon all at once, they tend to catch on and start asking for human verification. Having 5 watched items per server, in even just 10 servers, is **50 requests per minute** (not accounting for the 2-second buffer per request that is used to deter said verification). This *also* means that this can break at basically any moment, so if it all of a sudden stops working without any code changes, *please* don't make an issue for it, just maybe give the bot a rest and lower your watchlist.
 
 ## Requirements
 * [NodeJS v12.2 or higher](https://nodejs.org/en/)
