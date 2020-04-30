@@ -32,9 +32,9 @@ To set up the bot user, head to https://discordapp.com/developers and login. Fro
 ### Database setup
 Install MySQL for your preferred platform, and enter a couple commands into the MySQL terminal:
 
-1. `CREATE DATABASE [your database name]`
-2. `USE [your database name]`
-3. `CREATE TABLE watchlist (guild_id VARCHAR(30) NOT NULL, channel_id VARCHAR(30) NOT NULL, link MEDIUMTEXT NOT NULL, lastPrice FLOAT NOT NULL DEFAULT 0, item_name TEXT NOT NULL)`
+1. `CREATE DATABASE [your database name];`
+2. `USE [your database name];`
+3. `CREATE TABLE watchlist (guild_id VARCHAR(30) NOT NULL, channel_id VARCHAR(30) NOT NULL, link MEDIUMTEXT NOT NULL, lastPrice FLOAT NOT NULL DEFAULT 0, item_name TEXT NOT NULL);`
 
 Once the database and table is created, fill in the values in your `config.json`.
 
