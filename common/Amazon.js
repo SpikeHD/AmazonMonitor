@@ -11,9 +11,9 @@ module.exports = {
 /**
  * Gets top 10 Amazon items based on a search query
  * 
- * @param {string} q 
+ * @param {String} q 
  * 
- * @returns {array}
+ * @returns {Array}
  */
 function find(bot, q, suffix) {
   return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ function find(bot, q, suffix) {
 /**
  * Takes a product link or code and spits out some useful details
  * 
- * @param {string} l 
+ * @param {String} l 
  */
 function details(bot, l) {
   return new Promise((resolve, reject) => {
@@ -87,6 +87,12 @@ function parse($, l) {
   return obj
 }
 
+/**
+ * Gets the details of a regular, normally formatted Amazon item
+ * 
+ * @param {Object} $ 
+ * @param {String} l 
+ */
 function getRegularItem($, l) {
   // Most items have feature lists
   var features = $('#feature-bullets').find('li').find('span').toArray()
@@ -111,6 +117,12 @@ function getRegularItem($, l) {
   return obj
 }
 
+/**
+ * Gets details of a Amazon book item
+ * 
+ * @param {Object} $ 
+ * @param {String} l 
+ */
 function getBookItem($, l) {
   // Gets buying options
   var buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
@@ -129,14 +141,12 @@ function getBookItem($, l) {
     full_link: l,
     seller: $('#bylineInfo').find('.contributorNameID').text().trim(),
     price: mainPrice,
-    shipping: $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
+    shipping: 'N/A',
     rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
     features: optionsArray,
     availability: $('#buybox').find('.a-text-center').find('a').first().text().trim(),
     image: $('#imgBlkFront').attr('src') || 'https://via.placeholder.com/300x300.png?text=No+Image'
   }
-
-  console.log(obj)
 
   return obj
 }
