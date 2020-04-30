@@ -142,8 +142,7 @@ function sendInStockAlert(bot, obj, item) {
   var embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
     .setAuthor(item.seller)
-    .setDescription(`Current Price: $${item.price}`)
-    .setFooter(`${item.full_link}`)
+    .setDescription(`Current Price: $${item.price}\n\n${item.full_link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
