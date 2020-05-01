@@ -116,7 +116,7 @@ function sendPriceAlert(bot, obj, item) {
   var embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
-    .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: $${item.price}`)
+    .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: $${item.price}\n\n${item.full_link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
