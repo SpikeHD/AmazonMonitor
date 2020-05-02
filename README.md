@@ -27,6 +27,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
     "user":"DATABASE_USER",
     "password":"DATABASE_PASSWORD"
   },
+  "URLParams":{},
   "guild_item_limit":5,
   "required_perms":[]
 }
@@ -53,6 +54,15 @@ The `required_perms` field is an optional list of permissions that a user with b
 
 It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
 
+### URLParams
+If you want to include a referral code or something, you can use the `URLParams` object. It is formatted like this:
+```json
+"URLParams":{
+  "ref":"my_ref_code",
+  "tag":"my_tag"
+  etc...
+ }
+```
 ## Starting it up
 Now that everything is set up config-wise, you now need to install the dependancies! This can be done by running `npm install` inside of the root folder of the project. This should download everything you need.
 
