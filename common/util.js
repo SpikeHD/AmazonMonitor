@@ -12,6 +12,7 @@ var browser
 
 module.exports = {
   trim: (s, lim) => trim(s, lim),
+  parseParams: (obj) => parseParams(obj),
   startPup: () => startPup(),
   getPage: (url) => getPage(url),
   startWatcher: (bot) => startWatcher(bot)
@@ -24,6 +25,14 @@ function trim(s, lim) {
   if(s.length > 70) {
     return s.substr(0, 70) + '...'
   } else return s
+}
+
+function parseParams(obj) {
+  var str = "?"
+  Object.keys(obj).forEach(k => {
+    str += `${k}=${obj[k]}&`
+  })
+  return str
 }
 
 /**
@@ -78,6 +87,7 @@ function startWatcher(bot) {
     }, 60000)
   })
 }
+
 /**
  * Loops through all watchlist items, looking for price drops
  */

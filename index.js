@@ -21,6 +21,7 @@ const con = mysql.createPool({
 bot.on('ready', function () {
   bot.util = require('./common/util')
   bot.required_perms = config.required_perms
+  bot.URLParams = config.URLParams || {}
   bot.prefix = config.prefix
   bot.con = con
   const str = `
