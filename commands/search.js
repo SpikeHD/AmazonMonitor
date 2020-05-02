@@ -6,7 +6,8 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "search",
   desc: "Search and return the top 10 items using a search term",
-  usage: "search [search term]"
+  usage: "search [search term]",
+  type: "view"
 }
 
 function run(bot, guild, message, args) {

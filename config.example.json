@@ -7,5 +7,6 @@
     "user":"my_user",
     "password":"my_password"
   },
-  "guild_item_limit":5
+  "guild_item_limit":5,
+  "required_perms":["permission_1", "permission_2"]
 }

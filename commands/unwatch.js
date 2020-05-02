@@ -4,7 +4,8 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "unwatch",
   desc: "Removes from the watchlist using at number. If no number is provided, returns the watchlist",
-  usage: "unwatch [number]"
+  usage: "unwatch [number]",
+  type: "edit"
 }
 
 function run(bot, guild, message, args) {
