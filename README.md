@@ -27,7 +27,8 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
     "user":"DATABASE_USER",
     "password":"DATABASE_PASSWORD"
   },
-  "guild_item_limit":5
+  "guild_item_limit":5,
+  "required_perms":[]
 }
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
@@ -46,6 +47,11 @@ Once the database and table is created, fill in the values in your `config.json`
 
 ### Guild item limit
 You may have noticed the last value, `"guild_item_limit"`. This value can be changed, but at the risk of being flagged as a bot and breaking everything. I don't even know if 5 is too high or low, so just... keep it as low as possible?
+
+### Required Permissions
+The `required_perms` field is an optional list of permissions that a user with be required to have for running any command that changes the watchlist in any way. You can leave this empty if you want anybody to be able to use them.
+
+It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
 
 ## Starting it up
 Now that everything is set up config-wise, you now need to install the dependancies! This can be done by running `npm install` inside of the root folder of the project. This should download everything you need.
