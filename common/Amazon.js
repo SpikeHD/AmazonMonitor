@@ -82,6 +82,7 @@ function parse($, l) {
   switch (category) {
     default: obj = getRegularItem($, l)
     break;
+    case "kindle store":
     case "books": obj = getBookItem($, l)
     break;
   }
@@ -115,6 +116,8 @@ function getRegularItem($, l) {
     availability: $('#availability').first().find('span').text().trim(),
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
   }
+
+  console.log(obj)
 
   return obj
 }

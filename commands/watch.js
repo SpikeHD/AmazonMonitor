@@ -5,7 +5,7 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "watch",
   desc: "Add and watch a single Amazon link",
-  usage: "watch [amazon link]"
+  usage: "watch [amazon link] [optional: price limit]"
 }
 
 function run(bot, guild, message, args) {
@@ -13,14 +13,17 @@ function run(bot, guild, message, args) {
     // Get an array of all existing entrie to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
     var asin;
+    var priceLimit = 0;
     var exists = false
   
     // Compare asins for duplicate
     try {
-      asin = args[1].split("/dp/")[1].split("/")[0]
+      asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
     } catch(e) {
       reject(message.channel.send('Not a valid link'))
     }
+
+    if(parseFloat(args[2])) priceLimit = parseFloat(args[2])
   
     // If there isn't one, it's probably just a bad URL
     if (!asin) reject(message.channel.send('Not a valid link'))
@@ -41,10 +44,10 @@ function run(bot, guild, message, args) {
       reject()
     } else {
       amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
-        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title]
+        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
   
         // Push the values to the database
-        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name) VALUES (?, ?, ?, ?, ?)`, values, (err) => {
+        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name, priceLimit) VALUES (?, ?, ?, ?, ?, ?)`, values, (err) => {
           if (err) reject(err)
           // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
           bot.watchlist.push({
@@ -52,10 +55,11 @@ function run(bot, guild, message, args) {
             channel_id: values[1],
             link: values[2],
             lastPrice: values[3],
-            item_name: values[4]
+            item_name: values[4],
+            priceLimit: values[5]
           })
     
-          resolve(message.channel.send(`Now watching ${item.full_link}, I'll send updates in this channel from now on!`))
+          resolve(message.channel.send(`Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`))
         })
       }).catch(e => reject(e))
     }

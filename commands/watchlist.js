@@ -12,7 +12,8 @@ function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
     bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
       if (err) reject(err)
-      var links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}`)
+      var links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
+
       var embed = new MessageEmbed()
         .setTitle('List of Amazon items currently being watched')
         .setDescription(links.length > 0 ? links.join('\n\n'):'You haven\'t added any items yet!')
