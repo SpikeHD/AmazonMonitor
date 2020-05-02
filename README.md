@@ -1,6 +1,12 @@
 # AmazonMonitor
 A Discord bot that monitors Amazon items, and notifies you on price drops/restocks
 
+## Important!
+Before updating you should always check here in case of any database/config changes you may need to set.
+
+# Moving to 1.1.0: 
+If you've already got it set up a little while ago, make sure to run `ALTER TABLE watchlist ADD COLUMN priceLimit FLOAT NOT NULL DEFAULT 0;` as this will add the price limit functionality.
+
 ## Before you start
 "Why isn't this public?" you may ask. Well, the simple answer is that Amazon doesn't really like bots. When a program like this sends a ton of requests to Amazon all at once, they tend to catch on and start asking for human verification. Having 5 watched items per server, in even just 10 servers, is **50 requests per minute** (not accounting for the 2-second buffer per request that is used to deter said verification). This *also* means that this can break at basically any moment, so if it all of a sudden stops working without any code changes, *please* don't make an issue for it, just maybe give the bot a rest and lower your watchlist.
 
@@ -34,7 +40,7 @@ Install MySQL for your preferred platform, and enter a couple commands into the 
 
 1. `CREATE DATABASE [your database name];`
 2. `USE [your database name];`
-3. `CREATE TABLE watchlist (guild_id VARCHAR(30) NOT NULL, channel_id VARCHAR(30) NOT NULL, link MEDIUMTEXT NOT NULL, lastPrice FLOAT NOT NULL DEFAULT 0, item_name TEXT NOT NULL);`
+3. `CREATE TABLE watchlist (guild_id VARCHAR(30) NOT NULL, channel_id VARCHAR(30) NOT NULL, link MEDIUMTEXT NOT NULL, lastPrice FLOAT NOT NULL DEFAULT 0, item_name TEXT NOT NULL, priceLimit FLOAT NOT NULL DEFAULT 0);`
 
 Once the database and table is created, fill in the values in your `config.json`.
 
