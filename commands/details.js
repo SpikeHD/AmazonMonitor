@@ -40,7 +40,8 @@ function run(bot, guild, message, args) {
   
       resolve(message.channel.send(embed))
     }).catch(e => {
-      reject(e)
+      console.log(e)
+      reject('Got an error retrieving the Amazon item')
     })
   })
 }

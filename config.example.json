@@ -7,6 +7,7 @@
     "user":"my_user",
     "password":"my_password"
   },
+  "URLParams":{},
   "guild_item_limit":5,
   "required_perms":["permission_1", "permission_2"]
 }

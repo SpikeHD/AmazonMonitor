@@ -67,6 +67,8 @@ function details(bot, l) {
     } catch(e) {
       reject('Not a valid link')
     }
+
+    l += bot.util.parseParams(bot.URLParams)
   
     // Get parsed page with puppeteer/cheerio
     bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(($) => {
