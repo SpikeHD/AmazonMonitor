@@ -17,7 +17,7 @@ function run(bot, guild, message, args) {
     try {
       asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
     } catch(e) {
-      reject(message.channel.send('Not a valid link'))
+      reject('Not a valid link')
     }
 
     amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(res => {

@@ -24,14 +24,14 @@ function run(bot, guild, message, args) {
       var index = parseInt(args[1])
 
       bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
-        if (err) reject(err)
+        if (err) reject('Database error')
         if (!rows || rows.length == 0) reject('No existing items!')
         var item = rows[index-1]
         
         if(!item) reject(message.channel.send('Not an existing item!'))
         else {
           bot.con.query(`DELETE FROM watchlist WHERE guild_id=? AND link=?`, [guild.id, item.link], (err, rows) => {
-            if (err) reject(err)
+            if (err) reject('Database error')
             resolve(message.channel.send('Successfully removed item: ' + item.link))
           })
         }

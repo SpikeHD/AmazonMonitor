@@ -75,7 +75,7 @@ function exec(bot, message, args, cmd) {
   cmd.run(bot, message.guild, message, args).then(() =>  {
     message.channel.stopTyping(true)
   }).catch(e => {
-    console.log(e)
+    message.channel.send(e)
     message.channel.stopTyping(true)
   })
 }
