@@ -5,7 +5,8 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "watch",
   desc: "Add and watch a single Amazon link",
-  usage: "watch [amazon link] [optional: price limit]"
+  usage: "watch [amazon link] [optional: price limit]",
+  type: "edit"
 }
 
 function run(bot, guild, message, args) {
@@ -20,13 +21,13 @@ function run(bot, guild, message, args) {
     try {
       asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
     } catch(e) {
-      reject(message.channel.send('Not a valid link'))
+      reject('Not a valid link')
     }
 
     if(parseFloat(args[2])) priceLimit = parseFloat(args[2])
   
     // If there isn't one, it's probably just a bad URL
-    if (!asin) reject(message.channel.send('Not a valid link'))
+    if (!asin) reject('Not a valid link')
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
@@ -37,11 +38,9 @@ function run(bot, guild, message, args) {
     }
   
     if(exists) {
-      message.channel.send('I\'m already watching that link somewhere else!')
-      reject()
+      reject('I\'m already watching that link somewhere else!')
     }else if(existing.length >= bot.itemLimit) {
-      message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
-      reject()
+      reject('You\'re watching too many links! Remove one from your list and try again.')
     } else {
       amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
         var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]

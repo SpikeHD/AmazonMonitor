@@ -5,13 +5,14 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "watchlist",
   desc: "Display a list of each Amazon link currenty being watched in this server",
-  usage: "watchlist"
+  usage: "watchlist",
+  type: "view"
 }
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
     bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
-      if (err) reject(err)
+      if (err) reject('Database error')
       var links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
 
       var embed = new MessageEmbed()

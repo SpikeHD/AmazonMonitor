@@ -6,7 +6,8 @@ module.exports = {
   run: (b, g, m, a) => run(b, g, m, a),
   name: "search",
   desc: "Search and return the top 10 items using a search term",
-  usage: "search [search term]"
+  usage: "search [search term]",
+  type: "view"
 }
 
 function run(bot, guild, message, args) {
@@ -31,7 +32,8 @@ function run(bot, guild, message, args) {
       message.channel.send(embed).then(m => {
         // Message must be from original author and in the same channel
         var filter = (msg => msg.author.id === message.author.id &&
-          msg.channel.id === message.channel.id)
+          msg.channel.id === message.channel.id &&
+          msg.member.hasPermission(bot.required_perms))
         
         m.channel.awaitMessages(filter, { max: 1, time: 20000 }).then(col => {
           // If a message was sent and it start with the prefix
@@ -79,7 +81,7 @@ function run(bot, guild, message, args) {
     }).catch(e => {
       console.log(e)
       // Generic "I'm bad therefore I failed" message
-      reject(message.channel.send(e))
+      reject(e)
     })
   })
 }
