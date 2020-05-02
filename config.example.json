@@ -1,0 +1,11 @@
+{
+  "prefix":"!",
+  "token":"my_bot_token",
+  "sql": {
+    "host":"localhost",
+    "database":"my_database",
+    "user":"my_user",
+    "password":"my_password"
+  },
+  "guild_item_limit":5
+}
