@@ -2,25 +2,26 @@ const Discord = require("discord.js");
 const bot = new Discord.Client();
 const fs = require("fs");
 const mysql = require('mysql');
-var { prefix, token, sql, guild_item_limit } = require("./config.json");
+var config = require("./config.json");
 bot.commands = new Discord.Collection()
-bot.itemLimit = guild_item_limit
+bot.itemLimit = config.guild_item_limit
 
-bot.login(token)
+bot.login(config.token)
 
 // Establish Connection to SQL
 const con = mysql.createPool({
   connectionLimit: 100,
-  host: sql.host,
-  user: sql.user,
-  password: sql.password,
-  database: sql.database,
+  host: config.sql.host,
+  user: config.sql.user,
+  password: config.sql.password,
+  database: config.sql.database,
   charset: "utf8mb4"
 });
 
 bot.on('ready', function () {
   bot.util = require('./common/util')
-  bot.prefix = prefix
+  bot.required_perms = config.required_perms
+  bot.prefix = config.prefix
   bot.con = con
   const str = `
   ##########################################################################
@@ -52,19 +53,29 @@ bot.on('ready', function () {
 
 bot.on('message', function (message) {
   if (message.author.bot) return;
-  if (!message.content.startsWith(prefix)) return;
+  if (!message.content.startsWith(config.prefix)) return;
 
-  var command = message.content.split(prefix)[1].split(" ")[0],
+  var command = message.content.split(config.prefix)[1].split(" ")[0],
     args = message.content.split(' '),
     cmd = bot.commands.get(command)
 
   if (cmd) {
-    message.channel.startTyping()
-    cmd.run(bot, message.guild, message, args).then(() =>  {
-      message.channel.stopTyping(true)
-    }).catch(e => {
-      console.log(e)
-      message.channel.stopTyping(true)
-    })
+    switch(cmd.type) {
+      case "view": exec(bot, message, args, cmd)
+      break;
+      case "edit":
+        if (message.member.hasPermission(bot.required_perms)) exec(bot, message, args, cmd)
+      break;
+    }
   }
 });
+
+function exec(bot, message, args, cmd) {
+  message.channel.startTyping()
+  cmd.run(bot, message.guild, message, args).then(() =>  {
+    message.channel.stopTyping(true)
+  }).catch(e => {
+    console.log(e)
+    message.channel.stopTyping(true)
+  })
+}
