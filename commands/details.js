@@ -14,7 +14,7 @@ function run(bot, guild, message, args) {
   
     // Try to see if there is a valid asin
     try {
-      asin = args[1].split("/dp/")[1].split("/")[0]
+      asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
     } catch(e) {
       reject(message.channel.send('Not a valid link'))
     }

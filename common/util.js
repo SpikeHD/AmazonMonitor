@@ -88,10 +88,11 @@ function doCheck(bot, i) {
     // Get details
     amazon.details(bot, obj.link).then(item => {
       var curPrice = parseFloat(item.price.replace(/^\D+/g, "")) || 0
+      var underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
 
       // Compare prices
-      if (obj.lastPrice === 0 && curPrice !== 0) sendInStockAlert(bot, obj, item)
-      if (obj.lastPrice > curPrice && curPrice !== 0) sendPriceAlert(bot, obj, item)
+      if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
+      if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
       if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
     })
 
