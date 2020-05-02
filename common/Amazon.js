@@ -117,8 +117,6 @@ function getRegularItem($, l) {
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
   }
 
-  console.log(obj)
-
   return obj
 }
 
