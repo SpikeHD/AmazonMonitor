@@ -4,7 +4,7 @@ A Discord bot that monitors Amazon items, and notifies you on price drops/restoc
 ## Important!
 Before updating you should always check here in case of any database/config changes you may need to set.
 
-# Moving to 1.1.0: 
+### Moving to 1.1.0: 
 If you've already got it set up a little while ago, make sure to run `ALTER TABLE watchlist ADD COLUMN priceLimit FLOAT NOT NULL DEFAULT 0;` as this will add the price limit functionality.
 
 ## Before you start
