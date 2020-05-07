@@ -111,7 +111,7 @@ function getRegularItem($, l) {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
     seller: $('#bylineInfo').text().trim(),
-    price: $('#priceblock_ourprice').text().trim(),
+    price: $('#priceblock_ourprice').text().trim().replace(/,/g, ''),
     shipping: $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
     rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
     features: parsedFeatures,
@@ -131,7 +131,7 @@ function getRegularItem($, l) {
 function getBookItem($, l) {
   // Gets buying options
   var buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
-  var mainPrice = $('#buybox').find('a-color-price').first().text().trim()
+  var mainPrice = $('#buybox').find('a-color-price').first().text().trim().replace(/,/g, '')
   var optionsArray = []
 
   buyingOptions.forEach(o => {
