@@ -88,7 +88,7 @@ function startWatcher(bot) {
     setInterval(() => {
       debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 60000)
+    }, 180000)
   })
 }
 
