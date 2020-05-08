@@ -76,3 +76,6 @@ Once you've got the bot running properly, you can invite it to your server by go
 Google it!
 
 Unless it's like, *super* broken, which then you should create an issue.
+
+#### Donations
+I don't expect anything from anyone, and this bot will be free forever, but if you'd like to throw a Redbull or something my way, you can do so [here](https://www.paypal.me/spikegd) :)
