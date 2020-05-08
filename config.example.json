@@ -9,5 +9,6 @@
   },
   "URLParams":{},
   "guild_item_limit":5,
-  "required_perms":["permission_1", "permission_2"]
+  "required_perms":["permission_1", "permission_2"],
+  "debugEnabled":false
 }
