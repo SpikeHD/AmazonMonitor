@@ -14,6 +14,8 @@ function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
     args.splice(0, 1)
     var phrase  = args.join(' ')
+
+    bot.debug.log('Search phrase: ' + phrase, 'debug')
   
     var embed = new MessageEmbed()
       .setColor('ORANGE')
@@ -35,6 +37,8 @@ function run(bot, guild, message, args) {
           msg.channel.id === message.channel.id &&
           msg.member.hasPermission(bot.required_perms))
         
+        bot.debug.log('Watching for messages...', 'debug')
+
         m.channel.awaitMessages(filter, { max: 1, time: 20000 }).then(col => {
           // If a message was sent and it start with the prefix
           if (col.first() && col.first().content.startsWith(bot.prefix)) {
@@ -42,6 +46,8 @@ function run(bot, guild, message, args) {
             var command = col.first().content.split(bot.prefix)[1].split(' ')[0]
             if (command) {
               var link;
+
+              bot.debug.log('I parsed this as a command: ' + command, 'debug')
               
               // If the "command" is just a number, we assume that they want details on that number in the list
               if (parseInt(command)) {

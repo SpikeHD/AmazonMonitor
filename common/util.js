@@ -2,6 +2,7 @@ const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
 const cheerio = require('cheerio')
 const amazon = require('./Amazon')
+const debug = require('./debug')
 var userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -40,7 +41,7 @@ function parseParams(obj) {
  */
 async function startPup() {
   browser = await pup.launch()
-  console.log("Puppeteer launched")
+  debug.log('Puppeteer Launched', 'info')
 }
 
 /**
@@ -48,11 +49,13 @@ async function startPup() {
  */
 function getPage(url) {
   return new Promise(res => {
+    var now = new Date().getTime()
     browser.newPage().then(page => {
       var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
       page.setUserAgent(uAgent).then(() => {
         page.goto(url).then(() => {
           page.evaluate(() => document.body.innerHTML).then(html => {
+            debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
             res(load(html))
             page.close()
           })
@@ -77,12 +80,13 @@ function startWatcher(bot) {
   bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
     if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
-    console.log("Watchlist loaded")
+    debug.log('Watchlist Loaded', 'info')
 
     bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
 
     // Set an interval with an offset so we don't decimate Amazon with requests
     setInterval(() => {
+      debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
     }, 60000)
   })
