@@ -29,7 +29,8 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   },
   "URLParams":{},
   "guild_item_limit":5,
-  "required_perms":[]
+  "required_perms":[],
+  "debugEnabled":false
 }
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
