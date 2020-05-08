@@ -1,7 +1,8 @@
-const Discord = require("discord.js");
+const Discord = require('discord.js');
 const bot = new Discord.Client();
-const fs = require("fs");
+const fs = require('fs');
 const mysql = require('mysql');
+const debug = require('./common/debug')
 var config = require("./config.json");
 bot.commands = new Discord.Collection()
 bot.itemLimit = config.guild_item_limit
@@ -20,6 +21,7 @@ const con = mysql.createPool({
 
 bot.on('ready', function () {
   bot.util = require('./common/util')
+  bot.debug = debug
   bot.required_perms = config.required_perms
   bot.URLParams = config.URLParams || {}
   bot.prefix = config.prefix
@@ -41,7 +43,7 @@ bot.on('ready', function () {
 
   // Load commands
   fs.readdirSync("./commands/").forEach(command => {
-      console.log(`Loading command: ${command}`)
+      debug.log(`Loading command: ${command}`, 'info')
 
       let props = require(`./commands/${command}`)
       bot.commands.set(command.replace('.js', ''), props);
@@ -77,6 +79,7 @@ function exec(bot, message, args, cmd) {
     message.channel.stopTyping(true)
   }).catch(e => {
     message.channel.send(e)
+    debug.log(e, 'error')
     message.channel.stopTyping(true)
   })
 }

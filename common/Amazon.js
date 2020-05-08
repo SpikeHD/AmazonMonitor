@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js')
+const debug = require('./debug')
 const fs = require('fs')
 
 module.exports = {
@@ -23,7 +24,6 @@ function find(bot, q, suffix) {
 
     // Get parsed page with puppeteer/cheerio
     bot.util.getPage(url).then($ => {
-
       var lim = $('.s-result-list').find('.s-result-item').length
       if(!lim || lim === 0) reject('No Results')
 
@@ -65,6 +65,7 @@ function details(bot, l) {
     try {
       asin = l.split("/dp/")[1].split("/")[0]
     } catch(e) {
+      debug.log(e, 'warn')
       reject('Not a valid link')
     }
 
@@ -73,12 +74,16 @@ function details(bot, l) {
     // Get parsed page with puppeteer/cheerio
     bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(($) => {
       resolve(parse($, l))
-    }).catch(e => reject(e))
+    }).catch(e => {
+      debug.log(e, 'warn')
+      reject(e)
+    })
   })
 }
 
 function parse($, l) {
   var category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
+  var emptyVals = 0
   var obj;
 
   switch (category) {
@@ -88,6 +93,12 @@ function parse($, l) {
     case "books": obj = getBookItem($, l)
     break;
   }
+
+  Object.keys(obj).forEach(k => {
+    if(obj[k].length === 0) emptyVals++
+  })
+
+  if(emptyVals > 1) debug.log(`Detected ${emptyVals} empty values. Could potentially mean bot was flagged`, 'warn')
 
   return obj
 }
@@ -99,6 +110,7 @@ function parse($, l) {
  * @param {String} l 
  */
 function getRegularItem($, l) {
+  debug.log('Detected as a regular item', 'debug')
   // Most items have feature lists
   var features = $('#feature-bullets').find('li').find('span').toArray()
   var parsedFeatures = []
@@ -119,6 +131,9 @@ function getRegularItem($, l) {
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
   }
 
+  debug.log('Full object: ', 'debug')
+  debug.log(obj, 'debug')
+
   return obj
 }
 
@@ -129,6 +144,7 @@ function getRegularItem($, l) {
  * @param {String} l 
  */
 function getBookItem($, l) {
+  debug.log('Detected as a book item', 'debug')
   // Gets buying options
   var buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
   var mainPrice = $('#buybox').find('a-color-price').first().text().trim().replace(/,/g, '')

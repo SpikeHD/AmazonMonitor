@@ -11,11 +11,13 @@ module.exports = {
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
-    // Get an array of all existing entrie to make sure we don't have a duplicate
+    // Get an array of all existing entries to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
     var asin;
     var priceLimit = 0;
     var exists = false
+
+    bot.debug.log(existing, 'debug')
   
     // Compare asins for duplicate
     try {
@@ -44,7 +46,10 @@ function run(bot, guild, message, args) {
     } else {
       amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
         var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
-  
+
+        bot.debug.log('Occasionally one or a couple of these values will be empty. Doesn\'t affect functionality', 'info')
+        bot.debug.log(values, 'debug')
+
         // Push the values to the database
         bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name, priceLimit) VALUES (?, ?, ?, ?, ?, ?)`, values, (err) => {
           if (err) reject(err)
