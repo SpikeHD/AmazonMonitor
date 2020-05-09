@@ -1,6 +1,9 @@
 const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
 const cheerio = require('cheerio')
+const fetch = require('node-fetch')
+const fs = require('fs')
+const ProxyAgent = require('simple-proxy-agent')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 var userAgents = [
@@ -15,7 +18,7 @@ module.exports = {
   trim: (s, lim) => trim(s, lim),
   parseParams: (obj) => parseParams(obj),
   startPup: () => startPup(),
-  getPage: (url) => getPage(url),
+  getPage: (url, opt) => getPage(url, opt),
   startWatcher: (bot) => startWatcher(bot)
 }
 
@@ -47,30 +50,63 @@ async function startPup() {
 /**
  * Get page HTML
  */
-function getPage(url) {
-  return new Promise(res => {
+function getPage(url, opts) {
+  return new Promise((res, rej) => {
+    console.log(opts)
     var now = new Date().getTime()
-    browser.newPage().then(page => {
-      var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
-      page.setUserAgent(uAgent).then(() => {
-        page.goto(url).then(() => {
-          page.evaluate(() => document.body.innerHTML).then(html => {
-            debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-            res(load(html))
-            page.close()
+    if(opts.type === 'proxy') {
+      var l = fs.readFileSync('proxylist.txt', 'utf8')
+      var proxies = l.split('\n')
+
+      if(proxies.length > 0) {
+        var proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+        fetch(url, { method: 'GET',
+          redirect: 'follow',
+          follow: 3,
+          agent: new ProxyAgent(proxy, {tunnel: true, timeout: 10000})
+        }).then(resp => resp.text()).then(body => {
+          debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+          load(body).then(c => res(c)).catch(e => rej(e))
+        }).catch(e =>  {
+          debug.log('Encountered an error: ', 'error')
+          debug.log(e, 'error')
+          rej(e.message)
+        })
+
+      } else {
+        debug.log('No proxies found in proxylist.txt. If it\'s empty, remove the file', 'error')
+        rej('No Proxies')
+      }
+    } else {
+      browser.newPage().then(page => {
+        var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+        page.setUserAgent(uAgent).then(() => {
+          page.goto(url).then(() => {
+            page.evaluate(() => document.body.innerHTML).then(html => {
+              debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+              load(html).then(c => res(c)).catch(e => rej(e))
+              page.close()
+            })
           })
         })
       })
-    })
+    }
   })
 }
 
+function checkForErrors($) {
+  if($('title').first().text().trim().includes('Sorry!')) {
+    return true
+  } else return false
+}
 
 /**
  * Load HTML with cheerio
  */
 function load(html) {
-  return new Promise(res => res(cheerio.load(html)))
+  return new Promise(res => {
+    res(cheerio.load(html))
+  })
 }
 
 /**

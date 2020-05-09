@@ -23,7 +23,7 @@ function find(bot, q, suffix) {
     var results = []
 
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(url).then($ => {
+    bot.util.getPage(url, {type: bot.proxylist ? 'proxy':'headless'}).then($ => {
       var lim = $('.s-result-list').find('.s-result-item').length
       if(!lim || lim === 0) reject('No Results')
 
@@ -48,7 +48,7 @@ function find(bot, q, suffix) {
           }
         }
       })
-    })
+    }).catch(e => debug.log(e, 'error'))
   })
 }
 
@@ -72,10 +72,10 @@ function details(bot, l) {
     l += bot.util.parseParams(bot.URLParams)
   
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(($) => {
+    bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).then(($) => {
       resolve(parse($, l))
     }).catch(e => {
-      debug.log(e, 'warn')
+      debug.log(e, 'error')
       reject(e)
     })
   })
