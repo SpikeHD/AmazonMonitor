@@ -10,6 +10,8 @@ module.exports = {
 
 function run(bot, guild, message, args) {
   return new Promise((resolve, reject) => {
+    var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
+    var localIndex
     if(!args[1]) {
       message.channel.send(`Use \`${bot.prefix}unwatch [num]\` to unwatch one of the following links`)
       message.channel.startTyping()
@@ -27,11 +29,19 @@ function run(bot, guild, message, args) {
         if (err) reject('Database error')
         if (!rows || rows.length == 0) reject('No existing items!')
         var item = rows[index-1]
+
+        existing.forEach(itm => {
+          var asin = item.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+          if (itm.link.includes(asin)) {
+            localItem = bot.watchlist.indexOf(itm)
+          }
+        })
         
         if(!item) reject('Not an existing item!')
         else {
           bot.con.query(`DELETE FROM watchlist WHERE guild_id=? AND link=?`, [guild.id, item.link], (err, rows) => {
             if (err) reject('Database error')
+            bot.watchlist.splice(localIndex, 1)
             resolve(message.channel.send('Successfully removed item: ' + item.link))
           })
         }

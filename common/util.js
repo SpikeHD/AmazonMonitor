@@ -59,7 +59,7 @@ function getPage(url, opts) {
       var proxies = l.split('\n')
 
       if(proxies.length > 0) {
-        var proxy = 'https://' + proxies[Math.floor(Math.random() * proxies.length)]
+        var proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
         var options = {
           proxy: proxy,
           uri: url,

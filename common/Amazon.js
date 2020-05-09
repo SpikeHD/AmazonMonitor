@@ -86,6 +86,8 @@ function parse($, l) {
   var emptyVals = 0
   var obj;
 
+  debug.log('Type: ' + category, 'info')
+
   switch (category) {
     default: obj = getRegularItem($, l)
     break;
