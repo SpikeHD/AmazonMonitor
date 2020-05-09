@@ -22,6 +22,7 @@ const con = mysql.createPool({
 bot.on('ready', function () {
   bot.util = require('./common/util')
   bot.debug = debug
+  bot.proxylist = fs.existsSync('./proxylist.txt')
   bot.required_perms = config.required_perms
   bot.URLParams = config.URLParams || {}
   bot.prefix = config.prefix

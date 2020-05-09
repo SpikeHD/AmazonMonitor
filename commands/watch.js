@@ -62,10 +62,10 @@ function run(bot, guild, message, args) {
             item_name: values[4],
             priceLimit: values[5]
           })
-    
+
           resolve(message.channel.send(`Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`))
         })
-      }).catch(e => reject(e))
+      }).catch(e => reject(e.message))
     }
   })
 }

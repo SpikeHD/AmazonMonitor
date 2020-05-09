@@ -1,6 +1,8 @@
 const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
+const { proxyRequest } = require('puppeteer-proxy')
 const cheerio = require('cheerio')
+const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 var userAgents = [
@@ -15,7 +17,7 @@ module.exports = {
   trim: (s, lim) => trim(s, lim),
   parseParams: (obj) => parseParams(obj),
   startPup: () => startPup(),
-  getPage: (url) => getPage(url),
+  getPage: (url, opt) => getPage(url, opt),
   startWatcher: (bot) => startWatcher(bot)
 }
 
@@ -29,6 +31,7 @@ function trim(s, lim) {
 }
 
 function parseParams(obj) {
+  if(Object.keys(obj).length === 0) return ''
   var str = "?"
   Object.keys(obj).forEach(k => {
     str += `${k}=${obj[k]}&`
@@ -47,30 +50,63 @@ async function startPup() {
 /**
  * Get page HTML
  */
-function getPage(url) {
-  return new Promise(res => {
+function getPage(url, opts) {
+  return new Promise((res, rej) => {
+    console.log(opts)
     var now = new Date().getTime()
+    if (opts.type === 'proxy') {
+      var l = fs.readFileSync('proxylist.txt', 'utf8')
+      var proxies = l.split('\n')
+      var proxy
+
+      if (proxies.length > 0) {
+        proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+      } else {
+        debug.log('No proxies found in proxylist.txt', 'error')
+      }
+    }
+
     browser.newPage().then(page => {
       var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+      if(proxy) {
+        debug.log('Selected proxy URL: ' + proxy, 'info')
+        page.setRequestInterception(true)
+        page.on('request', (request) => {
+          proxyRequest({
+            page,
+            proxyUrl: proxy,
+            request
+          })
+        })
+      }
+
       page.setUserAgent(uAgent).then(() => {
         page.goto(url).then(() => {
           page.evaluate(() => document.body.innerHTML).then(html => {
             debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-            res(load(html))
+            load(html).then(c => res(c)).catch(e => rej(e))
             page.close()
           })
-        })
+        }).catch(e => rej(e))
       })
     })
+
   })
 }
 
+function checkForErrors($) {
+  if($('title').first().text().trim().includes('Sorry!')) {
+    return true
+  } else return false
+}
 
 /**
  * Load HTML with cheerio
  */
 function load(html) {
-  return new Promise(res => res(cheerio.load(html)))
+  return new Promise(res => {
+    res(cheerio.load(html))
+  })
 }
 
 /**
