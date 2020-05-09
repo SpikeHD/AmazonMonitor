@@ -110,7 +110,7 @@ function doCheck(bot, i) {
       if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
     })
 
-    setTimeout(() => doCheck(bot, i + 1), 2000)
+    setTimeout(() => doCheck(bot, i + 1), 6000)
   }
 
   bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
