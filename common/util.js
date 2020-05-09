@@ -1,9 +1,8 @@
 const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
 const cheerio = require('cheerio')
-const fetch = require('node-fetch')
 const fs = require('fs')
-const ProxyAgent = require('simple-proxy-agent')
+const request = require('request-promise')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 var userAgents = [
@@ -32,6 +31,7 @@ function trim(s, lim) {
 }
 
 function parseParams(obj) {
+  if(Object.keys(obj).length === 0) return ''
   var str = "?"
   Object.keys(obj).forEach(k => {
     str += `${k}=${obj[k]}&`
@@ -60,18 +60,19 @@ function getPage(url, opts) {
 
       if(proxies.length > 0) {
         var proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
-        fetch(url, { method: 'GET',
-          redirect: 'follow',
-          follow: 3,
-          agent: new ProxyAgent(proxy, {tunnel: true, timeout: 10000})
-        }).then(resp => resp.text()).then(body => {
+        var options = {
+          proxy: proxy,
+          uri: url,
+          followAllRedirects: true,
+          transform: (body) => {
+            return cheerio.load(body)
+          }
+        }
+
+        request(options).then($ => {
           debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-          load(body).then(c => res(c)).catch(e => rej(e))
-        }).catch(e =>  {
-          debug.log('Encountered an error: ', 'error')
-          debug.log(e, 'error')
-          rej(e.message)
-        })
+          res($)
+        }).catch(e => rej(e))
 
       } else {
         debug.log('No proxies found in proxylist.txt. If it\'s empty, remove the file', 'error')
