@@ -1,8 +1,8 @@
 const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
+const { proxyRequest } = require('puppeteer-proxy')
 const cheerio = require('cheerio')
 const fs = require('fs')
-const request = require('request-promise')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 var userAgents = [
@@ -54,44 +54,43 @@ function getPage(url, opts) {
   return new Promise((res, rej) => {
     console.log(opts)
     var now = new Date().getTime()
-    if(opts.type === 'proxy') {
+    if (opts.type === 'proxy') {
       var l = fs.readFileSync('proxylist.txt', 'utf8')
       var proxies = l.split('\n')
+      var proxy
 
-      if(proxies.length > 0) {
-        var proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
-        var options = {
-          proxy: proxy,
-          uri: url,
-          followAllRedirects: true,
-          transform: (body) => {
-            return cheerio.load(body)
-          }
-        }
-
-        request(options).then($ => {
-          debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-          res($)
-        }).catch(e => rej(e))
-
+      if (proxies.length > 0) {
+        proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       } else {
-        debug.log('No proxies found in proxylist.txt. If it\'s empty, remove the file', 'error')
-        rej('No Proxies')
+        debug.log('No proxies found in proxylist.txt', 'error')
       }
-    } else {
-      browser.newPage().then(page => {
-        var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
-        page.setUserAgent(uAgent).then(() => {
-          page.goto(url).then(() => {
-            page.evaluate(() => document.body.innerHTML).then(html => {
-              debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-              load(html).then(c => res(c)).catch(e => rej(e))
-              page.close()
-            })
+    }
+
+    browser.newPage().then(page => {
+      var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+      if(proxy) {
+        debug.log('Selected proxy URL: ' + proxy, 'info')
+        page.setRequestInterception(true)
+        page.on('request', (request) => {
+          proxyRequest({
+            page,
+            proxyUrl: proxy,
+            request
           })
         })
+      }
+
+      page.setUserAgent(uAgent).then(() => {
+        page.goto(url).then(() => {
+          page.evaluate(() => document.body.innerHTML).then(html => {
+            debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+            load(html).then(c => res(c)).catch(e => rej(e))
+            page.close()
+          })
+        }).catch(e => rej(e))
       })
-    }
+    })
+
   })
 }
 
