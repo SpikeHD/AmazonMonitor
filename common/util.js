@@ -52,7 +52,7 @@ async function startPup() {
  */
 function getPage(url, opts) {
   return new Promise((res, rej) => {
-    console.log(opts)
+    debug.log('Type: ' + opts.type, 'info')
     var now = new Date().getTime()
     if (opts.type === 'proxy') {
       var l = fs.readFileSync('proxylist.txt', 'utf8')
@@ -94,7 +94,7 @@ function getPage(url, opts) {
   })
 }
 
-function checkForErrors($) {
+function hasErrors($) {
   if($('title').first().text().trim().includes('Sorry!')) {
     return true
   } else return false
@@ -104,8 +104,13 @@ function checkForErrors($) {
  * Load HTML with cheerio
  */
 function load(html) {
-  return new Promise(res => {
-    res(cheerio.load(html))
+  return new Promise((res, rej) => {
+    var $ = cheerio.load(html)
+    if(hasErrors($)) {
+      rej({ message: 'Amazon Service Error' })
+    } else {
+      res($)
+    }
   })
 }
 
