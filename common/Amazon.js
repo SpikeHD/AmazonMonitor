@@ -113,6 +113,14 @@ function parse($, l) {
  */
 function getRegularItem($, l) {
   debug.log('Detected as a regular item', 'debug')
+  var priceElms = [
+    $('#priceblock_ourprice').text().trim(),
+    $('#priceblock_saleprice').text().trim()
+  ]
+  var shippingElms = [
+    $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
+    $('#saleprice_shippingmessage').find('b').text().trim()
+  ]
   // Most items have feature lists
   var features = $('#feature-bullets').find('li').find('span').toArray()
   var parsedFeatures = []
@@ -125,13 +133,20 @@ function getRegularItem($, l) {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
     seller: $('#bylineInfo').text().trim(),
-    price: $('#priceblock_ourprice').text().trim().replace(/,/g, ''),
-    shipping: $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
+    price: '',
+    shipping: '',
     rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
     features: parsedFeatures,
     availability: $('#availability').first().find('span').text().trim(),
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
   }
+
+  priceElms.forEach(p => {
+    if(p.length > 0) obj.price = p.replace(/,/g, '')
+  })
+  shippingElms.forEach(s => {
+    if(s.length > 0) obj.shipping = s
+  })
 
   debug.log('Full object: ', 'debug')
   debug.log(obj, 'debug')
