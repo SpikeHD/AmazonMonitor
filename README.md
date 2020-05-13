@@ -35,6 +35,9 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
 
+## Proxy Support!
+Proxy support is a super recent addition but should be a fairly helpful one. If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
+
 ### Bot user setup
 To set up the bot user, head to https://discordapp.com/developers and login. From there create a new application, set the name and image to whatever (you can change them later), and then click the "Bot" tab. Click "Add bot user" and once that's created, copy the token and place it in the `config.json` under "token". I doubt this has to be said, but DO NOT share your bot token with ANYONE.
 
@@ -54,9 +57,6 @@ You may have noticed the last value, `"guild_item_limit"`. This value can be cha
 The `required_perms` field is an optional list of permissions that a user with be required to have for running any command that changes the watchlist in any way. You can leave this empty if you want anybody to be able to use them.
 
 It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
-
-# Proxy Support!
-Proxy support is a super recent addition but should be a fairly helpful one. If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
 
 ### URLParams
 If you want to include a referral code or something, you can use the `URLParams` object. It is formatted like this:
