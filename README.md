@@ -55,6 +55,9 @@ The `required_perms` field is an optional list of permissions that a user with b
 
 It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
 
+# Proxy Support!
+Proxy support is a super recent addition but should be a fairly helpful one. If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
+
 ### URLParams
 If you want to include a referral code or something, you can use the `URLParams` object. It is formatted like this:
 ```json
