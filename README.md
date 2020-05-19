@@ -35,6 +35,9 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
 
+## Proxy Support!
+Proxy support is a super recent addition but should be a fairly helpful one. If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
+
 ### Bot user setup
 To set up the bot user, head to https://discordapp.com/developers and login. From there create a new application, set the name and image to whatever (you can change them later), and then click the "Bot" tab. Click "Add bot user" and once that's created, copy the token and place it in the `config.json` under "token". I doubt this has to be said, but DO NOT share your bot token with ANYONE.
 
