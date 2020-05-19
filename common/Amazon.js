@@ -132,6 +132,7 @@ function getRegularItem($, l) {
   var obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
+    asin: l.split("/dp/")[1].split("/")[0],
     seller: $('#bylineInfo').text().trim(),
     price: '',
     shipping: '',
@@ -177,6 +178,7 @@ function getBookItem($, l) {
   var obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
+    asin: l.split("/dp/")[1].split("/")[0],
     seller: $('#bylineInfo').find('.contributorNameID').text().trim(),
     price: mainPrice,
     shipping: 'N/A',
