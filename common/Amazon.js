@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports = {
   getLink: (code, suffix) => getLink(code, suffix),
-  find: (bot, q, suffix) => find(bot, q, suffix),
+  find: (bot, q, suffix = '.com') => find(bot, q, suffix),
   details: (bot, l) => details(bot, l),
   watch: (bot, channel, link) => watch(bot, channel, link)
 }
