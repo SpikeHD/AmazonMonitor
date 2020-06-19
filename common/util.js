@@ -13,24 +13,16 @@ var userAgents = [
 ]
 var browser
 
-module.exports = {
-  trim: (s, lim) => trim(s, lim),
-  parseParams: (obj) => parseParams(obj),
-  startPup: () => startPup(),
-  getPage: (url, opt) => getPage(url, opt),
-  startWatcher: (bot) => startWatcher(bot)
-}
-
 /*
  *  Appends ... to long strings
  */
-function trim(s, lim) {
+exports.trim = (s, lim) => {
   if(s.length > 70) {
     return s.substr(0, 70) + '...'
   } else return s
 }
 
-function parseParams(obj) {
+exports.parseParams = (obj) => {
   if(Object.keys(obj).length === 0) return ''
   var str = "?"
   Object.keys(obj).forEach(k => {
@@ -42,7 +34,7 @@ function parseParams(obj) {
 /**
  * Start a puppeteer instance
  */
-async function startPup() {
+exports.startPup = async () => {
   browser = await pup.launch()
   debug.log('Puppeteer Launched', 'info')
 }
@@ -50,7 +42,7 @@ async function startPup() {
 /**
  * Get page HTML
  */
-function getPage(url, opts) {
+exports.getPage = (url, opts) => {
   return new Promise((res, rej) => {
     debug.log('Type: ' + opts.type, 'info')
     var now = new Date().getTime()
@@ -117,7 +109,7 @@ function load(html) {
 /**
  * Inits a watcher that'll check all of the items for price drops
  */
-function startWatcher(bot) {
+exports.startWatcher = (bot) => {
   bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
     if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))

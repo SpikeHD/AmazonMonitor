@@ -1,11 +1,7 @@
 const colors = require('colors')
 const { debugEnabled } = require('../config.json')
 
-module.exports = {
-  log: (m, t = 'log') => log(m, t)
-}
-
-function log(message, type) {
+exports.log = (message, type) => {
   var t;
   switch(type.toLowerCase()) {
     default:

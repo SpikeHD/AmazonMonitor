@@ -1,11 +1,10 @@
 const { MessageEmbed } = require('discord.js')
 
-module.exports = {
-  run: (b, g, m, a) => run(b, g, m, a),
+exports = {
   type: "view"
 }
 
-function run(bot, guild, message, args) {
+exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     var embed = new MessageEmbed()
       .setTitle('AmazonMonitor: Commands and Help')
