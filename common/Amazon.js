@@ -1,13 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const debug = require('./debug')
 const fs = require('fs')
-
-module.exports = {
-  getLink: (code, suffix) => getLink(code, suffix),
-  find: (bot, q, suffix = '.com') => find(bot, q, suffix),
-  details: (bot, l) => details(bot, l),
-  watch: (bot, channel, link) => watch(bot, channel, link)
-}
+const checkaflip = require('./Checkaflip')
 
 /**
  * Gets top 10 Amazon items based on a search query
@@ -16,7 +10,7 @@ module.exports = {
  * 
  * @returns {Array}
  */
-function find(bot, q, suffix) {
+exports.find = (bot, q, suffix = '.com') => {
   return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
     var url = `https://www.amazon${suffix}/s?k=${sanq}/`
@@ -57,7 +51,7 @@ function find(bot, q, suffix) {
  * 
  * @param {String} l 
  */
-function details(bot, l) {
+exports.details = (bot, l) => {
   return new Promise((resolve, reject) => {
     var asin;
   

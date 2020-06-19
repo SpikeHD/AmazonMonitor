@@ -1,15 +1,14 @@
 const { MessageEmbed } = require('discord.js')
 const amazon = require('../common/Amazon')
 
-module.exports = {
-  run: (b, g, m, a) => run(b, g, m, a),
+exports = {
   name: "details",
   desc: "Return details using an amazon link",
   usage: "details [amazon link]",
   type: "view"
 }
 
-function run(bot, guild, message, args) {
+exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     var asin;
   
