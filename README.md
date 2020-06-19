@@ -30,7 +30,8 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   "URLParams":{},
   "guild_item_limit":5,
   "required_perms":[],
-  "debugEnabled":false
+  "debugEnabled":false,
+  "ebayAverage":false
 }
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
@@ -67,6 +68,14 @@ If you want to include a referral code or something, you can use the `URLParams`
   etc...
  }
 ```
+### ebayAverage
+Starting in v1.1.7, I've implemented a small usage of the https://www.checkaflip.com api. This can search your Amazon item when the details page is being displayed and gives you an average using the top 5 items
+
+To enable this, just add it to your config.json like so:
+```json
+"ebayAverage":true
+```
+
 ## Starting it up
 Now that everything is set up config-wise, you now need to install the dependancies! This can be done by running `npm install` inside of the root folder of the project. This should download everything you need.
 
