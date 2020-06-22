@@ -1,6 +1,5 @@
 const debug = require('./debug')
 const request = require('request')
-const fs = require('fs')
 const headers = {
   'Origin': 'http://www.checkaflip.com',
   'Accept-Language': 'en-US,en;q=0.9',
@@ -20,7 +19,6 @@ exports.getEbayAverage = (itm, lim) => {
     }
     request(options, function(err, res) {
       if(err) throw Error(err)
-      console.log()
       resolve(JSON.parse(res.body).slot2.splice(0, lim))
     })
   })
