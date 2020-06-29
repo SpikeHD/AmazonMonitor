@@ -52,9 +52,9 @@ module.exports.run = (bot, guild, message, args) => {
       } else {
         resolve(message.channel.send(embed))
       }
+    }).catch(e => {
+      console.log(e)
+      reject('Got an error retrieving the Amazon item')
     })
-  }).catch(e => {
-    console.log(e)
-    reject('Got an error retrieving the Amazon item')
   })
 }
