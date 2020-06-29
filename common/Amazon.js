@@ -10,10 +10,10 @@ const checkaflip = require('./Checkaflip')
  * 
  * @returns {Array}
  */
-exports.find = (bot, q, suffix = '.com') => {
+exports.find = (bot, q, suffix = 'com') => {
   return new Promise((resolve, reject) => {
     var sanq = q.replace(' ', '+')
-    var url = `https://www.amazon${suffix}/s?k=${sanq}/`
+    var url = `https://www.amazon.${suffix}/s?k=${sanq}/`
     var results = []
 
     // Get parsed page with puppeteer/cheerio
@@ -35,7 +35,7 @@ exports.find = (bot, q, suffix = '.com') => {
               ratings: $(this).find('.a-icon-alt').text().trim(),
               price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
               sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-              prod_link: `https://www.amazon${suffix}${prodLink}`
+              prod_link: `https://www.amazon.${suffix}${prodLink}`
             }
 
             results.push(obj)
@@ -58,6 +58,7 @@ exports.details = (bot, l) => {
     // Try to see if there is a valid asin
     try {
       asin = l.split("/dp/")[1].split("/")[0]
+      tld = l.split('amazon.')[1].split('/')[0]
     } catch(e) {
       debug.log(e, 'warn')
       reject('Not a valid link')
@@ -66,7 +67,7 @@ exports.details = (bot, l) => {
     l += bot.util.parseParams(bot.URLParams)
   
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(`https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).then(($) => {
+    bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).then(($) => {
       resolve(parse($, l))
     }).catch(e => {
       debug.log(e, 'error')

@@ -14,15 +14,17 @@ module.exports = {
 module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     var asin;
+    var tld;
   
     // Try to see if there is a valid asin
     try {
       asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+      tld = args[1].split('amazon.')[1].split('/')[0]
     } catch(e) {
       reject('Not a valid link')
     }
 
-    amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(res => {
+    amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(res => {
       // Replace empty values
       Object.keys(res).forEach(k => {
         if(!res[k] ||
