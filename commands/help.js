@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js')
 
-exports = {
+module.exports = {
   type: "view"
 }
 
