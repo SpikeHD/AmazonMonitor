@@ -64,7 +64,9 @@ It is an array, so the format is `["permission_1", "permission_2"]`. You can ref
 A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you want searches to be local to your country's Amazon, say, `www.amazon.de`, you can set your TLD in the config to `de`. More examples include:
 
 `ca` - Canada
+
 `co.uk` - UK
+
 `com` - America (default)
 
 ### URLParams
