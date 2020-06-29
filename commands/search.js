@@ -2,14 +2,14 @@ const { MessageEmbed } = require('discord.js')
 const { trim } = require('../common/util')
 const amazon = require('../common/Amazon')
 
-exports = {
+module.exports = {
   name: "search",
   desc: "Search and return the top 10 items using a search term",
   usage: "search [search term]",
   type: "view"
 }
 
-exports.run = (bot, guild, message, args) => {
+module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     args.splice(0, 1)
     var phrase  = args.join(' ')

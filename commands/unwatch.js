@@ -1,13 +1,13 @@
 const { MessageEmbed } = require('discord.js')
 
-exports = {
+module.exports = {
   name: "unwatch",
   desc: "Removes from the watchlist using at number. If no number is provided, returns the watchlist",
   usage: "unwatch [number]",
   type: "edit"
 }
 
-exports.run = (bot, guild, message, args) => {
+module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
     var localIndex

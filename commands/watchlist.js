@@ -1,14 +1,14 @@
 const { MessageEmbed } = require('discord.js')
 const { trim } = require('../common/util')
 
-exports = {
+module.exports = {
   name: "watchlist",
   desc: "Display a list of each Amazon link currenty being watched in this server",
   usage: "watchlist",
   type: "view"
 }
 
-exports.run = (bot, guild, message, args) => {
+module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
       if (err) reject('Database error')

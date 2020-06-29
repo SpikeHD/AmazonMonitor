@@ -1,14 +1,14 @@
 const { MessageEmbed } = require('discord.js')
 const amazon = require('../common/Amazon')
 
-exports = {
+module.exports = {
   name: "watch",
   desc: "Add and watch a single Amazon link",
   usage: "watch [amazon link] [optional: price limit]",
   type: "edit"
 }
 
-exports.run = (bot, guild, message, args) => {
+module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     // Get an array of all existing entries to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)

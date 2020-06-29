@@ -4,7 +4,7 @@ exports = {
   type: "view"
 }
 
-exports.run = (bot, guild, message, args) => {
+module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     var embed = new MessageEmbed()
       .setTitle('AmazonMonitor: Commands and Help')
