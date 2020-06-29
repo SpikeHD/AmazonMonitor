@@ -12,7 +12,7 @@ module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     // Get an array of all existing entries to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
-    var asin;
+    var asin, tld;
     var priceLimit = 0;
     var exists = false
 
@@ -21,6 +21,7 @@ module.exports.run = (bot, guild, message, args) => {
     // Compare asins for duplicate
     try {
       asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+      tld = args[1].split('amazon.')[1].split('/')[0]
     } catch(e) {
       reject('Not a valid link')
     }
@@ -43,7 +44,7 @@ module.exports.run = (bot, guild, message, args) => {
     }else if(existing.length >= bot.itemLimit) {
       reject('You\'re watching too many links! Remove one from your list and try again.')
     } else {
-      amazon.details(bot, `https://www.amazon.com/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
+      amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
         var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
 
         bot.debug.log('Occasionally one or a couple of these values will be empty. Doesn\'t affect functionality', 'info')

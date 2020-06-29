@@ -25,7 +25,8 @@ exports.getEbayAverage = (itm, lim) => {
     }
     request(options, function(err, res) {
       if(err) throw Error(err)
-      resolve(JSON.parse(res.body).slot2.splice(0, lim))
+      var body = JSON.parse(res.body)
+      resolve(body.slot2 ? body.slot2.splice(0, lim):[])
     })
   })
 }

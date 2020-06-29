@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const { trim } = require('../common/util')
 const amazon = require('../common/Amazon')
+const {tld} = require('../config.json')
 
 module.exports = {
   name: "search",
@@ -22,7 +23,7 @@ module.exports.run = (bot, guild, message, args) => {
       .setDescription(`(respond with **${bot.prefix}[num]** to get the full link and some additional details, or **${bot.prefix}quickwatch [num]** to quick-watch an item)`)
     
     // Search using term
-    amazon.find(bot, phrase, '.com').then((res) => {
+    amazon.find(bot, phrase, tld).then((res) => {
       var n = 1
       res.forEach(r => {
         // Add an embed field for each item
@@ -51,6 +52,8 @@ module.exports.run = (bot, guild, message, args) => {
               // If the "command" is just a number, we assume that they want details on that number in the list
               if (parseInt(command)) {
                 link = res[parseInt(command)-1].prod_link
+
+                console.log(link)
 
                 // Execute the 'details' command
                 message.channel.startTyping()
