@@ -61,7 +61,7 @@ The `required_perms` field is an optional list of permissions that a user with b
 It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
 
 ### TLD
-A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you want searches to be local to your countries Amazon, say, `www.amazon.de`, you can set your TLD in the config to `de`. More examples include:
+A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you want searches to be local to your country's Amazon, say, `www.amazon.de`, you can set your TLD in the config to `de`. More examples include:
 
 `ca` - Canada
 `co.uk` - UK
