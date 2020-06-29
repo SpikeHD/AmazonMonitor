@@ -7,6 +7,12 @@ const headers = {
   'Accept': 'application/json, text/javascript, */*; q=0.01'
 }
 
+/**
+ * Sends a request to the checkaflip API, and spits out the first X results
+ * 
+ * @param {String} itm 
+ * @param {Number} lim 
+ */
 exports.getEbayAverage = (itm, lim) => {
   return new Promise((resolve, reject) => {
     var options = {

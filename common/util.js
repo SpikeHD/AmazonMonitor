@@ -22,6 +22,11 @@ exports.trim = (s, lim) => {
   } else return s
 }
 
+/**
+ * Parses the URLParams object to a URL-appendable string
+ * 
+ * @param {Object} obj 
+ */
 exports.parseParams = (obj) => {
   if(Object.keys(obj).length === 0) return ''
   var str = "?"
@@ -86,6 +91,11 @@ exports.getPage = (url, opts) => {
   })
 }
 
+/**
+ * Checks for errors, I guess. Not super reliable I will admit
+ * 
+ * @param {*} $ 
+ */
 function hasErrors($) {
   if($('title').first().text().trim().includes('Sorry!')) {
     return true
