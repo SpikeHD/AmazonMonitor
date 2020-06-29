@@ -30,6 +30,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   "URLParams":{},
   "guild_item_limit":5,
   "required_perms":[],
+  "tld":"com",
   "debugEnabled":false,
   "ebayAverage":false
 }
@@ -58,6 +59,13 @@ You may have noticed the last value, `"guild_item_limit"`. This value can be cha
 The `required_perms` field is an optional list of permissions that a user with be required to have for running any command that changes the watchlist in any way. You can leave this empty if you want anybody to be able to use them.
 
 It is an array, so the format is `["permission_1", "permission_2"]`. You can refer to Discord permissions [here](https://discordapp.com/developers/docs/topics/permissions) (you can use the permission name, eg "MANAGE_MESSAGES")
+
+### TLD
+A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you want searches to be local to your countries Amazon, say, `www.amazon.de`, you can set your TLD in the config to `de`. More examples include:
+
+`ca` - Canada
+`co.uk` - UK
+`com` - America (default)
 
 ### URLParams
 If you want to include a referral code or something, you can use the `URLParams` object. It is formatted like this:
