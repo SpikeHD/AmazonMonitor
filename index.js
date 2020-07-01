@@ -74,13 +74,11 @@ bot.on('message', function (message) {
   }
 });
 
-function exec(bot, message, args, cmd) {
+async function exec(bot, message, args, cmd) {
   message.channel.startTyping()
-  cmd.run(bot, message.guild, message, args).then(() =>  {
-    message.channel.stopTyping(true)
-  }).catch(e => {
+  await cmd.run(bot, message.guild, message, args).catch(e => {
     message.channel.send(e)
     debug.log(e, 'error')
-    message.channel.stopTyping(true)
   })
+  message.channel.stopTyping(true)
 }
