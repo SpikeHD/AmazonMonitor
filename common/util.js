@@ -80,7 +80,7 @@ exports.getPage = (url, opts) => {
       page.setUserAgent(uAgent).then(() => {
         page.goto(url).then(() => {
           debug.log('Waiting a few seconds for JavaScript to load...', 'info')
-          page.waitFor(5000).then(() => {
+          page.waitFor(2000).then(() => {
             page.evaluate(() => document.body.innerHTML).then(html => {
               debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
               load(html).then(c => res(c)).catch(e => rej(e))

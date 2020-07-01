@@ -11,38 +11,38 @@ const checkaflip = require('./Checkaflip')
  * @returns {Array}
  */
 exports.find = (bot, q, suffix = 'com') => {
-  return new Promise((resolve, reject) => {
-    var sanq = q.replace(' ', '+')
-    var url = `https://www.amazon.${suffix}/s?k=${sanq}/`
+  return new Promise(async (resolve, reject) => {
+    const sanq = q.replace(' ', '+')
+    const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
     var results = []
 
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(url, {type: bot.proxylist ? 'proxy':'headless'}).then($ => {
-      var lim = $('.s-result-list').find('.s-result-item').length
-      if(!lim || lim === 0) reject('No Results')
+    var $ = await bot.util.getPage(url, { type: bot.proxylist ? 'proxy' : 'headless' }).catch(e => debug.log(e, 'error'))
+    var lim = $('.s-result-list').find('.s-result-item').length
 
-      $('.s-result-list').find('.s-result-item').each(function () {
-        if (results.length >= 10 || results.length >= lim) {
-          // We're done!
-          resolve(results)
-        } else {
-          var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
-          
-          // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
-          if (prodLink) {
-            var obj = {
-              title: $(this).find('span.a-text-normal').text().trim(),
-              ratings: $(this).find('.a-icon-alt').text().trim(),
-              price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
-              sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-              prod_link: `https://www.amazon.${suffix}${prodLink}`
-            }
+    if (!lim || lim === 0) reject('No Results')
 
-            results.push(obj)
+    $('.s-result-list').find('.s-result-item').each(function () {
+      if (results.length >= 10 || results.length >= lim) {
+        // We're done!
+        resolve(results)
+      } else {
+        var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
+
+        // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
+        if (prodLink) {
+          var obj = {
+            title: $(this).find('span.a-text-normal').text().trim(),
+            ratings: $(this).find('.a-icon-alt').text().trim(),
+            price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
+            sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
+            prod_link: `https://www.amazon.${suffix}${prodLink}`
           }
+
+          results.push(obj)
         }
-      })
-    }).catch(e => debug.log(e, 'error'))
+      }
+    })
   })
 }
 
@@ -52,7 +52,7 @@ exports.find = (bot, q, suffix = 'com') => {
  * @param {String} l 
  */
 exports.details = (bot, l) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     var asin;
   
     // Try to see if there is a valid asin
@@ -67,12 +67,12 @@ exports.details = (bot, l) => {
     l += bot.util.parseParams(bot.URLParams)
   
     // Get parsed page with puppeteer/cheerio
-    bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).then(($) => {
-      resolve(parse($, l))
-    }).catch(e => {
+    const page = await bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).catch(e => {
       debug.log(e, 'error')
       reject(e)
     })
+
+    resolve(parse(page, l))
   })
 }
 
