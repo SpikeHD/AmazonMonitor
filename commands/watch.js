@@ -9,7 +9,7 @@ module.exports = {
 }
 
 module.exports.run = (bot, guild, message, args) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     // Get an array of all existing entries to make sure we don't have a duplicate
     var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
     var asin, tld;
@@ -44,28 +44,27 @@ module.exports.run = (bot, guild, message, args) => {
     }else if(existing.length >= bot.itemLimit) {
       reject('You\'re watching too many links! Remove one from your list and try again.')
     } else {
-      amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(item => {
-        var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
+      var item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => reject(e.message))
+      var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
 
-        bot.debug.log('Occasionally one or a couple of these values will be empty. Doesn\'t affect functionality', 'info')
-        bot.debug.log(values, 'debug')
+      bot.debug.log('Occasionally one or a couple of these values will be empty. Doesn\'t affect functionality', 'info')
+      bot.debug.log(values, 'debug')
 
-        // Push the values to the database
-        bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name, priceLimit) VALUES (?, ?, ?, ?, ?, ?)`, values, (err) => {
-          if (err) reject(err)
-          // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
-          bot.watchlist.push({
-            guild_id: values[0],
-            channel_id: values[1],
-            link: values[2],
-            lastPrice: values[3],
-            item_name: values[4],
-            priceLimit: values[5]
-          })
-
-          resolve(message.channel.send(`Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`))
+      // Push the values to the database
+      bot.con.query(`INSERT INTO watchlist (guild_id, channel_id, link, lastPrice, item_name, priceLimit) VALUES (?, ?, ?, ?, ?, ?)`, values, (err) => {
+        if (err) reject(err)
+        // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
+        bot.watchlist.push({
+          guild_id: values[0],
+          channel_id: values[1],
+          link: values[2],
+          lastPrice: values[3],
+          item_name: values[4],
+          priceLimit: values[5]
         })
-      }).catch(e => reject(e.message))
+
+        resolve(message.channel.send(`Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`))
+      })
     }
   })
 }
