@@ -63,7 +63,6 @@ module.exports.run = (bot, guild, message, args) => {
 
           await bot.commands.get('details').run(bot, message.guild, m, [command, link]).catch(e =>  {
             console.log(e)
-            message.channel.stopTyping(true)
           })
           message.channel.stopTyping(true)
 
@@ -77,7 +76,6 @@ module.exports.run = (bot, guild, message, args) => {
               message.channel.startTyping()
               await bot.commands.get('watch').run(bot, message.guild, m, [command, link]).catch(e =>  {
                 console.log(e)
-                message.channel.stopTyping(true)
               })
               message.channel.stopTyping(true)
               break
