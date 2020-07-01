@@ -48,7 +48,7 @@ exports.startPup = async () => {
  * Get page HTML
  */
 exports.getPage = (url, opts) => {
-  return new Promise((res, rej) => {
+  return new Promise(async (res, rej) => {
     debug.log('Type: ' + opts.type, 'info')
     var now = new Date().getTime()
     if (opts.type === 'proxy') {
@@ -63,34 +63,33 @@ exports.getPage = (url, opts) => {
       }
     }
 
-    browser.newPage().then(page => {
-      var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
-      if(proxy) {
-        debug.log('Selected proxy URL: ' + proxy, 'info')
-        page.setRequestInterception(true)
-        page.on('request', (request) => {
-          proxyRequest({
-            page,
-            proxyUrl: proxy,
-            request
-          })
+    var page = await browser.newPage()
+    var uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+    if (proxy) {
+      debug.log('Selected proxy URL: ' + proxy, 'info')
+      page.setRequestInterception(true)
+      page.on('request', (request) => {
+        proxyRequest({
+          page,
+          proxyUrl: proxy,
+          request
         })
-      }
-
-      page.setUserAgent(uAgent).then(() => {
-        page.goto(url).then(() => {
-          debug.log('Waiting a few seconds for JavaScript to load...', 'info')
-          page.waitFor(5000).then(() => {
-            page.evaluate(() => document.body.innerHTML).then(html => {
-              debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-              load(html).then(c => res(c)).catch(e => rej(e))
-              page.close()
-            })
-          })
-        }).catch(e => rej(e))
       })
-    })
+    }
 
+    await page.setUserAgent(uAgent)
+    await page.goto(url)
+
+    debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
+    await page.waitFor(2000)
+
+    var html = await page.evaluate(() => document.body.innerHTML).catch(e => rej(e))
+    var $ = await load(html).catch(e => rej(e))
+
+    await page.close()
+
+    debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+    res($)
   })
 }
 
@@ -141,20 +140,19 @@ exports.startWatcher = (bot) => {
 /**
  * Loops through all watchlist items, looking for price drops
  */
-function doCheck(bot, i) {
+async function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
     var obj = bot.watchlist[i]
 
     // Get details
-    amazon.details(bot, obj.link).then(item => {
-      var curPrice = parseFloat(item.price.replace(/^\D+/g, "")) || 0
-      var underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
+    var item = await amazon.details(bot, obj.link)
+    var curPrice = parseFloat(item.price.replace(/^\D+/g, "")) || 0
+    var underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
 
-      // Compare prices
-      if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
-      if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
-      if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
-    })
+    // Compare prices
+    if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
+    if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
+    if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
 
     setTimeout(() => doCheck(bot, i + 1), 6000)
   }

@@ -12,7 +12,7 @@ module.exports = {
 }
 
 module.exports.run = (bot, guild, message, args) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     var asin;
     var tld;
   
@@ -24,39 +24,39 @@ module.exports.run = (bot, guild, message, args) => {
       reject('Not a valid link')
     }
 
-    amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).then(res => {
-      // Replace empty values
-      Object.keys(res).forEach(k => {
-        if(!res[k] ||
-          res[k].length <= 1) res[k] = 'none'
-      })
-
-      var embed = new MessageEmbed()
-        .setColor('ORANGE')
-        .setTitle(res.full_title)
-        .setAuthor(res.seller.includes('\n') ? 'invalid':res.seller)
-        .setImage(res.image)
-        .setDescription(`${res.full_link}\n${res.features != 'none' ? res.features.join('\n\n'):''}`)
-        .addField('Price', res.price, true)
-        .addField('Rating', res.rating, true)
-        .addField('Shipping', res.shipping, true)
-        .addField('Availability', res.availability)
-
-      if(ebayAverage) {
-        const lim = 5
-        ebay.getEbayAverage(res.full_title, lim).then(res => {
-          var ebayAvg = 0
-          res.forEach(r => ebayAvg += r.itemCurrentPrice)
-          ebayAvg = ebayAvg/lim
-          embed.addField('Average price compared to top 5 eBay results', `$${ebayAvg}`)
-          resolve(message.channel.send(embed))
-        })
-      } else {
-        resolve(message.channel.send(embed))
-      }
-    }).catch(e => {
+    var item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {
       console.log(e)
       reject('Got an error retrieving the Amazon item')
     })
+      
+    // Replace empty values
+    Object.keys(item).forEach(k => {
+      if(!item[k] ||
+        item[k].length <= 1) item[k] = 'none'
+    })
+
+    var embed = new MessageEmbed()
+      .setColor('ORANGE')
+      .setTitle(item.full_title)
+      .setAuthor(item.seller.includes('\n') ? 'invalid':item.seller)
+      .setImage(item.image)
+      .setDescription(`${item.full_link}\n${item.features != 'none' ? item.features.join('\n\n'):''}`)
+      .addField('Price', item.price, true)
+      .addField('Rating', item.rating, true)
+      .addField('Shipping', item.shipping, true)
+      .addField('Availability', item.availability)
+
+    if(ebayAverage) {
+      const lim = 5
+      const ebayItems = await ebay.getEbayAverage(item.full_title, lim)
+      var ebayAvg = 0
+
+      ebayItems.forEach(r => ebayAvg += r.itemCurrentPrice)
+      ebayAvg = ebayAvg/lim
+
+      embed.addField('Average price compared to top 5 eBay results', `$${ebayAvg}`)
+    }
+
+    resolve(message.channel.send(embed))
   })
 }
