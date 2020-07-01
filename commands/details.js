@@ -52,7 +52,7 @@ module.exports.run = (bot, guild, message, args) => {
       var ebayAvg = 0
 
       ebayItems.forEach(r => ebayAvg += r.itemCurrentPrice)
-      ebayAvg = ebayAvg/lim
+      ebayAvg = (ebayAvg/lim).toFixed(2)
 
       embed.addField('Average price compared to top 5 eBay results', `$${ebayAvg}`)
     }
