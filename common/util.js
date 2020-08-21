@@ -172,10 +172,12 @@ async function doCheck(bot, i) {
  */
 function sendPriceAlert(bot, obj, item) {
   var channel = bot.channels.cache.get(obj.channel_id)
+  // Hacky but effective way to get currency symbol
+  var currencySymbol = item.price.replace('.', '').replace(/\d/g, "")
   var embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
-    .setDescription(`Old Price: $${obj.lastPrice}\nNew Price: $${item.price}\n\n${item.full_link}`)
+    .setDescription(`Old Price: ${currencySymbol} ${obj.lastPrice}\nNew Price: ${currencySymbol} ${item.price.replace(currencySymbol, '')}\n\n${item.full_link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
