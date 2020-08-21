@@ -138,7 +138,7 @@ function getRegularItem($, l) {
   }
 
   priceElms.forEach(p => {
-    if(p.length > 0) obj.price = p.replace(/,/g, '')
+    if(p.length > 0) obj.price = p.replace(/,/g, '.')
   })
   shippingElms.forEach(s => {
     if(s.length > 0) obj.shipping = s

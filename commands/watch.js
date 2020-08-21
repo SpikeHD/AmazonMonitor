@@ -26,7 +26,7 @@ module.exports.run = (bot, guild, message, args) => {
       reject('Not a valid link')
     }
 
-    if(parseFloat(args[2])) priceLimit = parseFloat(args[2])
+    if(parseFloat(args[2])) priceLimit = parseFloat(args[2].replace(',', '.'))
   
     // If there isn't one, it's probably just a bad URL
     if (!asin) reject('Not a valid link')
