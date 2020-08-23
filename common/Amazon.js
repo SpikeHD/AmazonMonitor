@@ -2,6 +2,7 @@ const { MessageEmbed } = require('discord.js')
 const debug = require('./debug')
 const fs = require('fs')
 const checkaflip = require('./Checkaflip')
+const util = require('./util')
 
 /**
  * Gets top 10 Amazon items based on a search query
@@ -138,7 +139,7 @@ function getRegularItem($, l) {
   }
 
   priceElms.forEach(p => {
-    if(p.length > 0) obj.price = p.replace(/,/g, '.')
+    if(p.length > 0) obj.price = util.priceFormat(p)
   })
   shippingElms.forEach(s => {
     if(s.length > 0) obj.shipping = s
@@ -160,12 +161,12 @@ function getBookItem($, l) {
   debug.log('Detected as a book item', 'debug')
   // Gets buying options
   var buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
-  var mainPrice = $('#buybox').find('a-color-price').first().text().trim().replace(/,/g, '')
+  var mainPrice = util.priceFormat($('#buybox').find('a-color-price').first().text().trim().replace(/,/g, ''))
   var optionsArray = []
 
   buyingOptions.forEach(o => {
     var type = $(o).find('.a-button-inner').find('span').first().text().trim()
-    var price = $(o).find('.a-button-inner').find('span').eq(1).text().trim()
+    var price = util.priceFormat($(o).find('.a-button-inner').find('span').eq(1).text().trim())
     
     if(price.length > 1 && !type.toLowerCase().includes('audiobook')) optionsArray.push(` - ${type}: ${price}`)
   })

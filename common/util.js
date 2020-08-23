@@ -13,6 +13,23 @@ var userAgents = [
 ]
 var browser
 
+/**
+ * Format prices 
+ */
+exports.priceFormat = (p) => {
+  // Check if the price uses the reverse format
+  if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
+    var cents = p.match(/[^\,]*$/)[0]
+    var dollars = p.replace(cents, '').replace(',', '.')
+    
+    return dollars.replace('.', ',') + cents
+  } else if (p.includes(',') && !p.includes('.') && p.split(',')[1].length < 3) {
+    return p.replace(',', '.')
+  }
+
+  return p.replace(',', '')
+}
+
 /*
  *  Appends ... to long strings
  */
