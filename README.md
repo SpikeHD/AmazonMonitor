@@ -66,6 +66,12 @@ A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you wan
 
 `com` - America (default)
 
+### autoCartLink
+If you'd link for the bot to generate a link that will automatically add the item to the users cart when they click it, set this to `true`.
+```json
+"autoCartLink":true
+```
+
 ### URLParams
 If you want to include a referral code or something, you can use the `URLParams` object. It is formatted like this:
 ```json
