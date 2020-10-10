@@ -28,6 +28,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   "guild_item_limit":5,
   "required_perms":[],
   "tld":"com",
+  "autoCartLink":true,
   "debugEnabled":false,
   "ebayAverage":false
 }
