@@ -6,10 +6,10 @@
  */
 var config = require('../config.json')
 const fs = require('fs')
-const mysql = require('mysql');
+const mysql = require('mysql')
 const watchFile = './watchlist.json'
 
-let con = null;
+let con = null; // I hate this
 
 // Setup
 (function () {
