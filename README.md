@@ -9,7 +9,7 @@ Before updating you should always check here in case of any database/config chan
 
 ## Requirements
 * [NodeJS v12.2 or higher](https://nodejs.org/en/)
-* MySQL ([Windows](https://www.wikihow.com/Install-the-MySQL-Database-Server-on-Your-Windows-PC), [Ubuntu](https://itsfoss.com/install-mysql-ubuntu/), [Mac](https://www.thoughtco.com/installing-mysql-on-mac-2693866))
+* MySQL ([Windows](https://www.wikihow.com/Install-the-MySQL-Database-Server-on-Your-Windows-PC), [Ubuntu](https://itsfoss.com/install-mysql-ubuntu/), [Mac](https://www.thoughtco.com/installing-mysql-on-mac-2693866)) (Optional)
 
 ## Setup
 Setup is easy enough. Clone the repo somewhere and create a file in the main folder (the one with `index.js` in it) named `config.json`. Fill in the contents of `config.json` using this:
@@ -28,6 +28,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   "guild_item_limit":5,
   "required_perms":[],
   "tld":"com",
+  "storage_type":"json",
   "autoCartLink":true,
   "debugEnabled":false,
   "ebayAverage":false
@@ -35,8 +36,20 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
 
-## Proxy Support!
-Proxy support is a super recent addition but should be a fairly helpful one. If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
+## JSON Storage Update Released!
+Until I find the time and energy to rewrite this project, here something that should be *very* helpful. For those who are too lazy, you can now skip the MySQL setup and the project will work the exact same. There is now a "translation layer" (sure, let's go with that) that can get both SQL and JSON, and integrates it with the project seamlessly.
+
+JSON is now the default storage type. To enable JSON support, set `storage_type` to `json`. To stay on SQL, make sure to set `storage_type` to `sql`. Example:
+
+```json
+"storage_type":"sql"
+```
+
+### "Why is there still SQL support?"
+To keep compatibility with people updating to the newer version, and versions in the future, I kept it so those who already have it set up don't have to do anything other than make sure the `storage_type` is set properly. The update is also still an itty-bit experimental, so in case it's broken to hell, there is still the ability to fall back on SQL while I fix it.
+
+## Proxy Support
+If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
 
 ### Bot user setup
 To set up the bot user, head to https://discordapp.com/developers and login. From there create a new application, set the name and image to whatever (you can change them later), and then click the "Bot" tab. Click "Add bot user" and once that's created, copy the token and place it in the `config.json` under "token". I doubt this has to be said, but DO NOT share your bot token with ANYONE.

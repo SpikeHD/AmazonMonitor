@@ -1,23 +1,12 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const fs = require('fs');
-const mysql = require('mysql');
 const debug = require('./common/debug')
 var config = require("./config.json");
 bot.commands = new Discord.Collection()
 bot.itemLimit = config.guild_item_limit
 
 bot.login(config.token)
-
-// Establish Connection to SQL
-const con = mysql.createPool({
-  connectionLimit: 100,
-  host: config.sql.host,
-  user: config.sql.user,
-  password: config.sql.password,
-  database: config.sql.database,
-  charset: "utf8mb4"
-});
 
 bot.on('ready', function () {
   bot.util = require('./common/util')
@@ -26,7 +15,6 @@ bot.on('ready', function () {
   bot.required_perms = config.required_perms
   bot.URLParams = config.URLParams || {}
   bot.prefix = config.prefix
-  bot.con = con
   const str = `
   ##########################################################################
    _____                                        __      __         __         .__                  
@@ -53,6 +41,8 @@ bot.on('ready', function () {
   // Start services
   bot.util.startPup()
   bot.util.startWatcher(bot)
+
+  debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
 });
 
 bot.on('message', function (message) {

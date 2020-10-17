@@ -5,6 +5,8 @@ const cheerio = require('cheerio')
 const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
+const { getWatchlist, updateWatchlistItem } = require('./data')
+const { autoCartLink } = require('../config.json')
 var userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -139,8 +141,7 @@ function load(html) {
  * Inits a watcher that'll check all of the items for price drops
  */
 exports.startWatcher = (bot) => {
-  bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
-    if (err) throw err
+  getWatchlist().then(rows => {
     bot.watchlist = JSON.parse(JSON.stringify(rows))
     debug.log('Watchlist Loaded', 'info')
 
@@ -174,7 +175,7 @@ async function doCheck(bot, i) {
     setTimeout(() => doCheck(bot, i + 1), 6000)
   }
 
-  bot.con.query(`SELECT * FROM watchlist`, (err, rows) => {
+  getWatchlist().then(rows => {
     if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
 
@@ -191,6 +192,10 @@ function sendPriceAlert(bot, obj, item) {
   var channel = bot.channels.cache.get(obj.channel_id)
   // Hacky but effective way to get currency symbol
   var currencySymbol = item.price.replace('.', '').replace(/\d/g, "")
+
+  // Rework the link to automatically add it to the cart of the person that clicked it
+  if(autoCartLink) obj.full_link = `${obj.full_link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+
   var embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
@@ -207,8 +212,10 @@ function sendPriceAlert(bot, obj, item) {
  */
 function pushPriceChange(bot, obj, item) {
   var price = item.price.replace(/^\D+/g, "")
-  bot.con.query(`UPDATE watchlist SET lastPrice=? WHERE link=?`, [(parseFloat(price) || 0), obj.link], (err) => {
-    if (err) throw err
+  updateWatchlistItem({
+    lastPrice: (parseFloat(price) || 0)
+  }, {
+    link: obj.link
   })
 }
 
@@ -217,6 +224,10 @@ function pushPriceChange(bot, obj, item) {
  */
 function sendInStockAlert(bot, obj, item) {
   var channel = bot.channels.cache.get(obj.channel_id)
+
+  // Rework the link to automatically add it to the cart of the person that clicked it
+  if(autoCartLink) obj.full_link = `${obj.full_link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+
   var embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
     .setAuthor(item.seller)
