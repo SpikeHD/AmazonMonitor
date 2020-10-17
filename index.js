@@ -9,16 +9,6 @@ bot.itemLimit = config.guild_item_limit
 
 bot.login(config.token)
 
-// Establish Connection to SQL
-const con = mysql.createPool({
-  connectionLimit: 100,
-  host: config.sql.host,
-  user: config.sql.user,
-  password: config.sql.password,
-  database: config.sql.database,
-  charset: "utf8mb4"
-});
-
 bot.on('ready', function () {
   bot.util = require('./common/util')
   bot.debug = debug
@@ -26,7 +16,6 @@ bot.on('ready', function () {
   bot.required_perms = config.required_perms
   bot.URLParams = config.URLParams || {}
   bot.prefix = config.prefix
-  bot.con = con
   const str = `
   ##########################################################################
    _____                                        __      __         __         .__                  
