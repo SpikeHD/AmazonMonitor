@@ -31,7 +31,7 @@ module.exports.run = (bot, guild, message, args) => {
         else {
           removeWatchlistItem(item.link).then(() => {
             existing.forEach(itm => {
-              var asin = item.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+              var asin = itm.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
               if (itm.link.includes(asin)) {
                 localItem = bot.watchlist.indexOf(itm)
               }

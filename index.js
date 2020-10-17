@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const fs = require('fs');
-const mysql = require('mysql');
 const debug = require('./common/debug')
 var config = require("./config.json");
 bot.commands = new Discord.Collection()
