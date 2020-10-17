@@ -9,25 +9,28 @@ const fs = require('fs')
 const mysql = require('mysql');
 const watchFile = '../watchlist.json'
 
-let con = null
+let con = null;
 
-// Default type
-if (!config.storage_type) config.storage_type = 'json'
+// Setup
+(function () {
+  // Default type
+  if (!config.storage_type) config.storage_type = 'json'
 
-if (config.storage_type === 'sql') {
-  // Establish Connection to SQL
-  con = mysql.createPool({
-    connectionLimit: 100,
-    host: config.sql.host,
-    user: config.sql.user,
-    password: config.sql.password,
-    database: config.sql.database,
-    charset: "utf8mb4"
-  });
-} else if (config.storage_type === 'json') {
-  // Write/fix file on start
-  if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile))) fs.writeFileSync(watchFile, '[]', 'utf-8')
-} else throw new Error('Invalid storage type (must be \'json\' or \'sql\')')
+  if (config.storage_type === 'sql') {
+    // Establish Connection to SQL
+    con = mysql.createPool({
+      connectionLimit: 100,
+      host: config.sql.host,
+      user: config.sql.user,
+      password: config.sql.password,
+      database: config.sql.database,
+      charset: "utf8mb4"
+    });
+  } else if (config.storage_type === 'json') {
+    // Write/fix file on start
+    if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile))) fs.writeFileSync(watchFile, '[]', 'utf-8')
+  } else throw new Error('Invalid storage type (must be \'json\' or \'sql\')')
+})();
 
 /**
  * Retrieve watchlist.
