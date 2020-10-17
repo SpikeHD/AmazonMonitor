@@ -7,7 +7,7 @@
 var config = require('../config.json')
 const fs = require('fs')
 const mysql = require('mysql');
-const watchFile = '../watchlist.json'
+const watchFile = './watchlist.json'
 
 let con = null;
 
