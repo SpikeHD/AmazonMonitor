@@ -4,7 +4,7 @@
  * This project needs a re-write, but for now I'm just
  * going to slap these methods on and do that later.
  */
-const { storage_type } = require('../config.json')
+var { storage_type } = require('../config.json')
 const fs = require('fs')
 const watchFile = '../watchlist.json'
 

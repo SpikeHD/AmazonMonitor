@@ -96,9 +96,6 @@ function parse($, l) {
 
   if(emptyVals > 1) debug.log(`Detected ${emptyVals} empty values. Could potentially mean bot was flagged`, 'warn')
 
-  // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) obj.full_link = `${obj.full_link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
-
   return obj
 }
 

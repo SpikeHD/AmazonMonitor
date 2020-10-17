@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js')
 const { trim } = require('../common/util')
+const { getWatchlist } = require('../common/data')
 
 module.exports = {
   name: "watchlist",
@@ -10,8 +11,7 @@ module.exports = {
 
 module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
-    bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
-      if (err) reject('Database error')
+    getWatchlist().then(rows => {
       var links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
 
       bot.debug.log('Raw database output:', 'debug')

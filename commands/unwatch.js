@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js')
+const { getWatchlist, removeWatchlistItem } = require('../common/data') 
 
 module.exports = {
   name: "unwatch",
@@ -22,16 +23,13 @@ module.exports.run = (bot, guild, message, args) => {
       if(!parseInt(args[1])) reject('Invalid number/item')
       var index = parseInt(args[1])
 
-      bot.con.query(`SELECT * FROM watchlist WHERE guild_id=?`, [guild.id], (err, rows) => {
-        if (err) reject('Database error')
+      getWatchlist().then(rows => {
         if (!rows || rows.length == 0) reject('No existing items!')
         var item = rows[index-1]
         
         if(!item) reject('Not an existing item!')
         else {
-          bot.con.query(`DELETE FROM watchlist WHERE guild_id=? AND link=?`, [guild.id, item.link], err => {
-            if (err) reject('Database error')
-
+          removeWatchlistItem(item.link).then(() => {
             existing.forEach(itm => {
               var asin = item.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
               if (itm.link.includes(asin)) {

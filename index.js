@@ -42,6 +42,8 @@ bot.on('ready', function () {
   // Start services
   bot.util.startPup()
   bot.util.startWatcher(bot)
+
+  debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
 });
 
 bot.on('message', function (message) {
