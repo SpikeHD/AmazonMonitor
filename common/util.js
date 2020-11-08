@@ -176,7 +176,6 @@ async function doCheck(bot, i) {
   }
 
   getWatchlist().then(rows => {
-    if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
 
     bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
