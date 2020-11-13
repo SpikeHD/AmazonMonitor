@@ -13,8 +13,8 @@ module.exports = {
 
 module.exports.run = (bot, guild, message, args) => {
   return new Promise(async (resolve, reject) => {
-    var asin;
-    var tld;
+    let asin;
+    let tld;
   
     // Try to see if there is a valid asin
     try {
@@ -24,7 +24,7 @@ module.exports.run = (bot, guild, message, args) => {
       reject('Not a valid link')
     }
 
-    var item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {
+    let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {
       console.log(e)
       reject('Got an error retrieving the Amazon item')
     })
@@ -35,7 +35,7 @@ module.exports.run = (bot, guild, message, args) => {
         item[k].length <= 1) item[k] = 'none'
     })
 
-    var embed = new MessageEmbed()
+    let embed = new MessageEmbed()
       .setColor('ORANGE')
       .setTitle(item.full_title)
       .setAuthor(item.seller.includes('\n') ? 'invalid':item.seller)
@@ -49,7 +49,7 @@ module.exports.run = (bot, guild, message, args) => {
     if(ebayAverage) {
       const lim = 5
       const ebayItems = await ebay.getEbayAverage(item.full_title, lim)
-      var ebayAvg = 0
+      let ebayAvg = 0
 
       ebayItems.forEach(r => ebayAvg += r.itemCurrentPrice)
       ebayAvg = (ebayAvg/lim).toFixed(2)

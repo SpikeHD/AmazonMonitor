@@ -15,7 +15,7 @@ const headers = {
  */
 exports.getEbayAverage = (itm, lim) => {
   return new Promise((resolve, reject) => {
-    var options = {
+    let options = {
       'method': 'POST',
       'url': 'http://www.checkaflip.com/api',
       'headers': headers,
@@ -25,7 +25,7 @@ exports.getEbayAverage = (itm, lim) => {
     }
     request(options, function(err, res) {
       if(err) throw Error(err)
-      var body = JSON.parse(res.body)
+      let body = JSON.parse(res.body)
       resolve(body.slot2 ? body.slot2.splice(0, lim):[])
     })
   })

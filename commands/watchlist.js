@@ -12,12 +12,12 @@ module.exports = {
 module.exports.run = (bot, guild, message, args) => {
   return new Promise((resolve, reject) => {
     getWatchlist().then(rows => {
-      var links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
+      let links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
 
       bot.debug.log('Raw database output:', 'debug')
       bot.debug.log(rows, 'debug')
 
-      var embed = new MessageEmbed()
+      let embed = new MessageEmbed()
         .setTitle('List of Amazon items currently being watched')
         .setDescription(links.length > 0 ? links.join('\n\n'):'You haven\'t added any items yet!')
         .setColor('BLUE')

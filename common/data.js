@@ -4,7 +4,7 @@
  * This project needs a re-write, but for now I'm just
  * going to slap these methods on and do that later.
  */
-var config = require('../config.json')
+let config = require('../config.json')
 const fs = require('fs')
 const mysql = require('mysql')
 const watchFile = './watchlist.json'
@@ -83,7 +83,7 @@ exports.updateWatchlistItem = async (obj, condition) => {
   } else if (config.storage_type === 'json') {
     const data = JSON.parse(fs.readFileSync(watchFile))
     data = data.map(x => {
-      var matches = false
+      let matches = false
 
       Object.keys(condition).forEach(c => {
         if (x[c] != condition[c]) matches = false
@@ -102,7 +102,7 @@ exports.updateWatchlistItem = async (obj, condition) => {
 }
 
 function objToString(obj, sep, comma) {
-  var str = ''
+  let str = ''
 
   Object.keys(obj).forEach(k => {
     str += `${k}${sep}${obj[k]}`

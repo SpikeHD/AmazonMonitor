@@ -12,10 +12,10 @@ module.exports = {
 module.exports.run = (bot, guild, message, args) => {
   return new Promise(async (resolve, reject) => {
     // Get an array of all existing entries to make sure we don't have a duplicate
-    var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
-    var asin, tld;
-    var priceLimit = 0;
-    var exists = false
+    let existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
+    let asin, tld;
+    let priceLimit = 0;
+    let exists = false
 
     bot.debug.log(existing, 'debug')
   
@@ -45,9 +45,9 @@ module.exports.run = (bot, guild, message, args) => {
     }else if(existing.length >= bot.itemLimit) {
       reject('You\'re watching too many links! Remove one from your list and try again.')
     } else {
-      var item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => reject(e.message))
-      var values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
-      var obj = {
+      let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => reject(e.message))
+      let values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
+      let obj = {
         guild_id: values[0],
         channel_id: values[1],
         link: values[2],

@@ -2,7 +2,7 @@ const colors = require('colors')
 const { debugEnabled } = require('../config.json')
 
 exports.log = (message, type) => {
-  var t;
+  let t;
   switch(type.toLowerCase()) {
     default:
     case "log": t = "[LOG] ".blue

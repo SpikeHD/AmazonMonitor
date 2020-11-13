@@ -13,11 +13,11 @@ exports.find = (bot, q, suffix = 'com') => {
   return new Promise(async (resolve, reject) => {
     const sanq = q.replace(' ', '+')
     const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
-    var results = []
+    let results = []
 
     // Get parsed page with puppeteer/cheerio
-    var $ = await bot.util.getPage(url, { type: bot.proxylist ? 'proxy' : 'headless' }).catch(e => debug.log(e, 'error'))
-    var lim = $('.s-result-list').find('.s-result-item').length
+    let $ = await bot.util.getPage(url, { type: bot.proxylist ? 'proxy' : 'headless' }).catch(e => debug.log(e, 'error'))
+    let lim = $('.s-result-list').find('.s-result-item').length
 
     if (!lim || lim === 0) reject('No Results')
 
@@ -26,11 +26,11 @@ exports.find = (bot, q, suffix = 'com') => {
         // We're done!
         resolve(results)
       } else {
-        var prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
+        let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
 
         // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
         if (prodLink) {
-          var obj = {
+          let obj = {
             title: $(this).find('span.a-text-normal').text().trim(),
             ratings: $(this).find('.a-icon-alt').text().trim(),
             price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
@@ -52,7 +52,7 @@ exports.find = (bot, q, suffix = 'com') => {
  */
 exports.details = (bot, l) => {
   return new Promise(async (resolve, reject) => {
-    var asin;
+    let asin;
   
     // Try to see if there is a valid asin
     try {
@@ -76,9 +76,9 @@ exports.details = (bot, l) => {
 }
 
 function parse($, l) {
-  var category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
-  var emptyVals = 0
-  var obj;
+  let category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
+  let emptyVals = 0
+  let obj;
 
   debug.log('Type: ' + category, 'info')
 
@@ -107,23 +107,23 @@ function parse($, l) {
  */
 function getRegularItem($, l) {
   debug.log('Detected as a regular item', 'debug')
-  var priceElms = [
+  let priceElms = [
     $('#priceblock_ourprice').text().trim(),
     $('#priceblock_saleprice').text().trim()
   ]
-  var shippingElms = [
+  let shippingElms = [
     $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
     $('#saleprice_shippingmessage').find('b').text().trim()
   ]
   // Most items have feature lists
-  var features = $('#feature-bullets').find('li').find('span').toArray()
-  var parsedFeatures = []
+  let features = $('#feature-bullets').find('li').find('span').toArray()
+  let parsedFeatures = []
   features.forEach(f => {
     // Get features in a more normal format
     parsedFeatures.push(` - ${$(f).text().trim()}`)
   });
 
-  var obj = {
+  let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
     asin: l.split("/dp/")[1].split("/")[0],
@@ -158,18 +158,18 @@ function getRegularItem($, l) {
 function getBookItem($, l) {
   debug.log('Detected as a book item', 'debug')
   // Gets buying options
-  var buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
-  var mainPrice = util.priceFormat($('#buybox').find('a-color-price').first().text().trim().replace(/,/g, ''))
-  var optionsArray = []
+  let buyingOptions = $('#tmmSwatches').find('ul').find('li').toArray()
+  let mainPrice = util.priceFormat($('#buybox').find('a-color-price').first().text().trim().replace(/,/g, ''))
+  let optionsArray = []
 
   buyingOptions.forEach(o => {
-    var type = $(o).find('.a-button-inner').find('span').first().text().trim()
-    var price = util.priceFormat($(o).find('.a-button-inner').find('span').eq(1).text().trim())
+    let type = $(o).find('.a-button-inner').find('span').first().text().trim()
+    let price = util.priceFormat($(o).find('.a-button-inner').find('span').eq(1).text().trim())
     
     if(price.length > 1 && !type.toLowerCase().includes('audiobook')) optionsArray.push(` - ${type}: ${price}`)
   })
 
-  var obj = {
+  let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
     asin: l.split("/dp/")[1].split("/")[0],
