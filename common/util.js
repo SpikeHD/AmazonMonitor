@@ -164,7 +164,7 @@ exports.startWatcher = (bot) => {
     setInterval(() => {
       debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 5000)
+    }, 120000)
   })
 }
 
