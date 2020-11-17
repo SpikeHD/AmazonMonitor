@@ -129,15 +129,20 @@ function getRegularItem($, l) {
     asin: l.split("/dp/")[1].split("/")[0],
     seller: $('#bylineInfo').text().trim(),
     price: '',
+    symbol: '',
     shipping: '',
     rating: $('.a-icon-star').find('.a-icon-alt').first().text().trim(),
     features: parsedFeatures,
     availability: $('#availability').first().find('span').text().trim(),
-    image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image'
+    image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image',
   }
 
   priceElms.forEach(p => {
-    if(p.length > 0) obj.price = util.priceFormat(p)
+    if(p.length > 0) {
+      obj.price = util.priceFormat(p)
+      // Hacky but effective way to get currency symbol
+      obj.symbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+    }
   })
   shippingElms.forEach(s => {
     if(s.length > 0) obj.shipping = s

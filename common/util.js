@@ -164,7 +164,7 @@ exports.startWatcher = (bot) => {
     setInterval(() => {
       debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 120000)
+    }, 5000)
   })
 }
 
@@ -173,12 +173,12 @@ exports.startWatcher = (bot) => {
  */
 async function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
-    let obj = bot.watchlist[i]
+    const obj = bot.watchlist[i]
 
     // Get details
-    let item = await amazon.details(bot, obj.link)
-    let curPrice = parseFloat(exports.priceFormat(item.price)) || 0
-    let underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
+    const item = await amazon.details(bot, obj.link)
+    const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
+    const underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
 
     // Compare prices
     if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
@@ -203,8 +203,6 @@ async function doCheck(bot, i) {
 function sendPriceAlert(bot, obj, item) {
   let link = obj.link
   let channel = bot.channels.cache.get(obj.channel_id)
-  // Hacky but effective way to get currency symbol
-  let currencySymbol = item.price.replace(/[,\.]+/g, '').replace(/\d/g, "")
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
@@ -212,7 +210,7 @@ function sendPriceAlert(bot, obj, item) {
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
-    .setDescription(`Old Price: ${currencySymbol} ${exports.priceFormat(obj.lastPrice)}\nNew Price: ${currencySymbol} ${item.price.replace(currencySymbol, '')}\n\n${link}`)
+    .setDescription(`Old Price: ${item.symbol} ${exports.priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
@@ -239,12 +237,12 @@ function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) obj.full_link = `${obj.full_link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) obj.link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
     .setAuthor(item.seller)
-    .setDescription(`Current Price: $${item.price}\n\n${item.full_link}`)
+    .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${item.full_link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
