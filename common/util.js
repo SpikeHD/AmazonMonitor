@@ -33,7 +33,16 @@ exports.priceFormat = (p) => {
     return p.replace(',', '.')
   }
 
-  return p.replace(',', '')
+  p = parseFloat(p).toLocaleString('en')
+
+  // Okay, so we've made sure that reverse-format prices are fixed,
+  // now make sure commas are placed in the right spots
+  if (!p.includes('.')) {
+    let split = p.split('').concat(['.', '0', '0'])
+    p = split.join('')
+  }
+
+  return p
 }
 
 /*
@@ -155,7 +164,7 @@ exports.startWatcher = (bot) => {
     setInterval(() => {
       debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 5000)
+    }, 120000)
   })
 }
 
@@ -195,7 +204,7 @@ function sendPriceAlert(bot, obj, item) {
   let link = obj.link
   let channel = bot.channels.cache.get(obj.channel_id)
   // Hacky but effective way to get currency symbol
-  let currencySymbol = item.price.replace('.', '').replace(/\d/g, "")
+  let currencySymbol = item.price.replace(/[,\.]+/g, '').replace(/\d/g, "")
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
@@ -215,8 +224,7 @@ function sendPriceAlert(bot, obj, item) {
  * Pushes a change in price to the DB
  */
 function pushPriceChange(bot, obj, item) {
-  let price = exports.priceFormat(item.price)
-  console.log(price)
+  let price = item.price.replace(/,/g, '')
   updateWatchlistItem({
     lastPrice: (parseFloat(price) || 0)
   }, {
