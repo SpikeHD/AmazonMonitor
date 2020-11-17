@@ -10,8 +10,8 @@ module.exports = {
 
 module.exports.run = (bot, guild, message, args) => {
   return new Promise(async (resolve, reject) => {
-    var existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
-    var localIndex
+    let existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
+    let localIndex
     if(!args[1]) {
       message.channel.send(`Use \`${bot.prefix}unwatch [num]\` to unwatch one of the following links`)
       message.channel.startTyping()
@@ -21,17 +21,17 @@ module.exports.run = (bot, guild, message, args) => {
       message.channel.stopTyping(true)
     } else {
       if(!parseInt(args[1])) reject('Invalid number/item')
-      var index = parseInt(args[1])
+      let index = parseInt(args[1])
 
       getWatchlist().then(rows => {
         if (!rows || rows.length == 0) reject('No existing items!')
-        var item = rows[index-1]
+        let item = rows[index-1]
         
         if(!item) reject('Not an existing item!')
         else {
           removeWatchlistItem(item.link).then(() => {
             existing.forEach(itm => {
-              var asin = itm.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+              let asin = itm.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
               if (itm.link.includes(asin)) {
                 localItem = bot.watchlist.indexOf(itm)
               }

@@ -4,7 +4,7 @@
  * This project needs a re-write, but for now I'm just
  * going to slap these methods on and do that later.
  */
-var config = require('../config.json')
+let config = require('../config.json')
 const fs = require('fs')
 const mysql = require('mysql')
 const watchFile = './watchlist.json'
@@ -79,17 +79,38 @@ exports.removeWatchlistItem = async (link) => {
  */
 exports.updateWatchlistItem = async (obj, condition) => {
   if (config.storage_type === 'sql' && con) {
-    const res = await con.query(`UPDATE watchlist SET ${objToString(obj, '=', ',')} ${condition ? `WHERE ${objToString(obj, '=', 'AND')}`:''}`)
+    await con.query(`UPDATE watchlist SET ${objToString(obj, '=', ',')} ${condition ? `WHERE ${objToString(obj, '=', 'AND')}`:''}`)
   } else if (config.storage_type === 'json') {
-    const data = JSON.parse(fs.readFileSync(watchFile))
+    let data = JSON.parse(fs.readFileSync(watchFile))
+    /**
+     * The stuff ahead doesn't make a lot of sense so I'll try my best to explain:
+     */
     data = data.map(x => {
-      var matches = false
+      let matches = true
 
+      /**
+       * The condition param is an object (key/value pairs) containing
+       * which fields need to equal which values. This first loop verifies
+       * these
+       * 
+       * If the condition object is:
+       * 
+       * {
+       *    "link":"https://mylink.com/"
+       * }
+       * 
+       * then x[c] will be the value of the "link" field in our data (it could be anything),
+       * and condition[c] will be the "link" field in the condition ("https://mylink.com/").
+       * We then compare the two to make sure they match.
+       */
       Object.keys(condition).forEach(c => {
         if (x[c] != condition[c]) matches = false
       })
 
       if (matches) {
+        /**
+         * This second loop 
+         */
         Object.keys(obj).forEach(i => {
           x[i] = obj[i]
         })
@@ -102,7 +123,7 @@ exports.updateWatchlistItem = async (obj, condition) => {
 }
 
 function objToString(obj, sep, comma) {
-  var str = ''
+  let str = ''
 
   Object.keys(obj).forEach(k => {
     str += `${k}${sep}${obj[k]}`

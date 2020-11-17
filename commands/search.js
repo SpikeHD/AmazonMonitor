@@ -13,21 +13,21 @@ module.exports = {
 module.exports.run = (bot, guild, message, args) => {
   return new Promise(async (resolve, reject) => {
     args.splice(0, 1)
-    var phrase  = args.join(' ')
+    let phrase  = args.join(' ')
 
     bot.debug.log('Search phrase: ' + phrase, 'debug')
   
-    var embed = new MessageEmbed()
+    let embed = new MessageEmbed()
       .setColor('ORANGE')
       .setTitle(`Search results for phrase: ${phrase}`)
       .setDescription(`(respond with **${bot.prefix}[num]** to get the full link and some additional details, or **${bot.prefix}quickwatch [num]** to quick-watch an item)`)
     
     // Search using term
-    var item = await amazon.find(bot, phrase, tld).catch(e => {
+    let item = await amazon.find(bot, phrase, tld).catch(e => {
       console.log(e)
       reject(e)
     })
-    var n = 1
+    let n = 1
     item.forEach(r => {
       // Add an embed field for each item
       embed.addField(`[${n}] ${trim(r.title, 70)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
@@ -36,7 +36,7 @@ module.exports.run = (bot, guild, message, args) => {
   
     const m = await message.channel.send(embed)
     // Message must be from original author and in the same channel
-    var filter = (msg => msg.author.id === message.author.id &&
+    let filter = (msg => msg.author.id === message.author.id &&
       msg.channel.id === message.channel.id &&
       msg.member.hasPermission(bot.required_perms))
         
@@ -46,9 +46,9 @@ module.exports.run = (bot, guild, message, args) => {
     // If a message was sent and it start with the prefix
     if (col.first() && col.first().content.startsWith(bot.prefix)) {
       // Parse the actual command part
-      var command = col.first().content.split(bot.prefix)[1].split(' ')[0]
+      let command = col.first().content.split(bot.prefix)[1].split(' ')[0]
       if (command) {
-        var link;
+        let link;
 
         bot.debug.log('I parsed this as a command: ' + command, 'debug')
               

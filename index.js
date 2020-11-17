@@ -1,14 +1,14 @@
-const Discord = require('discord.js');
-const bot = new Discord.Client();
-const fs = require('fs');
+const Discord = require('discord.js')
+const bot = new Discord.Client()
+const fs = require('fs')
 const debug = require('./common/debug')
-var config = require("./config.json");
+let config = require("./config.json")
 bot.commands = new Discord.Collection()
 bot.itemLimit = config.guild_item_limit
 
 bot.login(config.token)
 
-bot.on('ready', function () {
+bot.on('ready', () => {
   bot.util = require('./common/util')
   bot.debug = debug
   bot.proxylist = fs.existsSync('./proxylist.txt')
@@ -28,14 +28,14 @@ bot.on('ready', function () {
   ##########################################################################
   `
 
-  console.log(str);
+  console.log(str)
 
   // Load commands
   fs.readdirSync("./commands/").forEach(command => {
       debug.log(`Loading command: ${command}`, 'info')
 
       let props = require(`./commands/${command}`)
-      bot.commands.set(command.replace('.js', ''), props);
+      bot.commands.set(command.replace('.js', ''), props)
   });
 
   // Start services
@@ -49,7 +49,7 @@ bot.on('message', function (message) {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
 
-  var command = message.content.split(config.prefix)[1].split(" ")[0],
+  let command = message.content.split(config.prefix)[1].split(" ")[0],
     args = message.content.split(' '),
     cmd = bot.commands.get(command)
 
