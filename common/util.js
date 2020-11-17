@@ -19,6 +19,10 @@ let browser
  * Format prices 
  */
 exports.priceFormat = (p) => {
+  p = '' + p
+  let currencySymbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+  if (currencySymbol) p = p.replace(currencySymbol, '')
+
   // Check if the price uses the reverse format
   if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
     let cents = p.match(/[^\,]*$/)[0]
@@ -70,10 +74,10 @@ exports.getPage = (url, opts) => {
   return new Promise(async (res, rej) => {
     debug.log('Type: ' + opts.type, 'info')
     let now = new Date().getTime()
+    let proxy
     if (opts.type === 'proxy') {
       let l = fs.readFileSync('proxylist.txt', 'utf8')
       let proxies = l.split('\n')
-      let proxy
 
       if (proxies.length > 0) {
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
@@ -151,7 +155,7 @@ exports.startWatcher = (bot) => {
     setInterval(() => {
       debug.log('Checking item prices...', 'message')
       if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 180000)
+    }, 5000)
   })
 }
 
@@ -164,7 +168,7 @@ async function doCheck(bot, i) {
 
     // Get details
     let item = await amazon.details(bot, obj.link)
-    let curPrice = parseFloat(item.price.replace(/^\D+/g, "")) || 0
+    let curPrice = parseFloat(exports.priceFormat(item.price)) || 0
     let underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
 
     // Compare prices
@@ -176,7 +180,6 @@ async function doCheck(bot, i) {
   }
 
   getWatchlist().then(rows => {
-    if (err) throw err
     bot.watchlist = JSON.parse(JSON.stringify(rows))
 
     bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
@@ -189,17 +192,18 @@ async function doCheck(bot, i) {
  * TODO: Maybe support multiple alerts (out of stock, back in stock, etc.)?
  */
 function sendPriceAlert(bot, obj, item) {
+  let link = obj.link
   let channel = bot.channels.cache.get(obj.channel_id)
   // Hacky but effective way to get currency symbol
   let currencySymbol = item.price.replace('.', '').replace(/\d/g, "")
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) obj.full_link = `${obj.full_link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller)
-    .setDescription(`Old Price: ${currencySymbol} ${obj.lastPrice}\nNew Price: ${currencySymbol} ${item.price.replace(currencySymbol, '')}\n\n${item.full_link}`)
+    .setDescription(`Old Price: ${currencySymbol} ${exports.priceFormat(obj.lastPrice)}\nNew Price: ${currencySymbol} ${item.price.replace(currencySymbol, '')}\n\n${link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
@@ -211,7 +215,8 @@ function sendPriceAlert(bot, obj, item) {
  * Pushes a change in price to the DB
  */
 function pushPriceChange(bot, obj, item) {
-  let price = item.price.replace(/^\D+/g, "")
+  let price = exports.priceFormat(item.price)
+  console.log(price)
   updateWatchlistItem({
     lastPrice: (parseFloat(price) || 0)
   }, {

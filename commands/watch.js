@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const util = require('../common/util')
 const amazon = require('../common/Amazon')
 const { addWatchlistItem } = require('../common/data')
 
@@ -46,7 +46,8 @@ module.exports.run = (bot, guild, message, args) => {
       reject('You\'re watching too many links! Remove one from your list and try again.')
     } else {
       let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => reject(e.message))
-      let values = [guild.id, message.channel.id, item.full_link, (parseFloat(item.price.replace(/^\D+/g, "")) || 0), item.full_title, priceLimit]
+      let values = [guild.id, message.channel.id, item.full_link, (parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0), item.full_title, priceLimit]
+      console.log(item.price)
       let obj = {
         guild_id: values[0],
         channel_id: values[1],
