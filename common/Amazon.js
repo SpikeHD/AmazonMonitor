@@ -9,39 +9,39 @@ const util = require('./util')
  * 
  * @returns {Array}
  */
-exports.find = (bot, q, suffix = 'com') => {
-  return new Promise(async (resolve, reject) => {
-    const sanq = q.replace(' ', '+')
-    const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
-    let results = []
+exports.find = async (bot, q, suffix = 'com') => {
+  const sanq = q.replace(' ', '+')
+  const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
+  let results = []
 
-    // Get parsed page with puppeteer/cheerio
-    let $ = await bot.util.getPage(url, { type: bot.proxylist ? 'proxy' : 'headless' }).catch(e => debug.log(e, 'error'))
-    let lim = $('.s-result-list').find('.s-result-item').length
+  // Get parsed page with puppeteer/cheerio
+  let $ = await bot.util.getPage(url, {
+    type: bot.proxylist ? 'proxy' : 'headless'
+  }).catch(e => debug.log(e, 'error'))
+  let lim = $('.s-result-list').find('.s-result-item').length
 
-    if (!lim || lim === 0) reject('No Results')
+  if (!lim || lim === 0) return null
 
-    $('.s-result-list').find('.s-result-item').each(function () {
-      if (results.length >= 10 || results.length >= lim) {
-        // We're done!
-        resolve(results)
-      } else {
-        let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
+  $('.s-result-list').find('.s-result-item').each(function () {
+    if (results.length >= 10 || results.length >= lim) {
+      // We're done!
+      return results
+    } else {
+      let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
 
-        // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
-        if (prodLink) {
-          let obj = {
-            title: $(this).find('span.a-text-normal').text().trim(),
-            ratings: $(this).find('.a-icon-alt').text().trim(),
-            price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
-            sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-            prod_link: `https://www.amazon.${suffix}${prodLink}`
-          }
-
-          results.push(obj)
+      // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
+      if (prodLink) {
+        let obj = {
+          title: $(this).find('span.a-text-normal').text().trim(),
+          ratings: $(this).find('.a-icon-alt').text().trim(),
+          price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
+          sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
+          prod_link: `https://www.amazon.${suffix}${prodLink}`
         }
+
+        results.push(obj)
       }
-    })
+    }
   })
 }
 
@@ -50,29 +50,29 @@ exports.find = (bot, q, suffix = 'com') => {
  * 
  * @param {String} l 
  */
-exports.details = (bot, l) => {
-  return new Promise(async (resolve, reject) => {
-    let asin;
-  
-    // Try to see if there is a valid asin
-    try {
-      asin = l.split("/dp/")[1].split("/")[0]
-      tld = l.split('amazon.')[1].split('/')[0]
-    } catch(e) {
-      debug.log(e, 'warn')
-      reject('Not a valid link')
-    }
+exports.details = async (bot, l) => {
+  let asin;
 
-    l += bot.util.parseParams(bot.URLParams)
-  
-    // Get parsed page with puppeteer/cheerio
-    const page = await bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {type: bot.proxylist ? 'proxy':'headless'}).catch(e => {
-      debug.log(e, 'error')
-      reject(e)
-    })
+  // Try to see if there is a valid asin
+  try {
+    asin = l.split("/dp/")[1].split("/")[0]
+    tld = l.split('amazon.')[1].split('/')[0]
+  } catch (e) {
+    debug.log(e, 'warn')
+    return null
+  }
 
-    resolve(parse(page, l))
+  l += bot.util.parseParams(bot.URLParams)
+
+  // Get parsed page with puppeteer/cheerio
+  const page = await bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {
+    type: bot.proxylist ? 'proxy' : 'headless'
+  }).catch(e => {
+    debug.log(e, 'error')
+    return
   })
+
+  return parse(page, l)
 }
 
 function parse($, l) {
