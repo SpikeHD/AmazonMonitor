@@ -79,50 +79,48 @@ exports.startPup = async () => {
 /**
  * Get page HTML
  */
-exports.getPage = (url, opts) => {
-  return new Promise(async (res, rej) => {
-    debug.log('Type: ' + opts.type, 'info')
-    let now = new Date().getTime()
-    let proxy
-    if (opts.type === 'proxy') {
-      let l = fs.readFileSync('proxylist.txt', 'utf8')
-      let proxies = l.split('\n')
+exports.getPage = async (url, opts) => {
+  debug.log('Type: ' + opts.type, 'info')
+  let now = new Date().getTime()
+  let proxy
+  if (opts.type === 'proxy') {
+    let l = fs.readFileSync('proxylist.txt', 'utf8')
+    let proxies = l.split('\n')
 
-      if (proxies.length > 0) {
-        proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
-      } else {
-        debug.log('No proxies found in proxylist.txt', 'error')
-      }
+    if (proxies.length > 0) {
+      proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+    } else {
+      debug.log('No proxies found in proxylist.txt', 'error')
     }
+  }
 
-    let page = await browser.newPage()
-    let uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
-    if (proxy) {
-      debug.log('Selected proxy URL: ' + proxy, 'info')
-      page.setRequestInterception(true)
-      page.on('request', (request) => {
-        proxyRequest({
-          page,
-          proxyUrl: proxy,
-          request
-        })
+  let page = await browser.newPage()
+  let uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+  if (proxy) {
+    debug.log('Selected proxy URL: ' + proxy, 'info')
+    page.setRequestInterception(true)
+    page.on('request', (request) => {
+      proxyRequest({
+        page,
+        proxyUrl: proxy,
+        request
       })
-    }
+    })
+  }
 
-    await page.setUserAgent(uAgent)
-    await page.goto(url)
+  await page.setUserAgent(uAgent)
+  await page.goto(url)
 
-    debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
-    await page.waitFor(2000)
+  debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
+  await page.waitFor(2000)
 
-    let html = await page.evaluate(() => document.body.innerHTML).catch(e => rej(e))
-    let $ = await load(html).catch(e => rej(e))
+  let html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
+  let $ = await load(html).catch(e => debug.log(e, 'error'))
 
-    await page.close()
+  await page.close()
 
-    debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
-    res($)
-  })
+  debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+  return $
 }
 
 /**
@@ -139,33 +137,34 @@ function hasErrors($) {
 /**
  * Load HTML with cheerio
  */
-function load(html) {
-  return new Promise((res, rej) => {
-    let $ = cheerio.load(html)
-    if(hasErrors($)) {
-      rej({ message: 'Amazon Service Error' })
-    } else {
-      res($)
+async function load(html) {
+  let $ = cheerio.load(html)
+  if (hasErrors($)) {
+    return {
+      message: 'Amazon Service Error'
     }
-  })
+  } else {
+    return $
+  }
 }
 
 /**
  * Inits a watcher that'll check all of the items for price drops
  */
-exports.startWatcher = (bot) => {
-  getWatchlist().then(rows => {
-    bot.watchlist = JSON.parse(JSON.stringify(rows))
-    debug.log('Watchlist Loaded', 'info')
+exports.startWatcher = async (bot) => {
+  rows = await getWatchlist()
+  bot.watchlist = JSON.parse(JSON.stringify(rows))
+  debug.log('Watchlist Loaded', 'info')
 
-    bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
-
-    // Set an interval with an offset so we don't decimate Amazon with requests
-    setInterval(() => {
-      debug.log('Checking item prices...', 'message')
-      if(bot.watchlist.length > 0) doCheck(bot, 0)
-    }, 120000)
+  bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, {
+    type: 'WATCHING'
   })
+
+  // Set an interval with an offset so we don't decimate Amazon with requests
+  setInterval(() => {
+    debug.log('Checking item prices...', 'message')
+    if (bot.watchlist.length > 0) doCheck(bot, 0)
+  }, 120000)
 }
 
 /**
