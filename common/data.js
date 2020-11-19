@@ -35,16 +35,14 @@ let con = null; // I hate this
 /**
  * Retrieve watchlist.
  */
-exports.getWatchlist = () => {
-  return new Promise(resolve => {
-    if (config.storage_type === 'sql' && con) {
-      con.query(`SELECT * FROM watchlist`, (err, rows) => {
-        resolve(rows)
-      })
-    } else if (config.storage_type === 'json') {
-      resolve(JSON.parse(fs.readFileSync(watchFile)))
-    }
-  })
+exports.getWatchlist = async () => {
+  if (config.storage_type === 'sql' && con) {
+    con.query(`SELECT * FROM watchlist`, (err, rows) => {
+      return rows
+    })
+  } else if (config.storage_type === 'json') {
+    return JSON.parse(fs.readFileSync(watchFile))
+  }
 }
 
 /**
