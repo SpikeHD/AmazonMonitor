@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spikegd/AmazonMonitor.git"
+    "url": "git+https://github.com/SpikeHD/AmazonMonitor.git"
   },
-  "author": "SpikeGD",
+  "author": "SpikeHD",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/spikegd/AmazonMonitor/issues"
+    "url": "https://github.com/SpikeHD/AmazonMonitor/issues"
   },
-  "homepage": "https://github.com/spikegd/AmazonMonitor#readme",
+  "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "colors": "^1.4.0",
