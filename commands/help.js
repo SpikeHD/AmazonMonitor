@@ -3,18 +3,15 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
   type: "view"
 }
+module.exports.run = async (bot, guild, message, args) => {
+  let embed = new MessageEmbed()
+    .setTitle('AmazonMonitor: Commands and Help')
+    .setDescription('This will describe each function and what it does.\n Some commands take a hot second, but 90% of the time it isn\'t broken, so don\'t worry')
+    .setColor('RED')
 
-module.exports.run = (bot, guild, message, args) => {
-  return new Promise((resolve, reject) => {
-    let embed = new MessageEmbed()
-      .setTitle('AmazonMonitor: Commands and Help')
-      .setDescription('This will describe each function and what it does.\n Some commands take a hot second, but 90% of the time it isn\'t broken, so don\'t worry')
-      .setColor('RED')
-    
-    bot.commands.forEach(c => {
-      if(c.name) embed.addField(bot.prefix + c.name, `${c.desc}\n**Usage: ${bot.prefix + c.usage}**`)
-    })
-
-    resolve(message.channel.send(embed))
+  bot.commands.forEach(c => {
+    if (c.name) embed.addField(bot.prefix + c.name, `${c.desc}\n**Usage: ${bot.prefix + c.usage}**`)
   })
+
+  message.channel.send(embed)
 }

@@ -9,21 +9,19 @@ module.exports = {
   type: "view"
 }
 
-module.exports.run = (bot, guild, message, args) => {
-  return new Promise((resolve, reject) => {
-    getWatchlist().then(rows => {
-      let links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
+module.exports.run = async (bot, guild, message, args) => {
+  getWatchlist().then(rows => {
+    let links = rows.map((x, i) => `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`)
 
-      bot.debug.log('Raw database output:', 'debug')
-      bot.debug.log(rows, 'debug')
+    bot.debug.log('Raw database output:', 'debug')
+    bot.debug.log(rows, 'debug')
 
-      let embed = new MessageEmbed()
-        .setTitle('List of Amazon items currently being watched')
-        .setDescription(links.length > 0 ? links.join('\n\n'):'You haven\'t added any items yet!')
-        .setColor('BLUE')
-        .setFooter(`Currently watching ${rows.length} links in this server`)
+    let embed = new MessageEmbed()
+      .setTitle('List of Amazon items currently being watched')
+      .setDescription(links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!')
+      .setColor('BLUE')
+      .setFooter(`Currently watching ${rows.length} links in this server`)
 
-      resolve(message.channel.send(embed))
-    })
+    message.channel.send(embed)
   })
 }
