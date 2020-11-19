@@ -12,6 +12,5 @@
   "required_perms":["permission_1", "permission_2"],
   "tld":"com",
   "autoCartLink":true,
-  "debugEnabled":false,
-  "ebayAverage":false
+  "debugEnabled":false
 }

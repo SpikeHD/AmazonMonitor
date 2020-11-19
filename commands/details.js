@@ -1,7 +1,5 @@
 const { MessageEmbed } = require('discord.js')
-const ebay = require('../common/Checkaflip')
 const amazon = require('../common/Amazon')
-const {ebayAverage} = require('../config.json')
 const util = require('../common/util')
 
 module.exports = {
@@ -45,17 +43,6 @@ module.exports.run = (bot, guild, message, args) => {
       .addField('Rating', item.rating, true)
       .addField('Shipping', item.shipping, true)
       .addField('Availability', item.availability)
-
-    if(ebayAverage) {
-      const lim = 5
-      const ebayItems = await ebay.getEbayAverage(item.full_title, lim)
-      let ebayAvg = 0
-
-      ebayItems.forEach(r => ebayAvg += r.itemCurrentPrice)
-      ebayAvg = (ebayAvg/lim).toFixed(2)
-
-      embed.addField('Average price compared to top 5 eBay results', `$${ebayAvg}`)
-    }
 
     resolve(message.channel.send(embed))
   })

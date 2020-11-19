@@ -96,12 +96,7 @@ If you want to include a referral code or something, you can use the `URLParams`
  }
 ```
 ### ebayAverage
-Starting in v1.1.7, I've implemented a small usage of the https://www.checkaflip.com api. This can search your Amazon item when the details page is being displayed and gives you an average using the top 5 items
-
-To enable this, just add it to your config.json like so:
-```json
-"ebayAverage":true
-```
+**REMOVED DUE TO API REMOVAL**
 
 ## Starting it up
 Now that everything is set up config-wise, you now need to install the dependancies! This can be done by running `npm install` inside of the root folder of the project. This should download everything you need.

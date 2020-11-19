@@ -1,6 +1,6 @@
 {
   "name": "amazonmonitor",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A Discord bot that monitors Amazon items for price drops/restocks",
   "main": "index.js",
   "scripts": {
