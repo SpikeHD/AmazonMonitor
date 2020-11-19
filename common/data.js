@@ -50,7 +50,7 @@ exports.getWatchlist = async () => {
  */
 exports.addWatchlistItem = async (obj) => {
   if (config.storage_type === 'sql' && con) {
-    const res = await con.query(`INSERT INTO watchlist (${Object.keys(obj).toString()} VALUES (${Object.values(obj).toString()}))`)
+    await con.query(`INSERT INTO watchlist (${Object.keys(obj).toString()} VALUES (${Object.values(obj).toString()}))`)
   } else if (config.storage_type === 'json') {
     const data = JSON.parse(fs.readFileSync(watchFile))
     data.push(obj)
@@ -63,7 +63,7 @@ exports.addWatchlistItem = async (obj) => {
  */
 exports.removeWatchlistItem = async (link) => {
   if (config.storage_type === 'sql' && con) {
-    const res = await con.query(`DELETE FROM watchlist WHERE link=${link}`)
+    await con.query(`DELETE FROM watchlist WHERE link=${link}`)
   } else if (config.storage_type === 'json') {
     const data = JSON.parse(fs.readFileSync(watchFile))
     const item = data.find(x => x.link === link)
