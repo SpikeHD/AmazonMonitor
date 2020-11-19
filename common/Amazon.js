@@ -24,8 +24,7 @@ exports.find = async (bot, q, suffix = 'com') => {
 
   $('.s-result-list').find('.s-result-item').each(function () {
     if (results.length >= 10 || results.length >= lim) {
-      // We're done!
-      return results
+      return
     } else {
       let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
 
@@ -43,6 +42,8 @@ exports.find = async (bot, q, suffix = 'com') => {
       }
     }
   })
+
+  return results
 }
 
 /**

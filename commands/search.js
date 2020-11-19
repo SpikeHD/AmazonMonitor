@@ -24,7 +24,6 @@ module.exports.run = async (bot, guild, message, args) => {
   // Search using term
   let item = await amazon.find(bot, phrase, tld).catch(e => {
     console.log(e)
-    reject(e)
   })
   let n = 1
   item.forEach(r => {

@@ -1,12 +1,6 @@
 {
   "prefix":"!",
   "token":"my_bot_token",
-  "sql": {
-    "host":"localhost",
-    "database":"my_database",
-    "user":"my_user",
-    "password":"my_password"
-  },
   "URLParams":{},
   "guild_item_limit":5,
   "required_perms":["permission_1", "permission_2"],
