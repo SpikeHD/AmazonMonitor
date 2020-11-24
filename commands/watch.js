@@ -79,6 +79,7 @@ module.exports.run = async (bot, guild, message, args) => {
       return message.channel.send('Invalid category!')
     })
 
+    // Check for existing
     existing.forEach(itm => {
       if (itm.link.includes(items.node)) {
         exists = true
@@ -89,6 +90,7 @@ module.exports.run = async (bot, guild, message, args) => {
       return message.channel.send('I am already watching that category!')
     }
 
+    // Less detailed object because we request item details later.
     obj = {
       guild_id: guild.id,
       channel_id: message.channel.id,
