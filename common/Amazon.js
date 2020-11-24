@@ -1,5 +1,4 @@
 const debug = require('./debug')
-const { autoCartLink } = require('../config.json')
 const util = require('./util')
 
 /**
@@ -46,13 +45,37 @@ exports.find = async (bot, q, suffix = 'com') => {
   return results
 }
 
+exports.categoryDetails = async (bot, l) => {
+  let node, ie, tld, path
+
+  try {
+    node = l.split('node=')[1].split('&')[0]
+    ie = l.split('ie=')[1].split('&')[0]
+    tld = l.split('amazon.')[1].split('/')[0]
+    path = l.split(tld + '/')[1].split('?')[0]
+  } catch (e) {
+    debug.log(e, 'warn')
+    return null
+  }
+
+  // Get parsed page with puppeteer/cheerio
+  const page = await bot.util.getPage(`https://www.amazon.${tld}/${path}/?ie=${ie}&node=${node}`, {
+    type: bot.proxylist ? 'proxy' : 'headless'
+  }).catch(e => {
+    debug.log(e, 'error')
+    return
+  })
+  
+  return category(page, l)
+}
+
 /**
  * Takes a product link or code and spits out some useful details
  * 
  * @param {String} l 
  */
 exports.details = async (bot, l) => {
-  let asin;
+  let asin
 
   // Try to see if there is a valid asin
   try {
@@ -98,6 +121,37 @@ function parse($, l) {
   if(emptyVals > 1) debug.log(`Detected ${emptyVals} empty values. Could potentially mean bot was flagged`, 'warn')
 
   return obj
+}
+
+/**
+ * Get contents of category and return prices and names.
+ * 
+ * @param {Object} $ 
+ * @param {String} l 
+ */
+function category($, l) {
+  debug.log('Detected category', 'debug')
+  let arr
+  let topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray()
+  
+  arr = topRated.map(i => {
+    let item = $(i).find('.octopus-pc-item-link')
+    let link = item.attr('href')
+    let name = item.attr('title')
+    let priceFull = $(i).find('.octopus-pc-asin-price').text().trim()
+    let price = util.priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
+
+    return {
+      full_title: name,
+      full_link: link,
+      asin: link.split("/dp/")[1].split('?')[0].replace(/\//g, ''),
+      price: price,
+      symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+      image: $(i).find('.octopus-pc-item-image').attr('src')
+    }
+  })
+
+  return arr
 }
 
 /**

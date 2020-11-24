@@ -71,7 +71,8 @@ module.exports.run = async (bot, guild, message, args) => {
     }
   } else if (clArgs.category.length > 0) {
     // Add category to watchlist
-    let items // This will be the grabbed items from Amazon
+    let items = await amazon.categoryDetails(bot, clArgs.category)
+    console.log(items)
     return
   } else if (clArgs.query.length > 0) {
     // Add query to watchlist
