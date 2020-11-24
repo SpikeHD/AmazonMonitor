@@ -158,6 +158,8 @@ function category($, l) {
     }
   })
 
+  obj.name = $('.bxw-pageheader__title h1').text().trim()
+
   return obj
 }
 

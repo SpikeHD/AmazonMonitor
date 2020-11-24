@@ -1,6 +1,7 @@
 const util = require('../common/util')
 const amazon = require('../common/Amazon')
 const { addWatchlistItem } = require('../common/data')
+const {tld} = require('../config.json')
 
 module.exports = {
   name: "watch",
@@ -19,9 +20,11 @@ module.exports.run = async (bot, guild, message, args) => {
     link: '',
     category: '',
     query:'',
-    priceLim: ''
+    priceLim: 0
   }
   let clArgs = util.argParser(args, argsObj)
+
+  priceLimit = clArgs.priceLim
 
   bot.debug.log(existing, 'debug')
   bot.debug.log(clArgs, 'debug')
@@ -99,11 +102,33 @@ module.exports.run = async (bot, guild, message, args) => {
       type: 'category'
     }
 
-    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`
+    console.log(items)
+
+    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
   } else if (clArgs.query.length > 0) {
+    // Check for existing
+    existing.forEach(itm => {
+      if (itm.query && itm.query.toLowerCase().includes(clArgs.query.toLowerCase())) {
+        exists = true
+      }
+    })
+
     // Add query to watchlist
-    let items // This will be the grabbed items from Amazon
-    return
+    let items = await amazon.find(bot, clArgs.query, tld)
+
+    if (items.length < 1) {
+      return message.channel.send('I couldn\'t find anything using this query. Try something more generic!')
+    }
+
+    obj = {
+      guild_id: guild.id,
+      channel_id: message.channel.id,
+      query: clArgs.query,
+      priceLimit: clArgs.priceLim || 0,
+      type: 'query'
+    }
+
+    mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
   } else {
     return message.channel.send('Not a valid link, category, or search query')
   }
