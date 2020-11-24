@@ -65,8 +65,12 @@ exports.categoryDetails = async (bot, l) => {
     debug.log(e, 'error')
     return
   })
+
+  let obj = category(page, l)
+  // Node set for validation
+  obj.node = node
   
-  return category(page, l)
+  return obj
 }
 
 /**
@@ -131,10 +135,13 @@ function parse($, l) {
  */
 function category($, l) {
   debug.log('Detected category', 'debug')
-  let arr
+  let obj = {
+    link: l,
+    list: []
+  }
   let topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray()
   
-  arr = topRated.map(i => {
+  obj.list = topRated.map(i => {
     let item = $(i).find('.octopus-pc-item-link')
     let link = item.attr('href')
     let name = item.attr('title')
@@ -151,7 +158,7 @@ function category($, l) {
     }
   })
 
-  return arr
+  return obj
 }
 
 /**

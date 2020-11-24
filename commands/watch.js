@@ -18,7 +18,8 @@ module.exports.run = async (bot, guild, message, args) => {
   let argsObj = {
     link: '',
     category: '',
-    query:''
+    query:'',
+    priceLim: ''
   }
   let clArgs = util.argParser(args, argsObj)
 
@@ -52,7 +53,7 @@ module.exports.run = async (bot, guild, message, args) => {
     } else if (existing.length >= bot.itemLimit) {
       return 'You\'re watching too many links! Remove one from your list and try again.'
     } else {
-      let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => reject(e.message))
+      let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
       let values = [guild.id, message.channel.id, item.full_link, (parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0), item.full_title, priceLimit]
       obj = {
         guild_id: values[0],
@@ -70,10 +71,33 @@ module.exports.run = async (bot, guild, message, args) => {
       mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`
     }
   } else if (clArgs.category.length > 0) {
-    // Add category to watchlist
-    let items = await amazon.categoryDetails(bot, clArgs.category)
-    console.log(items)
-    return
+    // Make sure it is a proper category by grabbing some items.
+    // We do not actually store the items since they can change,
+    // and we always want the most recent data.
+    const items = await amazon.categoryDetails(bot, clArgs.category).catch(e => {
+      debug.log(e.message, 'error')
+      return message.channel.send('Invalid category!')
+    })
+
+    existing.forEach(itm => {
+      if (itm.link.includes(items.node)) {
+        exists = true
+      }
+    })
+    
+    if (exists) {
+      return message.channel.send('I am already watching that category!')
+    }
+
+    obj = {
+      guild_id: guild.id,
+      channel_id: message.channel.id,
+      link: items.link,
+      priceLimit: clArgs.priceLim || 0,
+      type: 'category'
+    }
+
+    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`
   } else if (clArgs.query.length > 0) {
     // Add query to watchlist
     let items // This will be the grabbed items from Amazon
