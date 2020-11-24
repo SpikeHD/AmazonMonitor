@@ -3,6 +3,7 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
   type: "view"
 }
+
 module.exports.run = async (bot, guild, message, args) => {
   let embed = new MessageEmbed()
     .setTitle('AmazonMonitor: Commands and Help')

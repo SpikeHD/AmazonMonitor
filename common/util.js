@@ -45,6 +45,33 @@ exports.priceFormat = (p) => {
   return p
 }
 
+/**
+ * Parse arguments from an array, kinda like a commandline.
+ * 
+ * @param {Array} opts
+ * @param {Array} avblArgs 
+ */
+exports.argParser = (opts, avblArgs) => {
+  for (let i = 0; i < opts.length; i++) {
+    if (opts[i].startsWith('-')) {
+      // Get part of flag after hyphen
+      let argVal = opts[i].split('-')[opts[i].lastIndexOf('-') + 1]
+      // Get matching argument in avblArgs
+      let avblArg = Object.keys(avblArgs).filter(x => x.startsWith(argVal[0]))
+      
+      if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith("-") || !opts[i + 1])) {
+        // If the argument has no value associated with it, assume boolean
+        avblArgs[avblArg] = true
+  
+        // Otherwise, assume actual
+      } else avblArgs[avblArg] = opts[i + 1];
+    }
+  }
+
+  // Return object with filled in values
+  return avblArgs
+}
+
 /*
  *  Appends ... to long strings
  */
@@ -174,17 +201,19 @@ async function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
     const obj = bot.watchlist[i]
 
-    // Get details
-    const item = await amazon.details(bot, obj.link)
-    const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
-    const underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
+    if (obj.type === 'link') {
+      // Get details
+      const item = await amazon.details(bot, obj.link)
+      const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
+      const underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
 
-    // Compare prices
-    if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
-    if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
-    if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
+      // Compare prices
+      if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
+      if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
+      if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
 
-    setTimeout(() => doCheck(bot, i + 1), 6000)
+      setTimeout(() => doCheck(bot, i + 1), 6000)
+    }
   }
 
   getWatchlist().then(rows => {
