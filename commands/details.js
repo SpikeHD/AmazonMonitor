@@ -15,10 +15,11 @@ module.exports.run = async (bot, guild, message, args) => {
 
   // Try to see if there is a valid asin
   try {
-    asin = args[1].split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+    asin = args[1].split("/dp/")[1] || args[1].split("/gp/product/")[1]
+    asin = asin.match(/^[a-zA-Z0-9]+/)[0]
     tld = args[1].split('amazon.')[1].split('/')[0]
   } catch (e) {
-    return 'Not a valid link'
+    return bot.debug.log(e, 'warning')
   }
 
   let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {

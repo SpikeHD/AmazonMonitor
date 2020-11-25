@@ -32,10 +32,11 @@ module.exports.run = async (bot, guild, message, args) => {
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
     try {
-      asin = clArgs.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+      asin = clArgs.link.split("/dp/")[1] || clArgs.link.split("/gp/product/")[1]
+      asin = asin.match(/^[a-zA-Z0-9]+/)[0]
       itld = clArgs.link.split('amazon.')[1].split('/')[0]
     } catch (e) {
-      return 'Not a valid link'
+      return bot.debug.log(e, 'warning')
     }
   
     if (parseFloat(args[2])) priceLimit = parseFloat(util.priceFormat(args[2]))
@@ -45,7 +46,7 @@ module.exports.run = async (bot, guild, message, args) => {
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
-        if (itm.link.includes(asin)) {
+        if (itm.link && itm.link.includes(asin)) {
           exists = true
         }
       })
