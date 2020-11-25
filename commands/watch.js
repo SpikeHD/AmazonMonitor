@@ -6,7 +6,7 @@ const { cache_limit, tld } = require('../config.json')
 module.exports = {
   name: "watch",
   desc: "Add and watch a single Amazon link",
-  usage: "watch [argument type (eg, -q for query, -c for category, -l or nothing for link)] [amazon link OR category link OR search query] [optional: price limit]",
+  usage: "watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: price limit]",
   type: "edit"
 }
 
