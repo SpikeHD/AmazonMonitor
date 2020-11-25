@@ -25,11 +25,12 @@ exports.addWatchlistItem = async (obj) => {
 /**
  * Remove item.
  */
-exports.removeWatchlistItem = async (link) => {
+exports.removeWatchlistItem = async (bot, link) => {
   const data = JSON.parse(fs.readFileSync(watchFile))
-  const item = data.find(x => x.link === link)
+  const item = data.find(x => x.link === link || (x.query && x.query === link))
   if (item) data.splice(data.indexOf(item), 1)
   fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
+  bot.watchlist.splice(bot.watchlist.indexOf(item), 1)
 }
 
 /**

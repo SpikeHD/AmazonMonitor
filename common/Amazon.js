@@ -54,8 +54,10 @@ exports.categoryDetails = async (bot, l) => {
   let node, ie, tld, path
 
   try {
-    node = l.split('node=')[1].split('&')[0]
-    ie = l.split('ie=')[1].split('&')[0]
+    node = l.split('node=')[1]
+    if (node.includes('&')) node = node.split('&')[0]
+    ie = l.split('ie=')[1]
+    if (ie.includes('&')) ie = ie.split('&')[0]
     tld = l.split('amazon.')[1].split('/')[0]
     path = l.split(tld + '/')[1].split('?')[0]
   } catch (e) {
@@ -140,6 +142,7 @@ function parse($, l) {
  */
 function category($, l) {
   debug.log('Detected category', 'debug')
+  let tld = l.split('amazon.')[1].split('/')[0]
   let obj = {
     link: l,
     list: []
@@ -148,15 +151,15 @@ function category($, l) {
   
   obj.list = topRated.map(i => {
     let item = $(i).find('.octopus-pc-item-link')
-    let link = item.attr('href')
+    let asin = item.attr('href').split("/dp/")[1].split('?')[0].replace(/\//g, '')
     let name = item.attr('title')
     let priceFull = $(i).find('.octopus-pc-asin-price').text().trim()
     let price = util.priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
 
     return {
       full_title: name,
-      full_link: link,
-      asin: link.split("/dp/")[1].split('?')[0].replace(/\//g, ''),
+      full_link: `https://amazon.${tld}/dp/${asin}/`,
+      asin: asin,
       price: price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),

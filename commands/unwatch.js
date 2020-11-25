@@ -28,15 +28,13 @@ module.exports.run = async (bot, guild, message, args) => {
 
       if (!item) return 'Not an existing item!'
       else {
-        removeWatchlistItem(item.link).then(() => {
+        removeWatchlistItem(bot, item.link).then(() => {
           existing.forEach(itm => {
             let asin = itm.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
             if (itm.link.includes(asin)) {
               localItem = bot.watchlist.indexOf(itm)
             }
           })
-
-          bot.watchlist.splice(localIndex, 1)
           message.channel.send('Successfully removed item: ' + item.link)
         })
       }
