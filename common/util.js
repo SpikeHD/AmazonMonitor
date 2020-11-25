@@ -76,8 +76,8 @@ exports.argParser = (opts, avblArgs) => {
  *  Appends ... to long strings
  */
 exports.trim = (s, lim) => {
-  if(s.length > 70) {
-    return s.substr(0, 70) + '...'
+  if(s.length > lim) {
+    return s.substr(0, lim) + '...'
   } else return s
 }
 
@@ -243,7 +243,22 @@ async function doCheck(bot, i) {
       await addWatchlistItem(addition)
       bot.watchlist.push(obj)
     } else if (obj.type === 'query') {
-      // TODO
+      let total = 0
+      // Same concept as category. Get new items...
+      const newItems = await amazon.find(bot, obj.query, tld)
+
+      // Match items for comparison
+      const itemsToCompare = newItems.filter(ni => obj.cache.find(o => o.asin === ni.asin))
+
+      itemsToCompare.forEach(item => {
+        const matchingObj = obj.cache.find(o => o.asin === item.asin)
+
+        // Assign channel_id in case there is an alert to send
+        matchingObj.channel_id = obj.channel_id
+        if (priceCheck(bot, matchingObj, item)) total++
+      })
+      
+      debug.log(`${total} item(s) changed`, 'debug')
 
       // Push changes
       const addition = {
@@ -256,7 +271,7 @@ async function doCheck(bot, i) {
       }
 
       // Remove old stuff
-      await removeWatchlistItem(obj.link)
+      await removeWatchlistItem(bot, obj.link)
       // Add new stuff
       await addWatchlistItem(addition) 
       bot.watchlist.push(obj)

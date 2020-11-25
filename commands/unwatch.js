@@ -10,7 +10,6 @@ module.exports = {
 
 module.exports.run = async (bot, guild, message, args) => {
   let existing = bot.watchlist.filter(x => x.guild_id === message.guild.id)
-  let localIndex
   if (!args[1]) {
     message.channel.send(`Use \`${bot.prefix}unwatch [num]\` to unwatch one of the following links`)
     message.channel.startTyping()

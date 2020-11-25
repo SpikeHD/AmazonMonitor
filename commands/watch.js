@@ -96,6 +96,7 @@ module.exports.run = async (bot, guild, message, args) => {
     obj = {
       guild_id: guild.id,
       channel_id: message.channel.id,
+      name: items.name,
       link: items.link,
       cache: items.list.slice(0, cache_limit),
       priceLimit: clArgs.priceLim || 0,
