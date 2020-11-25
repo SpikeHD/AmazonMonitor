@@ -57,21 +57,17 @@ module.exports.run = async (bot, guild, message, args) => {
       return 'You\'re watching too many links! Remove one from your list and try again.'
     } else {
       let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
-      let values = [guild.id, message.channel.id, item.full_link, (parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0), item.full_title, priceLimit]
       obj = {
-        guild_id: values[0],
-        channel_id: values[1],
-        link: values[2],
-        lastPrice: values[3],
-        item_name: values[4],
-        priceLimit: values[5],
+        guild_id: guild.id,
+        channel_id: message.channel.id,
+        link: item.full_link,
+        lastPrice: parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0,
+        item_name: item.full_title,
+        priceLimit: priceLimit,
         type: 'link'
       }
-  
-      bot.debug.log('Occasionally one or a couple of these values will be empty. Doesn\'t affect functionality', 'info')
-      bot.debug.log(values, 'debug')
 
-      mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${values[5]}!`:`I'll send updates in this channel from now on!`}`
+      mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
     }
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
