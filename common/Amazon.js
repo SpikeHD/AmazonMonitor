@@ -30,16 +30,17 @@ exports.find = async (bot, q, suffix = 'com') => {
       // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
       if (prodLink) {
         let asin = prodLink.split('/dp/')[1].split('/')[0].replace(/\?/g, '')
-        let price = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
+        let priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
+        let price = util.priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
         let obj = {
-          title: $(this).find('span.a-text-normal').text().trim(),
+          full_title: $(this).find('span.a-text-normal').text().trim(),
           ratings: $(this).find('.a-icon-alt').text().trim(),
-          price: price,
-          lastPrice: parseFloat(util.priceFormat(price.replace(/[a-zA-Z]/g, ''))) || 0,
-          symbol: price.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+          price: price.includes('NaN') ? '':price,
+          lastPrice: parseFloat(util.priceFormat(price)) || 0,
+          symbol: priceString.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
           asin: asin,
-          prod_link: `https://www.amazon.${suffix}/dp/${asin}`
+          full_link: `https://www.amazon.${suffix}/dp/${asin}`
         }
 
         results.push(obj)
@@ -160,7 +161,7 @@ function category($, l) {
       full_title: name,
       full_link: `https://amazon.${tld}/dp/${asin}/`,
       asin: asin,
-      price: price,
+      price: price.includes('NaN') ? '':price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       image: $(i).find('.octopus-pc-item-image').attr('src')

@@ -257,7 +257,7 @@ async function doCheck(bot, i) {
         matchingObj.channel_id = obj.channel_id
         if (priceCheck(bot, matchingObj, item)) total++
       })
-      
+
       debug.log(`${total} item(s) changed`, 'debug')
 
       // Push changes
@@ -296,7 +296,7 @@ async function doCheck(bot, i) {
  * @param {Object} item 
  */
 function priceCheck(bot, obj, item) {
-  const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
+  const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
   const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit;
 
   // Compare prices
