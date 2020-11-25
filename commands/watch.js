@@ -42,7 +42,7 @@ module.exports.run = async (bot, guild, message, args) => {
     if (parseFloat(args[2])) priceLimit = parseFloat(util.priceFormat(args[2]))
   
     // If there isn't one, it's probably just a bad URL
-    if (!asin) return 'Not a valid link'
+    if (!asin) return debug.log('Not a valid asin', 'error')
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
@@ -53,9 +53,9 @@ module.exports.run = async (bot, guild, message, args) => {
     }
   
     if (exists) {
-      return 'I\'m already watching that link somewhere else!'
+      return message.channel.send('I\'m already watching that link somewhere else!')
     } else if (existing.length >= bot.itemLimit) {
-      return 'You\'re watching too many links! Remove one from your list and try again.'
+      return message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
     } else {
       let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
       obj = {
