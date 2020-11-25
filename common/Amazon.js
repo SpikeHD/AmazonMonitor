@@ -22,19 +22,21 @@ exports.find = async (bot, q, suffix = 'com') => {
   if (!lim || lim === 0) return null
 
   $('.s-result-list').find('.s-result-item').each(function () {
-    if (results.length >= 10 || results.length >= lim) {
+    if (results.length >= lim) {
       return
     } else {
       let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
 
       // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
       if (prodLink) {
+        let asin = prodLink.split('/dp/')[1].split('/')[0].replace(/\?/g, '')
         let obj = {
           title: $(this).find('span.a-text-normal').text().trim(),
           ratings: $(this).find('.a-icon-alt').text().trim(),
           price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-          prod_link: `https://www.amazon.${suffix}${prodLink}`
+          asin: asin,
+          prod_link: `https://www.amazon.${suffix}/dp/${asin}`
         }
 
         results.push(obj)

@@ -1,7 +1,7 @@
 const util = require('../common/util')
 const amazon = require('../common/Amazon')
 const { addWatchlistItem } = require('../common/data')
-const {tld} = require('../config.json')
+const { cache_limit, tld } = require('../config.json')
 
 module.exports = {
   name: "watch",
@@ -13,7 +13,7 @@ module.exports = {
 module.exports.run = async (bot, guild, message, args) => {
   // Get an array of all existing entries to make sure we don't have a duplicate
   let existing = bot.watchlist.filter(x => x && x.guild_id === message.guild.id)
-  let asin, tld, obj, mContents;
+  let asin, itld, obj, mContents;
   let priceLimit = 0;
   let exists = false
   let argsObj = {
@@ -33,7 +33,7 @@ module.exports.run = async (bot, guild, message, args) => {
     // Compare asins for duplicate
     try {
       asin = clArgs.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
-      tld = clArgs.link.split('amazon.')[1].split('/')[0]
+      itld = clArgs.link.split('amazon.')[1].split('/')[0]
     } catch (e) {
       return 'Not a valid link'
     }
@@ -56,7 +56,7 @@ module.exports.run = async (bot, guild, message, args) => {
     } else if (existing.length >= bot.itemLimit) {
       return 'You\'re watching too many links! Remove one from your list and try again.'
     } else {
-      let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
+      let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
       let values = [guild.id, message.channel.id, item.full_link, (parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0), item.full_title, priceLimit]
       obj = {
         guild_id: values[0],
@@ -75,8 +75,7 @@ module.exports.run = async (bot, guild, message, args) => {
     }
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
-    // We do not actually store the items since they can change,
-    // and we always want the most recent data.
+    // We store the items and refresh the cache about once a day.
     const items = await amazon.categoryDetails(bot, clArgs.category).catch(e => {
       debug.log(e.message, 'error')
       return message.channel.send('Invalid category!')
@@ -84,7 +83,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
     // Check for existing
     existing.forEach(itm => {
-      if (itm.link.includes(items.node)) {
+      if (itm.link && itm.link.includes(items.node)) {
         exists = true
       }
     })
@@ -98,11 +97,10 @@ module.exports.run = async (bot, guild, message, args) => {
       guild_id: guild.id,
       channel_id: message.channel.id,
       link: items.link,
+      cache: items.list.slice(0, cache_limit),
       priceLimit: clArgs.priceLim || 0,
       type: 'category'
     }
-
-    console.log(items)
 
     mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
   } else if (clArgs.query.length > 0) {
@@ -124,6 +122,7 @@ module.exports.run = async (bot, guild, message, args) => {
       guild_id: guild.id,
       channel_id: message.channel.id,
       query: clArgs.query,
+      cache: items.slice(0, cache_limit),
       priceLimit: clArgs.priceLim || 0,
       type: 'query'
     }
