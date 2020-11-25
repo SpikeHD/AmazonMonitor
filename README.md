@@ -19,6 +19,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
   "token":"YOUR_BOT_TOKEN",
   "URLParams":{},
   "guild_item_limit":5,
+  "cache_limit":10,
   "required_perms":[],
   "tld":"com",
   "autoCartLink":true,
@@ -26,6 +27,23 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
 }
 ```
 Filling in the proper values of course. We'll go over each of them specifically below.
+
+# New in v1.5.0 - Cache limit and watch types
+Amazon categories (eg. `https://www.amazon.ca/Tablets/b/?ie=UTF8&node=2690953011`) and search queries (eg. `iphone`) can now be watched. This will cache the entires found when first running the `watch` command, and will update the cache and send price alerts on subsequent price checks.
+
+Due to this, the watch command required a bit of a rework, and now uses arguments to specify which type you are watching. Here's how it works now (assume prefix = !):
+
+Watch a link:
+
+`!watch -l https://www.amazon.ca/dp/B0813VL2K8/`
+
+Watch a category:
+
+`!watch -c https://www.amazon.ca/Tablets/b/?ie=UTF8&node=2690953011`
+
+Watch the results of a search query (note the + instead of space):
+
+`!watch -q nintendo+switch`
 
 ## Proxy Support
 If you use a proxy service (preferably paid, free ones are pretty hit and miss) then you can include a `proxylist.txt` file in the main bot folder, where each one is separated by a newline. The file is automatically detected so there is no need for any config changes once you create/add it.
@@ -35,6 +53,9 @@ To set up the bot user, head to https://discordapp.com/developers and login. Fro
 
 ### Guild item limit
 You may have noticed the last value, `"guild_item_limit"`. This value can be changed, but at the risk of being flagged as a bot and breaking everything. I don't even know if 5 is too high or low, so just... keep it as low as possible?
+
+### Cache limit
+Due to the local storage-y nature of the watchable `category` and `query` items, it has to store some cache. If you worry about data loss, you can make this a small number, like 5 or 10. Otherwise, go nuts, I think you'll be storing at most like 30 items. 
 
 ### Required Permissions
 The `required_perms` field is an optional list of permissions that a user with be required to have for running any command that changes the watchlist in any way. You can leave this empty if you want anybody to be able to use them.

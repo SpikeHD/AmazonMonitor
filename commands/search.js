@@ -28,7 +28,7 @@ module.exports.run = async (bot, guild, message, args) => {
   let n = 1
   item.forEach(r => {
     // Add an embed field for each item
-    embed.addField(`[${n}] ${trim(r.title, 70)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
+    embed.addField(`[${n}] ${trim(r.full_title, 70)}`, `${!r.ratings.length <= 1 ? r.ratings:'no ratings'} | ${r.price !== '' ? r.price:'none/not in stock'}`)
     n++
   })
 
@@ -55,7 +55,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
       // If the "command" is just a number, we assume that they want details on that number in the list
       if (parseInt(command)) {
-        link = item[parseInt(command) - 1].prod_link
+        link = item[parseInt(command) - 1].full_link
 
         bot.debug.log(link, 'info')
 
@@ -71,7 +71,7 @@ module.exports.run = async (bot, guild, message, args) => {
       } else {
         switch (command) {
           case 'quickwatch':
-            link = item[parseInt(col.first().content.split(' ')[1]) - 1].prod_link
+            link = item[parseInt(col.first().content.split(' ')[1]) - 1].full_link
 
             // Execute the 'watch' command
             message.channel.startTyping()

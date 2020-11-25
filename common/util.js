@@ -5,8 +5,8 @@ const cheerio = require('cheerio')
 const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
-const { getWatchlist, updateWatchlistItem } = require('./data')
-const { autoCartLink } = require('../config.json')
+const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
+const { autoCartLink, cache_limit, tld } = require('../config.json')
 let userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -45,12 +45,39 @@ exports.priceFormat = (p) => {
   return p
 }
 
+/**
+ * Parse arguments from an array, kinda like a commandline.
+ * 
+ * @param {Array} opts
+ * @param {Array} avblArgs 
+ */
+exports.argParser = (opts, avblArgs) => {
+  for (let i = 0; i < opts.length; i++) {
+    if (opts[i].startsWith('-')) {
+      // Get part of flag after hyphen
+      let argVal = opts[i].split('-')[opts[i].lastIndexOf('-') + 1]
+      // Get matching argument in avblArgs
+      let avblArg = Object.keys(avblArgs).filter(x => x.startsWith(argVal[0]))
+      
+      if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith("-") || !opts[i + 1])) {
+        // If the argument has no value associated with it, assume boolean
+        avblArgs[avblArg] = true
+  
+        // Otherwise, assume actual
+      } else avblArgs[avblArg] = opts[i + 1];
+    }
+  }
+
+  // Return object with filled in values
+  return avblArgs
+}
+
 /*
  *  Appends ... to long strings
  */
 exports.trim = (s, lim) => {
-  if(s.length > 70) {
-    return s.substr(0, 70) + '...'
+  if(s.length > lim) {
+    return s.substr(0, lim) + '...'
   } else return s
 }
 
@@ -60,7 +87,7 @@ exports.trim = (s, lim) => {
  * @param {Object} obj 
  */
 exports.parseParams = (obj) => {
-  if(Object.keys(obj).length === 0) return ''
+  if(Object.keys(obj).length === 0) return '?'
   let str = "?"
   Object.keys(obj).forEach(k => {
     str += `${k}=${obj[k]}&`
@@ -174,16 +201,83 @@ async function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
     const obj = bot.watchlist[i]
 
-    // Get details
-    const item = await amazon.details(bot, obj.link)
-    const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
-    const underLimit = curPrice < obj.priceLimit || obj.priceLimit === 0;
+    if (obj.type === 'link') {
+      // Get details
+      const item = await amazon.details(bot, obj.link)
+      const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
-    // Compare prices
-    if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) sendInStockAlert(bot, obj, item)
-    if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) sendPriceAlert(bot, obj, item)
-    if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
+      priceCheck(bot, obj, item)
+      if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
+    } else if (obj.type === 'category') {
+      let total = 0
+      // First, get current items in category for comparison
+      const newItems = await amazon.categoryDetails(bot, obj.link)
 
+      // Match items in both arrays and only compare those prices.
+      const itemsToCompare = newItems.list.filter(ni => obj.cache.find(o => o.asin === ni.asin))
+
+      // Compare new items to cache and alert on price change
+      itemsToCompare.forEach(item => {
+        const matchingObj = obj.cache.find(o => o.asin === item.asin)
+
+        // Assign channel_id in case there is an alert to send
+        matchingObj.channel_id = obj.channel_id
+        if (priceCheck(bot, matchingObj, item)) total++
+      })
+
+      // Push new list to watchlist
+      const addition = {
+        guild_id: obj.guild_id,
+        channel_id: obj.channel_id,
+        link: obj.link,
+        cache: newItems.list.slice(0, cache_limit),
+        priceLimit: obj.priceLim || 0,
+        type: 'category'
+      }
+
+      debug.log(`${total} item(s) changed`, 'debug')
+
+      // Remove old stuff
+      await removeWatchlistItem(bot, obj.link)
+      // Add new stuff
+      await addWatchlistItem(addition)
+      bot.watchlist.push(obj)
+    } else if (obj.type === 'query') {
+      let total = 0
+      // Same concept as category. Get new items...
+      const newItems = await amazon.find(bot, obj.query, tld)
+
+      // Match items for comparison
+      const itemsToCompare = newItems.filter(ni => obj.cache.find(o => o.asin === ni.asin))
+
+      itemsToCompare.forEach(item => {
+        const matchingObj = obj.cache.find(o => o.asin === item.asin)
+
+        // Assign channel_id in case there is an alert to send
+        matchingObj.channel_id = obj.channel_id
+        if (priceCheck(bot, matchingObj, item)) total++
+      })
+
+      debug.log(`${total} item(s) changed`, 'debug')
+
+      // Push changes
+      const addition = {
+        guild_id: obj.guild_id,
+        channel_id: obj.channel_id,
+        query: obj.query,
+        cache: newItems.slice(0, cache_limit),
+        priceLimit: obj.priceLim || 0,
+        type: 'query'
+      }
+
+      // Remove old stuff
+      await removeWatchlistItem(bot, obj.link)
+      // Add new stuff
+      await addWatchlistItem(addition) 
+      bot.watchlist.push(obj)
+    }
+
+    // Do check with next item
     setTimeout(() => doCheck(bot, i + 1), 6000)
   }
 
@@ -195,20 +289,45 @@ async function doCheck(bot, i) {
 }
 
 /**
+ * Shorthand function for performing simle price comparison.
+ * 
+ * @param {Any} bot 
+ * @param {Object} obj 
+ * @param {Object} item 
+ */
+function priceCheck(bot, obj, item) {
+  const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
+  const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit;
+
+  // Compare prices
+  if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) {
+    sendInStockAlert(bot, obj, item)
+    return true
+  }
+  if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) {
+    sendPriceAlert(bot, obj, item)
+    return true
+  }
+
+  return false
+}
+
+/**
  * Sends an alert to the guildChannel specified in the DB entry
  * 
  * TODO: Maybe support multiple alerts (out of stock, back in stock, etc.)?
  */
 function sendPriceAlert(bot, obj, item) {
-  let link = obj.link
+  // Yeah yeah, I'll fix the inconsistant link props later
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
-    .setAuthor(item.seller)
+    .setAuthor(item.seller ? item.seller:'Amazon')
     .setDescription(`Old Price: ${item.symbol} ${exports.priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('GREEN')
 
@@ -234,14 +353,15 @@ function pushPriceChange(bot, obj, item) {
  */
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) obj.link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html?&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
     .setAuthor(item.seller)
-    .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${item.full_link}`)
+    .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)

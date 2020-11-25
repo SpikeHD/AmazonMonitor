@@ -1,5 +1,4 @@
 const debug = require('./debug')
-const { autoCartLink } = require('../config.json')
 const util = require('./util')
 
 /**
@@ -23,19 +22,25 @@ exports.find = async (bot, q, suffix = 'com') => {
   if (!lim || lim === 0) return null
 
   $('.s-result-list').find('.s-result-item').each(function () {
-    if (results.length >= 10 || results.length >= lim) {
+    if (results.length >= lim) {
       return
     } else {
       let prodLink = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
 
       // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
       if (prodLink) {
+        let asin = prodLink.split('/dp/')[1].split('/')[0].replace(/\?/g, '')
+        let priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
+        let price = util.priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
         let obj = {
-          title: $(this).find('span.a-text-normal').text().trim(),
+          full_title: $(this).find('span.a-text-normal').text().trim(),
           ratings: $(this).find('.a-icon-alt').text().trim(),
-          price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
+          price: price.includes('NaN') ? '':price,
+          lastPrice: parseFloat(util.priceFormat(price)) || 0,
+          symbol: priceString.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-          prod_link: `https://www.amazon.${suffix}${prodLink}`
+          asin: asin,
+          full_link: `https://www.amazon.${suffix}/dp/${asin}`
         }
 
         results.push(obj)
@@ -46,13 +51,43 @@ exports.find = async (bot, q, suffix = 'com') => {
   return results
 }
 
+exports.categoryDetails = async (bot, l) => {
+  let node, ie, tld, path
+
+  try {
+    node = l.split('node=')[1]
+    if (node.includes('&')) node = node.split('&')[0]
+    ie = l.split('ie=')[1]
+    if (ie.includes('&')) ie = ie.split('&')[0]
+    tld = l.split('amazon.')[1].split('/')[0]
+    path = l.split(tld + '/')[1].split('?')[0]
+  } catch (e) {
+    debug.log(e, 'warn')
+    return null
+  }
+
+  // Get parsed page with puppeteer/cheerio
+  const page = await bot.util.getPage(`https://www.amazon.${tld}/${path}/?ie=${ie}&node=${node}`, {
+    type: bot.proxylist ? 'proxy' : 'headless'
+  }).catch(e => {
+    debug.log(e, 'error')
+    return
+  })
+
+  let obj = category(page, l)
+  // Node set for validation
+  obj.node = node
+  
+  return obj
+}
+
 /**
  * Takes a product link or code and spits out some useful details
  * 
  * @param {String} l 
  */
 exports.details = async (bot, l) => {
-  let asin;
+  let asin
 
   // Try to see if there is a valid asin
   try {
@@ -96,6 +131,44 @@ function parse($, l) {
   })
 
   if(emptyVals > 1) debug.log(`Detected ${emptyVals} empty values. Could potentially mean bot was flagged`, 'warn')
+
+  return obj
+}
+
+/**
+ * Get contents of category and return prices and names.
+ * 
+ * @param {Object} $ 
+ * @param {String} l 
+ */
+function category($, l) {
+  debug.log('Detected category', 'debug')
+  let tld = l.split('amazon.')[1].split('/')[0]
+  let obj = {
+    link: l,
+    list: []
+  }
+  let topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray()
+  
+  obj.list = topRated.map(i => {
+    let item = $(i).find('.octopus-pc-item-link')
+    let asin = item.attr('href').split("/dp/")[1].split('?')[0].replace(/\//g, '')
+    let name = item.attr('title')
+    let priceFull = $(i).find('.octopus-pc-asin-price').text().trim()
+    let price = util.priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
+
+    return {
+      full_title: name,
+      full_link: `https://amazon.${tld}/dp/${asin}/`,
+      asin: asin,
+      price: price.includes('NaN') ? '':price,
+      lastPrice: parseFloat(price) || 0,
+      symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+      image: $(i).find('.octopus-pc-item-image').attr('src')
+    }
+  })
+
+  obj.name = $('.bxw-pageheader__title h1').text().trim()
 
   return obj
 }
