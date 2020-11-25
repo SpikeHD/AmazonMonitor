@@ -29,7 +29,7 @@ Setup is easy enough. Clone the repo somewhere and create a file in the main fol
 Filling in the proper values of course. We'll go over each of them specifically below.
 
 # New in v1.5.0 - Cache limit and watch types
-Amazon categories (eg. `https://www.amazon.ca/Tablets/b/?ie=UTF8&node=2690953011`) and search queries (eg. `iphone`) ca nnow be watched. This will cache the entires found when first running the watch command, and will update the cache and send price alerts on subsequent price checks.
+Amazon categories (eg. `https://www.amazon.ca/Tablets/b/?ie=UTF8&node=2690953011`) and search queries (eg. `iphone`) can now be watched. This will cache the entires found when first running the `watch` command, and will update the cache and send price alerts on subsequent price checks.
 
 Due to this, the watch command required a bit of a rework, and now uses arguments to specify which type you are watching. Here's how it works now (assume prefix = !):
 
