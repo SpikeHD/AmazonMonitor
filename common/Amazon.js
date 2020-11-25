@@ -30,10 +30,13 @@ exports.find = async (bot, q, suffix = 'com') => {
       // The way it gets links isn't perfect, so we just make sure the link is valid (or else this crashes and burns)
       if (prodLink) {
         let asin = prodLink.split('/dp/')[1].split('/')[0].replace(/\?/g, '')
+        let price = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
         let obj = {
           title: $(this).find('span.a-text-normal').text().trim(),
           ratings: $(this).find('.a-icon-alt').text().trim(),
-          price: $(this).find('.a-price').find('.a-offscreen').first().text().trim(),
+          price: price,
+          lastPrice: parseFloat(util.priceFormat(price.replace(/[a-zA-Z]/g, ''))) || 0,
+          symbol: price.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
           asin: asin,
           prod_link: `https://www.amazon.${suffix}/dp/${asin}`
@@ -155,6 +158,7 @@ function category($, l) {
       full_link: link,
       asin: link.split("/dp/")[1].split('?')[0].replace(/\//g, ''),
       price: price,
+      lastPrice: parseFloat(price) || 0,
       symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       image: $(i).find('.octopus-pc-item-image').attr('src')
     }

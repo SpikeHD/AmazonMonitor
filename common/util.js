@@ -213,6 +213,10 @@ async function doCheck(bot, i) {
       if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
 
       setTimeout(() => doCheck(bot, i + 1), 6000)
+    } else if (obj.type === 'category') {
+      // Category stuff
+    } else if (obj.type === 'query') {
+      // Query stuff
     }
   }
 
