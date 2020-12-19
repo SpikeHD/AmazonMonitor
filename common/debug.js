@@ -1,4 +1,4 @@
-const colors = require('colors')
+require('colors')
 const { debugEnabled } = require('../config.json')
 
 exports.log = (message, type) => {

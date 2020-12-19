@@ -37,7 +37,7 @@ exports.find = async (bot, q, suffix = 'com') => {
           ratings: $(this).find('.a-icon-alt').text().trim(),
           price: price.includes('NaN') ? '':price,
           lastPrice: parseFloat(util.priceFormat(price)) || 0,
-          symbol: priceString.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+          symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
           asin: asin,
           full_link: `https://www.amazon.${suffix}/dp/${asin}`
@@ -87,7 +87,7 @@ exports.categoryDetails = async (bot, l) => {
  * @param {String} l 
  */
 exports.details = async (bot, l) => {
-  let asin
+  let asin, tld
 
   // Try to see if there is a valid asin
   try {
@@ -163,7 +163,7 @@ function category($, l) {
       asin: asin,
       price: price.includes('NaN') ? '':price,
       lastPrice: parseFloat(price) || 0,
-      symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+      symbol: priceFull.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       image: $(i).find('.octopus-pc-item-image').attr('src')
     }
   })
@@ -215,7 +215,7 @@ function getRegularItem($, l) {
     if(p.length > 0) {
       obj.price = util.priceFormat(p)
       // Hacky but effective way to get currency symbol
-      obj.symbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+      obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
     }
   })
   shippingElms.forEach(s => {

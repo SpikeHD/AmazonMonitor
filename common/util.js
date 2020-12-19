@@ -20,12 +20,12 @@ let browser
  */
 exports.priceFormat = (p) => {
   p = '' + p
-  let currencySymbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+  let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
   if (currencySymbol) p = p.replace(currencySymbol, '')
 
   // Check if the price uses the reverse format
   if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
-    let cents = p.match(/[^\,]*$/)[0]
+    let cents = p.match(/[^,]*$/)[0]
     let dollars = p.replace(cents, '').replace(',', '.')
     
     return dollars.replace('.', ',') + cents
@@ -179,7 +179,7 @@ async function load(html) {
  * Inits a watcher that'll check all of the items for price drops
  */
 exports.startWatcher = async (bot) => {
-  rows = await getWatchlist()
+  const rows = await getWatchlist()
   bot.watchlist = JSON.parse(JSON.stringify(rows))
   debug.log('Watchlist Loaded', 'info')
 
