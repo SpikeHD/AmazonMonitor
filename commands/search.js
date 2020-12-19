@@ -4,10 +4,10 @@ const amazon = require('../common/Amazon')
 const {tld} = require('../config.json')
 
 module.exports = {
-  name: "search",
-  desc: "Search and return the top 10 items using a search term",
-  usage: "search [search term]",
-  type: "view"
+  name: 'search',
+  desc: 'Search and return the top 10 items using a search term',
+  usage: 'search [search term]',
+  type: 'view'
 }
 
 module.exports.run = async (bot, guild, message, args) => {
@@ -49,7 +49,7 @@ module.exports.run = async (bot, guild, message, args) => {
     // Parse the actual command part
     let command = col.first().content.split(bot.prefix)[1].split(' ')[0]
     if (command) {
-      let link;
+      let link
 
       bot.debug.log('I parsed this as a command: ' + command, 'debug')
 
@@ -70,18 +70,18 @@ module.exports.run = async (bot, guild, message, args) => {
         return
       } else {
         switch (command) {
-          case 'quickwatch':
-            link = item[parseInt(col.first().content.split(' ')[1]) - 1].full_link
+        case 'quickwatch':
+          link = item[parseInt(col.first().content.split(' ')[1]) - 1].full_link
 
-            // Execute the 'watch' command
-            message.channel.startTyping()
-            await bot.commands.get('watch').run(bot, message.guild, m, [command, link]).catch(e => {
-              console.log(e)
-            })
-            message.channel.stopTyping(true)
-            break
-          default:
-            break
+          // Execute the 'watch' command
+          message.channel.startTyping()
+          await bot.commands.get('watch').run(bot, message.guild, m, [command, link]).catch(e => {
+            console.log(e)
+          })
+          message.channel.stopTyping(true)
+          break
+        default:
+          break
         }
         return
       }

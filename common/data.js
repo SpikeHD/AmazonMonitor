@@ -4,7 +4,7 @@ const watchFile = './watchlist.json'
 // Setup
 ;(function () {
   if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile))) fs.writeFileSync(watchFile, '[]', 'utf-8')
-})();
+})()
 
 /**
  * Retrieve watchlist.

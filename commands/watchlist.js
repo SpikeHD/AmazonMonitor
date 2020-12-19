@@ -3,10 +3,10 @@ const { trim } = require('../common/util')
 const { getWatchlist } = require('../common/data')
 
 module.exports = {
-  name: "watchlist",
-  desc: "Display a list of each Amazon link currenty being watched in this server",
-  usage: "watchlist",
-  type: "view"
+  name: 'watchlist',
+  desc: 'Display a list of each Amazon link currenty being watched in this server',
+  usage: 'watchlist',
+  type: 'view'
 }
 
 module.exports.run = async (bot, guild, message, args) => {

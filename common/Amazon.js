@@ -91,7 +91,7 @@ exports.details = async (bot, l) => {
 
   // Try to see if there is a valid asin
   try {
-    asin = l.split("/dp/")[1].split("/")[0]
+    asin = l.split('/dp/')[1].split('/')[0]
     tld = l.split('amazon.')[1].split('/')[0]
   } catch (e) {
     debug.log(e, 'warn')
@@ -114,16 +114,16 @@ exports.details = async (bot, l) => {
 function parse($, l) {
   let category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
   let emptyVals = 0
-  let obj;
+  let obj
 
   debug.log('Type: ' + category, 'info')
 
   switch (category) {
-    default: obj = getRegularItem($, l)
-    break;
-    case "kindle store":
-    case "books": obj = getBookItem($, l)
-    break;
+  default: obj = getRegularItem($, l)
+    break
+  case 'kindle store':
+  case 'books': obj = getBookItem($, l)
+    break
   }
 
   Object.keys(obj).forEach(k => {
@@ -152,7 +152,7 @@ function category($, l) {
   
   obj.list = topRated.map(i => {
     let item = $(i).find('.octopus-pc-item-link')
-    let asin = item.attr('href').split("/dp/")[1].split('?')[0].replace(/\//g, '')
+    let asin = item.attr('href').split('/dp/')[1].split('?')[0].replace(/\//g, '')
     let name = item.attr('title')
     let priceFull = $(i).find('.octopus-pc-asin-price').text().trim()
     let price = util.priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
@@ -195,12 +195,12 @@ function getRegularItem($, l) {
   features.forEach(f => {
     // Get features in a more normal format
     parsedFeatures.push(` - ${$(f).text().trim()}`)
-  });
+  })
 
   let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
-    asin: l.split("/dp/")[1].split("/")[0],
+    asin: l.split('/dp/')[1].split('/')[0],
     seller: $('#bylineInfo').text().trim(),
     price: '',
     symbol: '',
@@ -251,7 +251,7 @@ function getBookItem($, l) {
   let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
-    asin: l.split("/dp/")[1].split("/")[0],
+    asin: l.split('/dp/')[1].split('/')[0],
     seller: $('#bylineInfo').find('.contributorNameID').text().trim(),
     price: mainPrice,
     shipping: 'N/A',

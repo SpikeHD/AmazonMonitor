@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
-  type: "view"
+  type: 'view'
 }
 
 module.exports.run = async (bot, guild, message, args) => {

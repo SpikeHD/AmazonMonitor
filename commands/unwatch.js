@@ -2,10 +2,10 @@ const { MessageEmbed } = require('discord.js')
 const { getWatchlist, removeWatchlistItem } = require('../common/data') 
 
 module.exports = {
-  name: "unwatch",
-  desc: "Removes from the watchlist using at number. If no number is provided, returns the watchlist",
-  usage: "unwatch [number]",
-  type: "edit"
+  name: 'unwatch',
+  desc: 'Removes from the watchlist using at number. If no number is provided, returns the watchlist',
+  usage: 'unwatch [number]',
+  type: 'edit'
 }
 
 module.exports.run = async (bot, guild, message, args) => {
@@ -29,7 +29,7 @@ module.exports.run = async (bot, guild, message, args) => {
       else {
         removeWatchlistItem(bot, item.link).then(() => {
           existing.forEach(itm => {
-            let asin = itm.link.split("/dp/")[1].match(/^[a-zA-Z0-9]+/)[0]
+            let asin = itm.link.split('/dp/')[1].match(/^[a-zA-Z0-9]+/)[0]
             if (itm.link.includes(asin)) {
               localItem = bot.watchlist.indexOf(itm)
             }

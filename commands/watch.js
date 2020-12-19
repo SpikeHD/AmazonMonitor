@@ -4,17 +4,17 @@ const { addWatchlistItem } = require('../common/data')
 const { cache_limit, tld } = require('../config.json')
 
 module.exports = {
-  name: "watch",
-  desc: "Add and watch a single Amazon link",
-  usage: "watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: price limit]",
-  type: "edit"
+  name: 'watch',
+  desc: 'Add and watch a single Amazon link',
+  usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: price limit]',
+  type: 'edit'
 }
 
 module.exports.run = async (bot, guild, message, args) => {
   // Get an array of all existing entries to make sure we don't have a duplicate
   let existing = bot.watchlist.filter(x => x && x.guild_id === message.guild.id)
-  let asin, itld, obj, mContents;
-  let priceLimit = 0;
+  let asin, itld, obj, mContents
+  let priceLimit = 0
   let exists = false
   let argsObj = {
     link: '',
@@ -32,7 +32,7 @@ module.exports.run = async (bot, guild, message, args) => {
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
     try {
-      asin = clArgs.link.split("/dp/")[1] || clArgs.link.split("/gp/product/")[1]
+      asin = clArgs.link.split('/dp/')[1] || clArgs.link.split('/gp/product/')[1]
       asin = asin.match(/^[a-zA-Z0-9]+/)[0]
       itld = clArgs.link.split('amazon.')[1].split('/')[0]
     } catch (e) {
@@ -68,7 +68,7 @@ module.exports.run = async (bot, guild, message, args) => {
         type: 'link'
       }
 
-      mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
+      mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
     }
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
@@ -100,7 +100,7 @@ module.exports.run = async (bot, guild, message, args) => {
       type: 'category'
     }
 
-    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
+    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else if (clArgs.query.length > 0) {
     // Check for existing
     existing.forEach(itm => {
@@ -125,7 +125,7 @@ module.exports.run = async (bot, guild, message, args) => {
       type: 'query'
     }
 
-    mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:`I'll send updates in this channel from now on!`}`
+    mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else {
     return message.channel.send('Not a valid link, category, or search query')
   }

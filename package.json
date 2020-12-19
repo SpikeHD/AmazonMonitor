@@ -24,5 +24,8 @@
     "puppeteer-proxy": "^2.1.0",
     "request-promise": "^4.2.5",
     "simple-proxy-agent": "^1.0.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.16.0"
   }
 }
