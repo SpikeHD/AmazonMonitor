@@ -1,28 +1,27 @@
 const { MessageEmbed } = require('discord.js')
 const amazon = require('../common/Amazon')
-const util = require('../common/util')
 
 module.exports = {
-  name: "details",
-  desc: "Return details using an amazon link",
-  usage: "details [amazon link]",
-  type: "view"
+  name: 'details',
+  desc: 'Return details using an amazon link',
+  usage: 'details [amazon link]',
+  type: 'view'
 }
 
 module.exports.run = async (bot, guild, message, args) => {
-  let asin;
-  let tld;
+  let asin
+  let tld
 
   // Try to see if there is a valid asin
   try {
-    asin = args[1].split("/dp/")[1] || args[1].split("/gp/product/")[1]
+    asin = args[1].split('/dp/')[1] || args[1].split('/gp/product/')[1]
     asin = asin.match(/^[a-zA-Z0-9]+/)[0]
     tld = args[1].split('amazon.')[1].split('/')[0]
   } catch (e) {
     return bot.debug.log(e, 'warning')
   }
 
-  let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {
+  let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(() => {
     return 'Got an error retrieving the Amazon item'
   })
 

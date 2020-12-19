@@ -4,7 +4,7 @@ const watchFile = './watchlist.json'
 // Setup
 ;(function () {
   if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile))) fs.writeFileSync(watchFile, '[]', 'utf-8')
-})();
+})()
 
 /**
  * Retrieve watchlist.
@@ -75,16 +75,4 @@ exports.updateWatchlistItem = async (obj, condition) => {
     return x
   })
   fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
-}
-
-function objToString(obj, sep, comma) {
-  let str = ''
-
-  Object.keys(obj).forEach(k => {
-    str += `${k}${sep}${obj[k]}`
-
-    if (Object.keys(obj).length > Object.keys(obj).indexOf(k)+1) str += comma
-  })
-
-  return str
 }

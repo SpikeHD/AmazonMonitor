@@ -1,10 +1,10 @@
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
-  type: "view"
+  type: 'view'
 }
 
-module.exports.run = async (bot, guild, message, args) => {
+module.exports.run = async (bot, guild, message) => {
   let embed = new MessageEmbed()
     .setTitle('AmazonMonitor: Commands and Help')
     .setDescription('This will describe each function and what it does.\n Some commands take a hot second, but 90% of the time it isn\'t broken, so don\'t worry')

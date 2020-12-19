@@ -20,12 +20,12 @@ let browser
  */
 exports.priceFormat = (p) => {
   p = '' + p
-  let currencySymbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+  let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
   if (currencySymbol) p = p.replace(currencySymbol, '')
 
   // Check if the price uses the reverse format
   if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
-    let cents = p.match(/[^\,]*$/)[0]
+    let cents = p.match(/[^,]*$/)[0]
     let dollars = p.replace(cents, '').replace(',', '.')
     
     return dollars.replace('.', ',') + cents
@@ -59,12 +59,12 @@ exports.argParser = (opts, avblArgs) => {
       // Get matching argument in avblArgs
       let avblArg = Object.keys(avblArgs).filter(x => x.startsWith(argVal[0]))
       
-      if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith("-") || !opts[i + 1])) {
+      if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith('-') || !opts[i + 1])) {
         // If the argument has no value associated with it, assume boolean
         avblArgs[avblArg] = true
   
         // Otherwise, assume actual
-      } else avblArgs[avblArg] = opts[i + 1];
+      } else avblArgs[avblArg] = opts[i + 1]
     }
   }
 
@@ -88,7 +88,7 @@ exports.trim = (s, lim) => {
  */
 exports.parseParams = (obj) => {
   if(Object.keys(obj).length === 0) return '?'
-  let str = "?"
+  let str = '?'
   Object.keys(obj).forEach(k => {
     str += `${k}=${obj[k]}&`
   })
@@ -179,7 +179,7 @@ async function load(html) {
  * Inits a watcher that'll check all of the items for price drops
  */
 exports.startWatcher = async (bot) => {
-  rows = await getWatchlist()
+  const rows = await getWatchlist()
   bot.watchlist = JSON.parse(JSON.stringify(rows))
   debug.log('Watchlist Loaded', 'info')
 
@@ -297,7 +297,7 @@ async function doCheck(bot, i) {
  */
 function priceCheck(bot, obj, item) {
   const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
-  const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit;
+  const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit
 
   // Compare prices
   if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) {

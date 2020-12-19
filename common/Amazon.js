@@ -37,7 +37,7 @@ exports.find = async (bot, q, suffix = 'com') => {
           ratings: $(this).find('.a-icon-alt').text().trim(),
           price: price.includes('NaN') ? '':price,
           lastPrice: parseFloat(util.priceFormat(price)) || 0,
-          symbol: priceString.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+          symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
           asin: asin,
           full_link: `https://www.amazon.${suffix}/dp/${asin}`
@@ -87,11 +87,11 @@ exports.categoryDetails = async (bot, l) => {
  * @param {String} l 
  */
 exports.details = async (bot, l) => {
-  let asin
+  let asin, tld
 
   // Try to see if there is a valid asin
   try {
-    asin = l.split("/dp/")[1].split("/")[0]
+    asin = l.split('/dp/')[1].split('/')[0]
     tld = l.split('amazon.')[1].split('/')[0]
   } catch (e) {
     debug.log(e, 'warn')
@@ -114,16 +114,16 @@ exports.details = async (bot, l) => {
 function parse($, l) {
   let category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
   let emptyVals = 0
-  let obj;
+  let obj
 
   debug.log('Type: ' + category, 'info')
 
   switch (category) {
-    default: obj = getRegularItem($, l)
-    break;
-    case "kindle store":
-    case "books": obj = getBookItem($, l)
-    break;
+  default: obj = getRegularItem($, l)
+    break
+  case 'kindle store':
+  case 'books': obj = getBookItem($, l)
+    break
   }
 
   Object.keys(obj).forEach(k => {
@@ -152,7 +152,7 @@ function category($, l) {
   
   obj.list = topRated.map(i => {
     let item = $(i).find('.octopus-pc-item-link')
-    let asin = item.attr('href').split("/dp/")[1].split('?')[0].replace(/\//g, '')
+    let asin = item.attr('href').split('/dp/')[1].split('?')[0].replace(/\//g, '')
     let name = item.attr('title')
     let priceFull = $(i).find('.octopus-pc-asin-price').text().trim()
     let price = util.priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
@@ -163,7 +163,7 @@ function category($, l) {
       asin: asin,
       price: price.includes('NaN') ? '':price,
       lastPrice: parseFloat(price) || 0,
-      symbol: priceFull.replace(/[,\.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
+      symbol: priceFull.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       image: $(i).find('.octopus-pc-item-image').attr('src')
     }
   })
@@ -195,12 +195,12 @@ function getRegularItem($, l) {
   features.forEach(f => {
     // Get features in a more normal format
     parsedFeatures.push(` - ${$(f).text().trim()}`)
-  });
+  })
 
   let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
-    asin: l.split("/dp/")[1].split("/")[0],
+    asin: l.split('/dp/')[1].split('/')[0],
     seller: $('#bylineInfo').text().trim(),
     price: '',
     symbol: '',
@@ -215,7 +215,7 @@ function getRegularItem($, l) {
     if(p.length > 0) {
       obj.price = util.priceFormat(p)
       // Hacky but effective way to get currency symbol
-      obj.symbol = p.replace(/[,\.]+/g, '').replace(/\d/g, '')
+      obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
     }
   })
   shippingElms.forEach(s => {
@@ -251,7 +251,7 @@ function getBookItem($, l) {
   let obj = {
     full_title: $('#productTitle').text().trim(),
     full_link: l,
-    asin: l.split("/dp/")[1].split("/")[0],
+    asin: l.split('/dp/')[1].split('/')[0],
     seller: $('#bylineInfo').find('.contributorNameID').text().trim(),
     price: mainPrice,
     shipping: 'N/A',
