@@ -1,4 +1,3 @@
-const { MessageEmbed } = require('discord.js')
 const { getWatchlist, removeWatchlistItem } = require('../common/data') 
 
 module.exports = {
@@ -28,12 +27,6 @@ module.exports.run = async (bot, guild, message, args) => {
       if (!item) return 'Not an existing item!'
       else {
         removeWatchlistItem(bot, item.link).then(() => {
-          existing.forEach(itm => {
-            let asin = itm.link.split('/dp/')[1].match(/^[a-zA-Z0-9]+/)[0]
-            if (itm.link.includes(asin)) {
-              localItem = bot.watchlist.indexOf(itm)
-            }
-          })
           message.channel.send('Successfully removed item: ' + item.link)
         })
       }

@@ -1,6 +1,5 @@
 const { MessageEmbed } = require('discord.js')
 const amazon = require('../common/Amazon')
-const util = require('../common/util')
 
 module.exports = {
   name: 'details',
@@ -22,7 +21,7 @@ module.exports.run = async (bot, guild, message, args) => {
     return bot.debug.log(e, 'warning')
   }
 
-  let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => {
+  let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(() => {
     return 'Got an error retrieving the Amazon item'
   })
 

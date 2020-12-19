@@ -9,7 +9,7 @@ module.exports = {
   type: 'view'
 }
 
-module.exports.run = async (bot, guild, message, args) => {
+module.exports.run = async (bot, guild, message) => {
   getWatchlist().then(rows => {
     let links = rows.map((x, i) => {
       if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${x.priceLimit}`:''}`

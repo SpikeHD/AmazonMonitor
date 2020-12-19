@@ -42,7 +42,7 @@ module.exports.run = async (bot, guild, message, args) => {
     if (parseFloat(args[2])) priceLimit = parseFloat(util.priceFormat(args[2]))
   
     // If there isn't one, it's probably just a bad URL
-    if (!asin) return debug.log('Not a valid asin', 'error')
+    if (!asin) return bot.debug.log('Not a valid asin', 'error')
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
@@ -57,7 +57,7 @@ module.exports.run = async (bot, guild, message, args) => {
     } else if (existing.length >= bot.itemLimit) {
       return message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
     } else {
-      let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => debug.log(e.message, 'error'))
+      let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => bot.debug.log(e.message, 'error'))
       obj = {
         guild_id: guild.id,
         channel_id: message.channel.id,
@@ -74,7 +74,7 @@ module.exports.run = async (bot, guild, message, args) => {
     // Make sure it is a proper category by grabbing some items.
     // We store the items and refresh the cache about once a day.
     const items = await amazon.categoryDetails(bot, clArgs.category).catch(e => {
-      debug.log(e.message, 'error')
+      bot.debug.log(e.message, 'error')
       return message.channel.send('Invalid category!')
     })
 
