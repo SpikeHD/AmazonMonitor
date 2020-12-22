@@ -147,6 +147,9 @@ exports.getPage = async (url, opts) => {
   await page.close()
 
   debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
+
+  if (typeof $ !== 'function') throw new Error('Cheerio.load() returned something other than a function')
+
   return $
 }
 
