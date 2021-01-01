@@ -74,5 +74,5 @@ exports.updateWatchlistItem = async (obj, condition) => {
 
     return x
   })
-  fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
+  fs.writeFileSync(watchFile, JSON.stringify(data, null, 2), 'utf-8')
 }

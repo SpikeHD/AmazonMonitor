@@ -212,7 +212,7 @@ async function doCheck(bot, i) {
       const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
       priceCheck(bot, obj, item)
-      if (obj.lastPrice < curPrice) pushPriceChange(bot, obj, item)
+      if (obj.lastPrice.toFixed(2) !== curPrice.toFixed(2)) pushPriceChange(bot, obj, item)
     } else if (obj.type === 'category') {
       let total = 0
       // First, get current items in category for comparison
