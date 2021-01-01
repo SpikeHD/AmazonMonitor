@@ -6,7 +6,9 @@ const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
-const { autoCartLink, cache_limit, tld } = require('../config.json')
+const { autoCartLink, cache_limit, tld, watch_cycle, server_notification_sound } = require('../config.json')
+const player = require('play-sound')()
+const path = require('path')
 let userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -27,12 +29,12 @@ exports.priceFormat = (p) => {
   if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
     let cents = p.match(/[^,]*$/)[0]
     let dollars = p.replace(cents, '').replace(',', '.')
-    
     return dollars.replace('.', ',') + cents
   } else if (p.includes(',') && !p.includes('.') && p.split(',')[1].length < 3) {
     return p.replace(',', '.')
   }
 
+  p = p.replace(',','')
   p = parseFloat(p).toLocaleString('en')
 
   // Okay, so we've made sure that reverse-format prices are fixed,
@@ -194,7 +196,7 @@ exports.startWatcher = async (bot) => {
   setInterval(() => {
     debug.log('Checking item prices...', 'message')
     if (bot.watchlist.length > 0) doCheck(bot, 0)
-  }, 120000)
+  }, watch_cycle * 1000)
 }
 
 /**
@@ -315,6 +317,23 @@ function priceCheck(bot, obj, item) {
   return false
 }
 
+
+function alertSound() {
+  if(!server_notification_sound) {
+    return
+  }
+
+  // const soundPath = path.join(__dirname, '');
+  for(let i = 0; i < 5; i++) {
+    debug.log('check sound '+ i, 'debug')
+      setTimeout(() => {
+          player.play(path.join(__dirname,'../media/system-fault-518.wav'), (err) => {
+              if (err) console.log(`Could not play sound: ${err}`);
+          });
+      }, (i) * 1000)
+  }
+}
+
 /**
  * Sends an alert to the guildChannel specified in the DB entry
  * 
@@ -326,7 +345,7 @@ function sendPriceAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
@@ -337,6 +356,7 @@ function sendPriceAlert(bot, obj, item) {
   if(channel) channel.send(embed)
 
   pushPriceChange(bot, obj, item)
+  alertSound()
 }
 
 /**
@@ -359,7 +379,7 @@ function sendInStockAlert(bot, obj, item) {
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
@@ -370,4 +390,5 @@ function sendInStockAlert(bot, obj, item) {
   if(channel) channel.send(embed)
 
   pushPriceChange(bot, obj, item)
+  alertSound()
 }

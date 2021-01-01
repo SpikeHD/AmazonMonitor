@@ -57,6 +57,9 @@ You may have noticed the last value, `"guild_item_limit"`. This value can be cha
 ### Cache limit
 Due to the local storage-y nature of the watchable `category` and `query` items, it has to store some cache. If you worry about data loss, you can make this a small number, like 5 or 10. Otherwise, go nuts, I think you'll be storing at most like 30 items. 
 
+### Watch Cycle
+Watch cycle to check all item on watchlist in seconds. Recommended to leave it at default 5 Guild item limit limit and `watch_cycle` of 60 sec. Adjustment adviced for 10 sec per watch item limits, eg: 5 Guild item limit and then 50 sec watch cycle, 10 Guild item limit and then 100 sec watch cycle
+
 ### Required Permissions
 The `required_perms` field is an optional list of permissions that a user with be required to have for running any command that changes the watchlist in any way. You can leave this empty if you want anybody to be able to use them.
 
@@ -70,6 +73,9 @@ A **Top Level Domain** (or TLD) is just the `.com` or `.ca` of a URL. If you wan
 `co.uk` - UK
 
 `com` - America (default)
+
+### server_notification_sound
+Enable server to play notification sound when item getting alerted.
 
 ### autoCartLink
 If you'd link for the bot to generate a link that will automatically add the item to the users cart when they click it, set this to `true`.
