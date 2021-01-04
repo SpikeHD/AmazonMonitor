@@ -317,7 +317,9 @@ function priceCheck(bot, obj, item) {
   return false
 }
 
-
+/**
+ * Make alert sound in node server.
+ */
 function alertSound() {
   if(!server_notification_sound) {
     return
@@ -325,12 +327,11 @@ function alertSound() {
 
   // const soundPath = path.join(__dirname, '');
   for(let i = 0; i < 5; i++) {
-    debug.log('check sound '+ i, 'debug')
-      setTimeout(() => {
-          player.play(path.join(__dirname,'../media/system-fault-518.wav'), (err) => {
-              if (err) console.log(`Could not play sound: ${err}`);
-          });
-      }, (i) * 1000)
+    setTimeout(() => {
+      player.play(path.join(__dirname,'../media/system-fault-518.wav'), (err) => {
+        if (err) console.log(`Could not play sound: ${err}`);
+      });
+    }, (i) * 1000)
   }
 }
 
