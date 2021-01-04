@@ -107,3 +107,4 @@ dist
 config.json
 proxylist.txt
 watchlist.json
+package-lock.json
