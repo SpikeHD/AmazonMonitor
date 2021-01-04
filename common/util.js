@@ -325,7 +325,6 @@ function alertSound() {
     return
   }
 
-  // const soundPath = path.join(__dirname, '');
   for(let i = 0; i < 5; i++) {
     setTimeout(() => {
       player.play(path.join(__dirname,'../media/system-fault-518.wav'), (err) => {
