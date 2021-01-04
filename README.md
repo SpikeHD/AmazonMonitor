@@ -5,25 +5,25 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
 
 # Jump to:
 
-* [Requirements](#Requirements)
-* [Configuration](#Configuration)
+* [Requirements](#requirements)
+* [Configuration](#configuration)
   * [prefix](#prefix)
   * [token](#token)
-  * [URLParams](#URLParams)
+  * [URLParams](#urlparams)
   * [guild_item_limit](#guild_item_limit)
   * [cache_limit](#cache_limit)
   * [required_perms](#required_perms)
   * [tld](#tld)
-  * [autoCartLink](#autoCartLink)
-  * [debugEnabled](#debugEnabled)
-* [Comamnds](#Commands)
+  * [autoCartLink](#autocartlink)
+  * [debugEnabled](#debugenabled)
+* [Commands](#Commands)
   * [help](#help)
   * [search](#search)
   * [details](#details)
   * [watch](#watch)
   * [watchlist](#watchlist)
   * [unwatch](#unwatch)
-* [Contributing](#Contributing)
+* [Contributing](#contributing)
 
 
 # Requirements
