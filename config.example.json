@@ -1,11 +1,11 @@
 {
   "prefix":"!",
   "token":"my_bot_token",
-  "URLParams":{},
+  "url_params":{},
   "guild_item_limit":5,
   "cache_limit": 10,
   "required_perms":["permission_1", "permission_2"],
   "tld":"com",
-  "autoCartLink":true,
-  "debugEnabled":false
+  "auto_cart_link":true,
+  "debug_enabled":false
 }

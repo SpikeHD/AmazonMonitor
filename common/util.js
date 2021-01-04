@@ -6,7 +6,7 @@ const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
-const { autoCartLink, cache_limit, tld } = require('../config.json')
+const { auto_cart_link, cache_limit, tld } = require('../config.json')
 let userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -82,7 +82,7 @@ exports.trim = (s, lim) => {
 }
 
 /**
- * Parses the URLParams object to a URL-appendable string
+ * Parses the url_params object to a URL-appendable string
  * 
  * @param {Object} obj 
  */
@@ -322,11 +322,11 @@ function priceCheck(bot, obj, item) {
  */
 function sendPriceAlert(bot, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
@@ -356,10 +356,10 @@ function pushPriceChange(bot, obj, item) {
  */
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)

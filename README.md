@@ -9,13 +9,13 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
 * [Configuration](#configuration)
   * [prefix](#prefix)
   * [token](#token)
-  * [URLParams](#urlparams)
+  * [url_params](#url_params)
   * [guild_item_limit](#guild_item_limit)
   * [cache_limit](#cache_limit)
   * [required_perms](#required_perms)
   * [tld](#tld)
-  * [autoCartLink](#autocartlink)
-  * [debugEnabled](#debugenabled)
+  * [auto_cart_link](#auto_cart_link)
+  * [debug_enabled](#debug_enabled)
 * [Commands](#Commands)
   * [help](#help)
   * [search](#search)
@@ -48,12 +48,12 @@ This is the character, or characters, that you will begin every command with. Go
 
 The token is the login information of the bot. If you don't know how to set up a bot user, refer to [this guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
-## URLParams
+## url_params
 
 If you want to include a referral code or something, you can use this option to add as many as you want. You'll notice the curly braces; inside of those is where you add each parameter. And example would be something like this:
 
 ```json
-"URLParams":{
+"url_params":{
   "ref":"my_ref_code",
   "tag":"my_tag"
   etc...
@@ -86,11 +86,11 @@ A TLD, or *Top-Level Domain*, is the little `.com` or `.ca` of a URL. Each regio
 
 \* Just as a heads up, if you run the `details` or `watch` command on an item listed in a different country, it will not convert it to the correct country.
 
-## autoCartLink
+## auto_cart_link
 
 If you're the efficient type, setting this to `true` will make sure that the links in stock.price notifications will bring you to a page that will automatically add the item to your cart.
 
-## debugEnabled
+## debug_enabled
 
 If set to `true`, the console window will spit out all kinds of information related to what it's doing, in order to give you a better understanding of what's goin on in case you're having trouble.
 
