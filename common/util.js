@@ -6,7 +6,7 @@ const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
-const { auto_cart_link, cache_limit, tld } = require('../config.json')
+const { auto_cart_link, cache_limit, tld, minutes_per_check } = require('../config.json')
 let userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
@@ -194,7 +194,7 @@ exports.startWatcher = async (bot) => {
   setInterval(() => {
     debug.log('Checking item prices...', 'message')
     if (bot.watchlist.length > 0) doCheck(bot, 0)
-  }, 120000)
+  }, (minutes_per_check * 60000) || 120000)
 }
 
 /**

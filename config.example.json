@@ -1,6 +1,7 @@
 {
   "prefix":"!",
   "token":"my_bot_token",
+  "minutes_per_check":2,
   "url_params":{},
   "guild_item_limit":5,
   "cache_limit": 10,
