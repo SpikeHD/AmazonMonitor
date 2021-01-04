@@ -16,7 +16,8 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
   * [tld](#tld)
   * [auto_cart_link](#auto_cart_link)
   * [debug_enabled](#debug_enabled)
-* [Commands](#Commands)
+* [Using a proxy list](#proxies)
+* [Commands](#commands)
   * [help](#help)
   * [search](#search)
   * [details](#details)
@@ -93,6 +94,17 @@ If you're the efficient type, setting this to `true` will make sure that the lin
 ## debug_enabled
 
 If set to `true`, the console window will spit out all kinds of information related to what it's doing, in order to give you a better understanding of what's goin on in case you're having trouble.
+
+# Proxies
+
+To make use of your fancy-dancey proxylist, you simply need to create a file named `proxylist.txt` in the main bot folder. Each ip/url should be separated by a new line. Each one should be formatted like so: `http://username:password@ip:port`. An example of some are listed below in the same format yours should be listed:
+
+```
+http://myuser:password123@127.0.0.1:12345
+http://spikehd:testpass@111.22.33.456:8008
+http://amazonuser:amazonpassword@26.29.66.123:2318008
+etc...
+```
 
 # Commands
 
