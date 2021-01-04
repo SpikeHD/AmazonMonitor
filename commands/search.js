@@ -75,7 +75,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
           // Execute the 'watch' command
           message.channel.startTyping()
-          await bot.commands.get('watch').run(bot, message.guild, m, [command, link]).catch(e => {
+          await bot.commands.get('watch').run(bot, message.guild, m, [command, '-l', link]).catch(e => {
             console.log(e)
           })
           message.channel.stopTyping(true)

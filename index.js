@@ -13,7 +13,7 @@ bot.on('ready', () => {
   bot.debug = debug
   bot.proxylist = fs.existsSync('./proxylist.txt')
   bot.required_perms = config.required_perms
-  bot.URLParams = config.URLParams || {}
+  bot.url_params = config.url_params || {}
   bot.prefix = config.prefix
   const str = `
   ##########################################################################

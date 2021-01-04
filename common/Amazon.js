@@ -98,7 +98,7 @@ exports.details = async (bot, l) => {
     return null
   }
 
-  l += bot.util.parseParams(bot.URLParams)
+  l += bot.util.parseParams(bot.url_params)
 
   // Get parsed page with puppeteer/cheerio
   const page = await bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {

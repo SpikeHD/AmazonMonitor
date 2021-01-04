@@ -6,7 +6,7 @@ const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
-const { autoCartLink, cache_limit, tld, watch_cycle, server_notification_sound } = require('../config.json')
+const { auto_cart_link, cache_limit, tld, minutes_per_check, server_notification_sound } = require('../config.json')
 const player = require('play-sound')()
 const path = require('path')
 let userAgents = [
@@ -84,7 +84,7 @@ exports.trim = (s, lim) => {
 }
 
 /**
- * Parses the URLParams object to a URL-appendable string
+ * Parses the url_params object to a URL-appendable string
  * 
  * @param {Object} obj 
  */
@@ -196,7 +196,7 @@ exports.startWatcher = async (bot) => {
   setInterval(() => {
     debug.log('Checking item prices...', 'message')
     if (bot.watchlist.length > 0) doCheck(bot, 0)
-  }, watch_cycle * 1000)
+  }, (minutes_per_check * 60000) || 120000)
 }
 
 /**
@@ -212,7 +212,7 @@ async function doCheck(bot, i) {
       const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
       priceCheck(bot, obj, item)
-      if (obj.lastPrice.toFixed(2) !== curPrice.toFixed(2)) pushPriceChange(bot, obj, item)
+      if (obj.lastPrice !== curPrice) pushPriceChange(bot, obj, item)
     } else if (obj.type === 'category') {
       let total = 0
       // First, get current items in category for comparison
@@ -341,11 +341,11 @@ function alertSound() {
  */
 function sendPriceAlert(bot, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
@@ -376,10 +376,10 @@ function pushPriceChange(bot, obj, item) {
  */
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.URLParams)
+  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(autoCartLink) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.URLParams)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)

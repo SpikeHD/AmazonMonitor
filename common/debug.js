@@ -1,7 +1,7 @@
 require('colors')
-const { debugEnabled } = require('../config.json')
+const { debug_enabled } = require('../config.json')
 
-exports.log = (message, type) => {
+exports.log = (message, type = 'debug') => {
   let t
   switch(type.toLowerCase()) {
   default:
@@ -16,5 +16,5 @@ exports.log = (message, type) => {
   case 'info': t = '[MESSAGE] '.magenta
   }
 
-  if(debugEnabled) console.log(t, message)
+  if(debug_enabled) console.log(t, message)
 }

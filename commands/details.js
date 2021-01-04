@@ -28,7 +28,7 @@ module.exports.run = async (bot, guild, message, args) => {
   // Replace empty values
   Object.keys(item).forEach(k => {
     if (!item[k] ||
-      item[k].length <= 1) item[k] = 'none'
+      item[k].length < 1) item[k] = 'none'
   })
 
   let embed = new MessageEmbed()
@@ -37,7 +37,7 @@ module.exports.run = async (bot, guild, message, args) => {
     .setAuthor(item.seller.includes('\n') ? 'invalid' : item.seller)
     .setImage(item.image)
     .setDescription(`${item.full_link}\n${item.features != 'none' ? item.features.join('\n\n'):''}`)
-    .addField('Price', item.price, true)
+    .addField('Price', item.symbol + item.price, true)
     .addField('Rating', item.rating, true)
     .addField('Shipping', item.shipping, true)
     .addField('Availability', item.availability)
