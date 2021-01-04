@@ -1,7 +1,7 @@
 require('colors')
 const { debug_enabled } = require('../config.json')
 
-exports.log = (message, type) => {
+exports.log = (message, type = 'debug') => {
   let t
   switch(type.toLowerCase()) {
   default:
