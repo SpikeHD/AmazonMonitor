@@ -5,7 +5,6 @@
   "url_params":{},
   "guild_item_limit":5,
   "cache_limit": 10,
-  "watch_cycle": 60,
   "required_perms":["permission_1", "permission_2"],
   "tld":"com",
   "server_notification_sound": false,
