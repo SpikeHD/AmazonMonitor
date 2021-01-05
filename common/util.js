@@ -33,6 +33,7 @@ exports.priceFormat = (p) => {
     return p.replace(',', '.')
   }
 
+  p = p.replace(',', '')
   p = parseFloat(p).toLocaleString('en')
 
   // Okay, so we've made sure that reverse-format prices are fixed,
