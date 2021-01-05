@@ -23,24 +23,24 @@ exports.priceFormat = (p) => {
   let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
   if (currencySymbol) p = p.replace(currencySymbol, '')
 
-  // Check if the price uses the reverse format
-  if(p.includes(',') && p.includes('.') && p.indexOf(',') > p.indexOf('.')) {
-    let cents = p.match(/[^,]*$/)[0]
-    let dollars = p.replace(cents, '').replace(',', '.')
-    
-    return dollars.replace('.', ',') + cents
-  } else if (p.includes(',') && !p.includes('.') && p.split(',')[1].length < 3) {
-    return p.replace(',', '.')
+  if (!p.includes('.')) {
+    p += '.00'
+  }
+
+  // Strip symbols from number
+  if (p.indexOf('.') > p.indexOf(',')) {
+    const cents = p.split('.')[1]
+    const dollars = p.split(`.${cents}`)[0].split(',').join('')
+
+    p = `${dollars}.${cents}`
+  } else {
+    const cents = p.split(',')[1]
+    const dollars = p.split(`,${cents}`)[0].split('.').join('')
+
+    p = `${dollars}.${cents}`
   }
 
   p = parseFloat(p).toLocaleString('en')
-
-  // Okay, so we've made sure that reverse-format prices are fixed,
-  // now make sure commas are placed in the right spots
-  if (!p.includes('.')) {
-    let split = p.split('').concat(['.', '0', '0'])
-    p = split.join('')
-  }
 
   return p
 }
@@ -325,6 +325,9 @@ function sendPriceAlert(bot, obj, item) {
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
 
+  console.log(item)
+  console.log(obj)
+
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
 
@@ -357,6 +360,9 @@ function pushPriceChange(bot, obj, item) {
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
+
+  console.log(item)
+  console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
