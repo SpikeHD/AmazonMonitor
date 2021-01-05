@@ -329,7 +329,7 @@ function sendPriceAlert(bot, obj, item) {
   console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
@@ -365,7 +365,7 @@ function sendInStockAlert(bot, obj, item) {
   console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${obj.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)
