@@ -2,9 +2,9 @@
 
 Problems with something? Here's where you might find some answers!
 
-### I'm getting a "failed to load shared libraries error!"
+### I'm getting a "failed to load shared libraries" error!
 
-Looks like you're missing some Puppeteer dependancies! See [this Medium article](https://medium.com/@ssmak/how-to-fix-puppetteer-error-while-loading-shared-libraries-libx11-xcb-so-1-c1918b75acc3) for a solution
+Looks like you're missing some Puppeteer dependencies! See [this Medium article](https://medium.com/@ssmak/how-to-fix-puppetteer-error-while-loading-shared-libraries-libx11-xcb-so-1-c1918b75acc3) for a solution
 
 ### I'm on a Raspberry Pi!
 
@@ -29,6 +29,6 @@ Noted in [this issue](https://github.com/SpikeHD/AmazonMonitor/issues/44), you'r
 
 This is unfortunately a common problem and a limitation of web scraping. 99% of the time something like this happens, it means the bot is temporarily flagged, and Amazon is returning a Captcha instead of the item or page you're trying to get.
 
-If you're a bit tech-savvy and want to see if this is the case, use `curl` or something similar to output the HTML when a request is made.
+If you're a bit tech-savvy and want to see if this is the case, use `curl` or something similar to output the HTML for the item or page you're trying to view.
 
 The best solution to this problem? Wait (or use a proxylist). Take the bot down for a few minutes, increase the time between price checks, and try again.
