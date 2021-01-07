@@ -1,4 +1,4 @@
-# FAQ
+# FAQ (Or I guess more of an FES - Frequently Encountered Scenarios)
 
 Problems with something? Here's where you might find some answers!
 
