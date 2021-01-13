@@ -3,6 +3,7 @@ const { debug_enabled } = require('../config.json')
 
 exports.log = (message, type = 'debug') => {
   let t
+  /* eslint-disable indent */
   switch(type.toLowerCase()) {
     default:
     case 'log': t = '[LOG] '.blue

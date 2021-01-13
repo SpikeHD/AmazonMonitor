@@ -36,7 +36,7 @@ exports.find = async (bot, q, suffix = 'com') => {
           full_title: $(this).find('span.a-text-normal').text().trim(),
           ratings: $(this).find('.a-icon-alt').text().trim(),
           price: price.includes('NaN') ? '':price,
-          lastPrice: parseFloat(util.priceFormat(price)) || 0,
+          lastPrice: parseFloat(price) || 0,
           symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
           sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
           asin: asin,

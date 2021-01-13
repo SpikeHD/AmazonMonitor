@@ -317,16 +317,11 @@ function priceCheck(bot, obj, item) {
 
 /**
  * Sends an alert to the guildChannel specified in the DB entry
- * 
- * TODO: Maybe support multiple alerts (out of stock, back in stock, etc.)?
  */
 function sendPriceAlert(bot, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
-
-  console.log(item)
-  console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
@@ -345,7 +340,7 @@ function sendPriceAlert(bot, obj, item) {
 /**
  * Pushes a change in price to the DB
  */
-function pushPriceChange(bot, obj, item) {
+function pushPriceChange(obj, item) {
   let price = item.price.replace(/,/g, '')
   updateWatchlistItem({
     lastPrice: (parseFloat(price) || 0)
@@ -360,9 +355,6 @@ function pushPriceChange(bot, obj, item) {
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
-
-  console.log(item)
-  console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
