@@ -42,8 +42,6 @@ exports.priceFormat = (p) => {
 
   p = parseFloat(p).toLocaleString('en')
 
-  console.log(p)
-
   return p
 }
 
@@ -327,9 +325,6 @@ function sendPriceAlert(bot, obj, item) {
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
 
-  console.log(item)
-  console.log(obj)
-
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
@@ -362,9 +357,6 @@ function pushPriceChange(bot, obj, item) {
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
   let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
-
-  console.log(item)
-  console.log(obj)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
