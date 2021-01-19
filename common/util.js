@@ -23,7 +23,7 @@ exports.priceFormat = (p) => {
   let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
   if (currencySymbol) p = p.replace(currencySymbol, '')
 
-  if (!p.includes('.')) {
+  if (!p.includes('.') && !p.includes(',')) {
     p += '.00'
   }
 
@@ -41,6 +41,8 @@ exports.priceFormat = (p) => {
   }
 
   p = parseFloat(p).toLocaleString('en')
+
+  console.log(p)
 
   return p
 }

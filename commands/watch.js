@@ -28,6 +28,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
   bot.debug.log(existing, 'debug')
   bot.debug.log(clArgs, 'debug')
+  bot.debug.log(`PRice Limit: ${priceLimit}`, 'debug')
 
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
