@@ -133,7 +133,7 @@ Spits out details on an item from Amazon. Useful in conjunction with `search`.
 
 ## watch
 
-* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`
+* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`. Include `-p` for a price limit, eg. `watch -q toothbrush -p 100`.
 * Examples:
   * `!watch -l https://www.amazon.it/dp/B08C76W2WM/`
   * `!watch -c https://www.amazon.ca/b/?_encoding=UTF8&node=677244011`
