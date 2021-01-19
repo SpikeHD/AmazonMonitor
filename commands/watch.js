@@ -6,7 +6,7 @@ const { cache_limit, tld } = require('../config.json')
 module.exports = {
   name: 'watch',
   desc: 'Add and watch a single Amazon link',
-  usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: price limit]',
+  usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: -p for price limit ]',
   type: 'edit'
 }
 
@@ -28,7 +28,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
   bot.debug.log(existing, 'debug')
   bot.debug.log(clArgs, 'debug')
-  bot.debug.log(`PRice Limit: ${priceLimit}`, 'debug')
+  bot.debug.log(`Price Limit: ${priceLimit}`, 'debug')
 
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
