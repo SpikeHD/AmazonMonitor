@@ -26,6 +26,6 @@
     "simple-proxy-agent": "^1.0.7"
   },
   "devDependencies": {
-    "eslint": "^7.16.0"
+    "eslint": "^7.17.0"
   }
 }

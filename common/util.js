@@ -317,8 +317,6 @@ function priceCheck(bot, obj, item) {
 
 /**
  * Sends an alert to the guildChannel specified in the DB entry
- * 
- * TODO: Maybe support multiple alerts (out of stock, back in stock, etc.)?
  */
 function sendPriceAlert(bot, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
@@ -342,7 +340,7 @@ function sendPriceAlert(bot, obj, item) {
 /**
  * Pushes a change in price to the DB
  */
-function pushPriceChange(bot, obj, item) {
+function pushPriceChange(obj, item) {
   let price = item.price.replace(/,/g, '')
   updateWatchlistItem({
     lastPrice: (parseFloat(price) || 0)

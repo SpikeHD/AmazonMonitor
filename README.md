@@ -3,6 +3,8 @@
 
 AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other people, about price drops and restocks on Amazon. It supports setting price limits, watching items from other countries, watching entire search queries and categories, and more.
 
+[FAQ (please read this before creating an issue. Thanks!)](https://github.com/SpikeHD/AmazonMonitor/blob/master/FAQ.md)
+
 # Jump to:
 
 * [Requirements](#requirements)
@@ -51,7 +53,7 @@ The token is the login information of the bot. If you don't know how to set up a
 
 ## url_params
 
-If you want to include a referral code or something, you can use this option to add as many as you want. You'll notice the curly braces; inside of those is where you add each parameter. And example would be something like this:
+If you want to include a referral code or something, you can use this option to add as many as you want. You'll notice the curly braces; inside of those is where you add each parameter. An example would be something like this:
 
 ```json
 "url_params":{
@@ -89,11 +91,11 @@ A TLD, or *Top-Level Domain*, is the little `.com` or `.ca` of a URL. Each regio
 
 ## auto_cart_link
 
-If you're the efficient type, setting this to `true` will make sure that the links in stock.price notifications will bring you to a page that will automatically add the item to your cart.
+If you're the efficient type, setting this to `true` will make sure that the links in stock/price notifications will bring you to a page that will automatically add the item to your cart.
 
 ## debug_enabled
 
-If set to `true`, the console window will spit out all kinds of information related to what it's doing, in order to give you a better understanding of what's goin on in case you're having trouble.
+If set to `true`, the console window will spit out all kinds of information related to what it's doing, in order to give you a better understanding of what's going on in case you're having trouble.
 
 # Proxies
 

@@ -63,7 +63,7 @@ module.exports.run = async (bot, guild, message, args) => {
         guild_id: guild.id,
         channel_id: message.channel.id,
         link: item.full_link,
-        lastPrice: parseFloat(util.priceFormat(item.price).replace(/,/g, '')) || 0,
+        lastPrice: parseFloat(util.priceFormat(item.price)) || 0,
         item_name: item.full_title,
         priceLimit: priceLimit,
         type: 'link'
