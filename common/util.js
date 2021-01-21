@@ -210,7 +210,7 @@ async function doCheck(bot, i) {
       const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
       priceCheck(bot, obj, item)
-      if (obj.lastPrice !== curPrice) pushPriceChange(bot, obj, item)
+      if (obj.lastPrice !== curPrice) pushPriceChange(obj, item)
     } else if (obj.type === 'category') {
       let total = 0
       // First, get current items in category for comparison
@@ -334,14 +334,21 @@ function sendPriceAlert(bot, obj, item) {
 
   if(channel) channel.send(embed)
 
-  pushPriceChange(bot, obj, item)
+  pushPriceChange(obj, item)
 }
 
 /**
  * Pushes a change in price to the DB
  */
 function pushPriceChange(obj, item) {
+  // Check if we *actually* got data
+  if (!item.full_title && !item.symbol) {
+    debug.log('Aborting price update, data not valid', 'warn')
+    return
+  }
+
   let price = item.price.replace(/,/g, '')
+
   updateWatchlistItem({
     lastPrice: (parseFloat(price) || 0)
   }, {
@@ -367,5 +374,5 @@ function sendInStockAlert(bot, obj, item) {
 
   if(channel) channel.send(embed)
 
-  pushPriceChange(bot, obj, item)
+  pushPriceChange(obj, item)
 }
