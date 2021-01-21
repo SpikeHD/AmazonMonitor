@@ -342,7 +342,7 @@ function sendPriceAlert(bot, obj, item) {
  */
 function pushPriceChange(obj, item) {
   // Check if we *actually* got data
-  if (!item.full_title && !item.image) {
+  if (!item.full_title && item.image.includes('via.placeholder.com')) {
     debug.log('Aborting price update, data not valid', 'warn')
     return
   }
