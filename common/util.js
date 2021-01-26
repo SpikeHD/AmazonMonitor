@@ -115,7 +115,7 @@ exports.getPage = async (url, opts) => {
     let proxies = l.split('\n')
 
     if (proxies.length > 0) {
-      proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+      proxy = proxies[Math.floor(Math.random() * proxies.length)]
     } else {
       debug.log('No proxies found in proxylist.txt', 'error')
     }
