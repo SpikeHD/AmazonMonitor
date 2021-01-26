@@ -333,8 +333,6 @@ function sendPriceAlert(bot, obj, item) {
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
-
-  pushPriceChange(obj, item)
 }
 
 /**
@@ -373,6 +371,4 @@ function sendInStockAlert(bot, obj, item) {
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
-
-  pushPriceChange(obj, item)
 }
