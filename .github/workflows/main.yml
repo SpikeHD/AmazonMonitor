@@ -23,4 +23,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Runs ESLint against everything
-        run: eslint .
+        run: ./node_modules/eslint .
