@@ -40,7 +40,7 @@ exports.priceFormat = (p) => {
     p = `${dollars}.${cents}`
   }
 
-  p = parseFloat(p).toLocaleString('en')
+  p = parseFloat(p).toFixed(2)
 
   return p
 }
