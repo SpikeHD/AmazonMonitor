@@ -110,3 +110,4 @@ proxylist.txt
 watchlist.json
 
 package-lock.json
+yarn.lock
