@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor) ![](https://img.shields.io/david/SpikeHD/AmazonMonitor)
+![](https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor) ![](https://img.shields.io/david/SpikeHD/AmazonMonitor) ![](https://img.shields.io/github/workflow/status/SpikeHD/AmazonMonitor/ESLint)
 # Description
 
 AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other people, about price drops and restocks on Amazon. It supports setting price limits, watching items from other countries, watching entire search queries and categories, and more.
