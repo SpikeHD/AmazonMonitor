@@ -17,15 +17,15 @@
   },
   "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "^1.0.0-rc.5",
     "colors": "^1.4.0",
-    "discord.js": "^12.1.1",
-    "puppeteer": "^3.0.1",
-    "puppeteer-proxy": "^2.1.0",
+    "discord.js": "^12.5.1",
+    "puppeteer": "^5.5.0",
+    "puppeteer-proxy": "^2.1.1",
     "request-promise": "^4.2.5",
-    "simple-proxy-agent": "^1.0.7"
+    "simple-proxy-agent": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^7.17.0"
+    "eslint": "^7.19.0"
   }
 }
