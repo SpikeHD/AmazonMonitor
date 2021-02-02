@@ -1,6 +1,5 @@
 const util = require('../common/util')
 const pup = require('puppeteer')
-const cheerio = require('cheerio')
 
 describe('utils test', () => {
   it('tests price formatting', () => {
