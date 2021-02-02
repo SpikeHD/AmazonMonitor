@@ -4,7 +4,7 @@
   "description": "A Discord bot that monitors Amazon items for price drops/restocks",
   "main": "index.js",
   "scripts": {
-    "test": "jest tests/"
+    "test": "jest --coverage tests/"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "jest": "^26.6.3"
   },
   "jest":{
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageReporters": ["text"]
   }
 }
