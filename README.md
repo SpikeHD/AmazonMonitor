@@ -19,6 +19,7 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
   * [auto_cart_link](#auto_cart_link)
   * [debug_enabled](#debug_enabled)
 * [Using a proxy list](#proxies)
+* [Starting the bot](#starting)
 * [Commands](#commands)
   * [help](#help)
   * [search](#search)
@@ -108,6 +109,27 @@ http://amazonuser:amazonpassword@26.29.66.123:2318008
 etc...
 ```
 
+# Starting
+
+To start the bot, simply open a terminal and run these commands:
+
+* Set directory to bot directory:
+  ```sh
+  cd "C:/Path/To/Bot/Folder"
+  ```
+* Run the main file:
+  ```sh
+  node index
+  ```
+  
+To restart the bot after a config change:
+
+* Press Ctrl+C
+* Start it the same as before:
+  ```sh
+  node index
+  ```
+ 
 # Commands
 
 Like explained before, commands can only be run with users that have the permissions in the `required_perms` section of the config.
