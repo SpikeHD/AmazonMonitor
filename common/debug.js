@@ -1,7 +1,7 @@
 require('colors')
 const { debug_enabled } = require('../config.json')
 
-exports.log = (message, type = 'debug') => {
+exports.log = (message, type = 'debug', override = false) => {
   let t
   /* eslint-disable indent */
   switch(type.toLowerCase()) {
@@ -17,5 +17,5 @@ exports.log = (message, type = 'debug') => {
     case 'info': t = '[MESSAGE] '.magenta
   }
 
-  if(debug_enabled) console.log(t, message)
+  if(debug_enabled || override) console.log(t, message)
 }

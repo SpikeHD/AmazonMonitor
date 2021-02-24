@@ -43,6 +43,12 @@ bot.on('ready', () => {
   bot.util.startWatcher(bot)
 
   debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
+
+  if (config.minutes_per_check < 1) {
+    debug.log('You have set minutes_per_check to something lower than a minute. This can cause the bot to start new checks before the previous cycle has finshed.', 'warn', true)
+    debug.log('If you experience heightened RAM usage, CPU usage, or general slowness, bring this value back up a reasonable amount.', 'warn', true)
+    debug.log('This message is not an error, and the bot is still running.', 'warn', true)
+  }
 })
 
 bot.on('message', function (message) {
