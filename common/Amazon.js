@@ -95,7 +95,7 @@ exports.details = async (bot, l) => {
     tld = l.split('amazon.')[1].split('/')[0]
   } catch (e) {
     debug.log(e, 'warn')
-    return null
+    return
   }
 
   l += bot.util.parseParams(bot.url_params)

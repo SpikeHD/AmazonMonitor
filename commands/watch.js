@@ -33,8 +33,7 @@ module.exports.run = async (bot, guild, message, args) => {
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
     try {
-      asin = clArgs.link.split('/dp/')[1] || clArgs.link.split('/gp/product/')[1]
-      asin = asin.match(/^[a-zA-Z0-9]+/)[0]
+      asin = (clArgs.link.split('/dp/')[1] || clArgs.link.split('/gp/product/')[1]).match(/^[a-zA-Z0-9]+/)[0]
       itld = clArgs.link.split('amazon.')[1].split('/')[0]
     } catch (e) {
       return bot.debug.log(e, 'warning')

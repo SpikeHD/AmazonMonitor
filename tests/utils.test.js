@@ -8,6 +8,8 @@ describe('utils test', () => {
 
     expect(util.priceFormat('$1,000.99') === '1000.99').toBeTruthy()
     expect(util.priceFormat('€1.000,99') === '1000.99').toBeTruthy()
+
+    expect(util.priceFormat('$100') === '100.00').toBeTruthy()
   })
 
   it('tests argument parser', () => {
