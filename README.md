@@ -117,6 +117,10 @@ To start the bot, simply open a terminal and run these commands:
   ```sh
   cd "C:/Path/To/Bot/Folder"
   ```
+* Install the dependancies (you only have to do this once):
+  ```sh
+  npm install
+  ```
 * Run the main file:
   ```sh
   node index
