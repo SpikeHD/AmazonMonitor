@@ -139,7 +139,7 @@ exports.getPage = async (url, opts) => {
   await page.goto(url)
 
   debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
-  await page.waitFor(2000)
+  await page.waitForTimeout(2000)
 
   let html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
   let $ = await load(html).catch(e => debug.log(e, 'error'))
