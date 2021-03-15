@@ -20,11 +20,11 @@ module.exports.run = async (bot, guild, message, args) => {
     link: '',
     category: '',
     query:'',
-    priceLim: 0
+    priceLimit: 0
   }
   let clArgs = util.argParser(args, argsObj)
 
-  priceLimit = clArgs.priceLim
+  priceLimit = clArgs.priceLimit
 
   bot.debug.log(existing, 'debug')
   bot.debug.log(clArgs, 'debug')
@@ -96,7 +96,7 @@ module.exports.run = async (bot, guild, message, args) => {
       name: items.name,
       link: items.link,
       cache: items.list.slice(0, cache_limit),
-      priceLimit: clArgs.priceLim || 0,
+      priceLimit: clArgs.priceLimit || 0,
       type: 'category'
     }
 
@@ -121,7 +121,7 @@ module.exports.run = async (bot, guild, message, args) => {
       channel_id: message.channel.id,
       query: clArgs.query,
       cache: items.slice(0, cache_limit),
-      priceLimit: clArgs.priceLim || 0,
+      priceLimit: clArgs.priceLimit|| 0,
       type: 'query'
     }
 
