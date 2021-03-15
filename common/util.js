@@ -269,7 +269,7 @@ async function doCheck(bot, i) {
         channel_id: obj.channel_id,
         query: obj.query,
         cache: newItems.slice(0, cache_limit),
-        priceLimit: obj.priceLim || 0,
+        priceLimit: obj.priceLimit || 0,
         type: 'query'
       }
 
