@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const { trim } = require('../common/util')
 const amazon = require('../common/Amazon')
-const {tld} = require('../config.json')
+const {tld, search_response_ms} = require('../config.json')
 
 module.exports = {
   name: 'search',
@@ -42,7 +42,7 @@ module.exports.run = async (bot, guild, message, args) => {
 
   const col = await m.channel.awaitMessages(filter, {
     max: 1,
-    time: 20000
+    time: search_response_ms
   })
   // If a message was sent and it start with the prefix
   if (col.first() && col.first().content.startsWith(bot.prefix)) {
