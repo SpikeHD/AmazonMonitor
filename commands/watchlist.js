@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, Util } = require('discord.js')
 const { trim } = require('../common/util')
 const { getWatchlist } = require('../common/data')
 
@@ -10,7 +10,7 @@ module.exports = {
 }
 
 module.exports.run = async (bot, guild, message) => {
-  getWatchlist().then(rows => {
+  getWatchlist().then(async rows => {
     let links = rows.map((x, i) => {
       if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}`:''}`
       else if (x.type === 'category') return `${i+1}. Category: "${x.name}"`
@@ -22,10 +22,15 @@ module.exports.run = async (bot, guild, message) => {
 
     let embed = new MessageEmbed()
       .setTitle('List of Amazon items currently being watched')
-      .setDescription(links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!')
       .setColor('BLUE')
       .setFooter(`Currently watching ${rows.length} items in this server`)
 
-    message.channel.send(embed)
+    const description = links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!'
+    const splitDescriptions = Util.splitMessage(description, { maxLength: 2048 })
+
+    for (const desc of splitDescriptions) {
+      embed.setDescription(desc)
+      await message.channel.send(embed)
+    }
   })
 }
