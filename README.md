@@ -11,6 +11,8 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
 * [Configuration](#configuration)
   * [prefix](#prefix)
   * [token](#token)
+  * [minutes_per_check](#minutes_per_check)
+  * [search_response_ms](#search_response_ms)
   * [url_params](#url_params)
   * [guild_item_limit](#guild_item_limit)
   * [cache_limit](#cache_limit)
@@ -51,6 +53,16 @@ This is the character, or characters, that you will begin every command with. Go
 ## token
 
 The token is the login information of the bot. If you don't know how to set up a bot user, refer to [this guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
+
+## minutes_per_check
+
+The amount of minutes before each check cycle is run. A good number is arounc 2 or 3.
+
+## search_response_ms
+
+**Introduced in [!65](https://github.com/SpikeHD/AmazonMonitor/issues/65)**
+
+Amount of time to pass before the response window expires when running the `search` command.
 
 ## url_params
 
