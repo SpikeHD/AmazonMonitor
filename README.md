@@ -56,7 +56,7 @@ The token is the login information of the bot. If you don't know how to set up a
 
 ## minutes_per_check
 
-The amount of minutes before each check cycle is run. A good number is arounc 2 or 3.
+The amount of minutes before each check cycle is run. A good number is around 2 or 3.
 
 ## search_response_ms
 
