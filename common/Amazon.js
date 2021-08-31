@@ -48,7 +48,7 @@ exports.find = async (bot, q, suffix = 'com') => {
     }
   })
 
-  return results
+  return results || []
 }
 
 exports.categoryDetails = async (bot, l) => {

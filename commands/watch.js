@@ -12,7 +12,7 @@ module.exports = {
 
 module.exports.run = async (bot, guild, message, args) => {
   // Get an array of all existing entries to make sure we don't have a duplicate
-  let existing = bot.watchlist.filter(x => x && x.guild_id === message.guild.id)
+  let existing = Array.isArray(bot.watchlist) ? bot.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
   let asin, itld, obj, mContents
   let priceLimit = 0
   let exists = false
