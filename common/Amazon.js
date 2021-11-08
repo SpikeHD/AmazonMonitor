@@ -56,9 +56,9 @@ exports.categoryDetails = async (bot, l) => {
 
   try {
     node = l.split('node=')[1]
-    if (node.includes('&')) node = node.split('&')[0]
+    if (node?.includes('&')) node = node.split('&')[0]
     ie = l.split('ie=')[1]
-    if (ie.includes('&')) ie = ie.split('&')[0]
+    if (ie?.includes('&')) ie = ie.split('&')[0]
     tld = l.split('amazon.')[1].split('/')[0]
     path = l.split(tld + '/')[1].split('?')[0]
   } catch (e) {
