@@ -184,7 +184,7 @@ function getRegularItem($, l) {
   let priceElms = [
     $('#priceblock_ourprice').text().trim(),
     $('#priceblock_saleprice').text().trim(),
-    $('.a-price').eq(1).text().trim()
+    $('.a-price').find('.a-offscreen').eq(0).text().trim()
   ]
   console.log(priceElms)
   let shippingElms = [
