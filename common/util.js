@@ -250,8 +250,8 @@ async function doCheck(bot, i) {
       // Same concept as category. Get new items...
       const newItems = await amazon.find(bot, obj.query, tld)
 
-      // Match items for comparison
-      const itemsToCompare = newItems.filter(ni => obj.cache.find(o => o.asin === ni.asin))
+      // Match items for comparison, if there are no new items (due to error), just return an empty array
+      const itemsToCompare = newItems ? newItems.filter(ni => obj.cache.find(o => o.asin === ni.asin)) : []
 
       itemsToCompare.forEach(item => {
         const matchingObj = obj.cache.find(o => o.asin === item.asin)
@@ -268,7 +268,7 @@ async function doCheck(bot, i) {
         guild_id: obj.guild_id,
         channel_id: obj.channel_id,
         query: obj.query,
-        cache: newItems.slice(0, cache_limit),
+        cache: newItems ? newItems.slice(0, cache_limit) : obj.cache,
         priceLimit: obj.priceLimit || 0,
         type: 'query'
       }
