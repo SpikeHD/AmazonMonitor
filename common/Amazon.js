@@ -180,13 +180,12 @@ function category($, l) {
  * @param {String} l 
  */
 function getRegularItem($, l) {
-  debug.log('Detected as a regular item', 'debug')
   let priceElms = [
     $('#priceblock_ourprice').text().trim(),
     $('#priceblock_saleprice').text().trim(),
-    $('.a-price').find('.a-offscreen').eq(0).text().trim()
+    $('.a-price').find('.a-offscreen').eq(0).text().trim(),
+    $('.a-price-whole').text().trim() + $('.a-price-fraction').text().trim(),
   ]
-  console.log(priceElms)
   let shippingElms = [
     $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
     $('#saleprice_shippingmessage').find('b').text().trim()
@@ -220,6 +219,7 @@ function getRegularItem($, l) {
       obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
     }
   })
+
   shippingElms.forEach(s => {
     if(s.length > 0) obj.shipping = s
   })
