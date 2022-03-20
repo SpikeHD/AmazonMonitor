@@ -1,19 +1,20 @@
 const { MessageEmbed } = require('discord.js')
 const pup = require('puppeteer')
-const { proxyRequest } = require('puppeteer-proxy')
+const useProxy = require('puppeteer-page-proxy')
 const cheerio = require('cheerio')
 const fs = require('fs')
 const amazon = require('./Amazon')
 const debug = require('./debug')
 const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
 const { auto_cart_link, cache_limit, tld, minutes_per_check } = require('../config.json')
+
+let browser
 let userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.3538.77 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.62 Safari/537.36 Edg/81.0.416.31'
 ]
-let browser
 
 /**
  * Format prices 
@@ -127,11 +128,7 @@ exports.getPage = async (url, opts) => {
     debug.log('Selected proxy URL: ' + proxy, 'info')
     page.setRequestInterception(true)
     page.on('request', (request) => {
-      proxyRequest({
-        page,
-        proxyUrl: proxy,
-        request
-      })
+      useProxy(request, proxy)
     })
   }
 

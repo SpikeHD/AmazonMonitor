@@ -21,6 +21,7 @@
     "colors": "^1.4.0",
     "discord.js": "^12.5.1",
     "puppeteer": "^5.5.0",
+    "puppeteer-page-proxy": "^1.2.8",
     "puppeteer-proxy": "^2.1.1",
     "request-promise": "^4.2.5",
     "simple-proxy-agent": "^1.1.0"
@@ -30,8 +31,10 @@
     "eslint": "^7.19.0",
     "jest": "^26.6.3"
   },
-  "jest":{
+  "jest": {
     "testEnvironment": "node",
-    "coverageReporters": ["text"]
+    "coverageReporters": [
+      "text"
+    ]
   }
 }
