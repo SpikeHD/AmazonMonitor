@@ -170,9 +170,8 @@ function hasErrors($) {
 async function load(html) {
   let $ = cheerio.load(html)
   if (hasErrors($)) {
-    return {
-      message: 'Amazon Service Error'
-    }
+    debug.log('There was an error loading the page, the bot may be flagged', 'error')
+    return $
   } else {
     return $
   }
