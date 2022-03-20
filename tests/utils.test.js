@@ -1,5 +1,5 @@
-const util = require('../common/util')
-const pup = require('puppeteer')
+import * as util from '../common/util'
+import pup from 'puppeteer'
 
 describe('utils test', () => {
   it('tests price formatting', () => {

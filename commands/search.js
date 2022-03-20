@@ -1,16 +1,19 @@
-const { MessageEmbed } = require('discord.js')
-const { trim } = require('../common/util')
-const amazon = require('../common/Amazon')
-const {tld, search_response_ms} = require('../config.json')
+import fs from 'fs'
+import { MessageEmbed } from 'discord.js'
+import { trim } from '../common/util.js'
+import * as amazon from '../common/Amazon.js'
 
-module.exports = {
+const { tld, search_response_ms } = JSON.parse(fs.readFileSync('./config.json'))
+
+export default {
   name: 'search',
   desc: 'Search and return the top 10 items using a search term',
   usage: 'search [search term]',
-  type: 'view'
+  type: 'view',
+  run
 }
 
-module.exports.run = async (bot, guild, message, args) => {
+async function run(bot, guild, message, args) {
   args.splice(0, 1)
   let phrase = args.join(' ')
 
@@ -62,7 +65,7 @@ module.exports.run = async (bot, guild, message, args) => {
         // Execute the 'details' command
         message.channel.startTyping()
 
-        await bot.commands.get('details').run(bot, message.guild, m, [command, link]).catch(e => {
+        await bot.commands.get('details')?.default.run(bot, message.guild, m, [command, link]).catch(e => {
           console.log(e)
         })
         message.channel.stopTyping(true)

@@ -1,5 +1,5 @@
-const debug = require('./debug')
-const util = require('./util')
+import * as debug from './debug.js'
+import * as util from './util.js'
 
 /**
  * Gets top 10 Amazon items based on a search query
@@ -8,7 +8,7 @@ const util = require('./util')
  * 
  * @returns {Array}
  */
-exports.find = async (bot, q, suffix = 'com') => {
+export const find = async (bot, q, suffix = 'com') => {
   const sanq = q.replace(' ', '+')
   const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
   let results = []
@@ -51,7 +51,7 @@ exports.find = async (bot, q, suffix = 'com') => {
   return results || []
 }
 
-exports.categoryDetails = async (bot, l) => {
+export const categoryDetails = async (bot, l) => {
   let node, ie, tld, path
 
   try {
@@ -86,7 +86,7 @@ exports.categoryDetails = async (bot, l) => {
  * 
  * @param {String} l 
  */
-exports.details = async (bot, l) => {
+export const details = async (bot, l) => {
   let asin, tld
 
   // Try to see if there is a valid asin

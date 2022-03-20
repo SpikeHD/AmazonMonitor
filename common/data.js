@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'fs'
 const watchFile = './watchlist.json'
 
 // Setup
@@ -9,14 +9,14 @@ const watchFile = './watchlist.json'
 /**
  * Retrieve watchlist.
  */
-exports.getWatchlist = async () => {
+export const getWatchlist = async () => {
   return JSON.parse(fs.readFileSync(watchFile))
 }
 
 /**
  * Add new item.
  */
-exports.addWatchlistItem = async (obj) => {
+export const addWatchlistItem = async (obj) => {
   const data = JSON.parse(fs.readFileSync(watchFile))
   data.push(obj)
   fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
@@ -25,7 +25,7 @@ exports.addWatchlistItem = async (obj) => {
 /**
  * Remove item.
  */
-exports.removeWatchlistItem = async (bot, link) => {
+export const removeWatchlistItem = async (bot, link) => {
   const data = JSON.parse(fs.readFileSync(watchFile))
   const item = data.find(x => x.link === link || (x.query && x.query === link))
   if (item) data.splice(data.indexOf(item), 1)
@@ -36,7 +36,7 @@ exports.removeWatchlistItem = async (bot, link) => {
 /**
  * Update item.
  */
-exports.updateWatchlistItem = async (obj, condition) => {
+export const updateWatchlistItem = async (obj, condition) => {
   let data = JSON.parse(fs.readFileSync(watchFile))
   /**
    * The stuff ahead doesn't make a lot of sense so I'll try my best to explain:

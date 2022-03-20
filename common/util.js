@@ -1,12 +1,13 @@
-const { MessageEmbed } = require('discord.js')
-const pup = require('puppeteer')
-const useProxy = require('puppeteer-page-proxy')
-const cheerio = require('cheerio')
-const fs = require('fs')
-const amazon = require('./Amazon')
-const debug = require('./debug')
-const { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } = require('./data')
-const { auto_cart_link, cache_limit, tld, minutes_per_check } = require('../config.json')
+import { MessageEmbed } from 'discord.js'
+import pup from 'puppeteer'
+import useProxy from 'puppeteer-page-proxy'
+import cheerio from 'cheerio'
+import fs from 'fs'
+import * as amazon from './Amazon.js'
+import * as debug from './debug.js'
+import { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } from './data.js'
+
+const { auto_cart_link, cache_limit, tld, minutes_per_check } = JSON.parse(fs.readFileSync('./config.json'))
 
 let browser
 let userAgents = [
@@ -19,7 +20,7 @@ let userAgents = [
 /**
  * Format prices 
  */
-exports.priceFormat = (p) => {
+export const priceFormat = (p) => {
   p = '' + p
   let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
   if (currencySymbol) p = p.replace(currencySymbol, '')
@@ -52,7 +53,7 @@ exports.priceFormat = (p) => {
  * @param {Array} opts
  * @param {Array} avblArgs 
  */
-exports.argParser = (opts, avblArgs) => {
+export const argParser = (opts, avblArgs) => {
   for (let i = 0; i < opts.length; i++) {
     if (opts[i].startsWith('-')) {
       // Get part of flag after hyphen
@@ -76,7 +77,7 @@ exports.argParser = (opts, avblArgs) => {
 /*
  *  Appends ... to long strings
  */
-exports.trim = (s, lim) => {
+export const trim = (s, lim) => {
   if(s.length > lim) {
     return s.substr(0, lim) + '...'
   } else return s
@@ -87,7 +88,7 @@ exports.trim = (s, lim) => {
  * 
  * @param {Object} obj 
  */
-exports.parseParams = (obj) => {
+export const parseParams = (obj) => {
   if(Object.keys(obj).length === 0) return '?'
   let str = '?'
   Object.keys(obj).forEach(k => {
@@ -99,7 +100,7 @@ exports.parseParams = (obj) => {
 /**
  * Start a puppeteer instance
  */
-exports.startPup = async () => {
+export const startPup = async () => {
   browser = await pup.launch()
   debug.log('Puppeteer Launched', 'info')
 }
@@ -107,7 +108,7 @@ exports.startPup = async () => {
 /**
  * Get page HTML
  */
-exports.getPage = async (url, opts) => {
+export const getPage = async (url, opts) => {
   debug.log('Type: ' + opts.type, 'info')
   let now = new Date().getTime()
   let proxy
@@ -177,7 +178,7 @@ async function load(html) {
 /**
  * Inits a watcher that'll check all of the items for price drops
  */
-exports.startWatcher = async (bot) => {
+export const startWatcher = async (bot) => {
   const rows = await getWatchlist()
   bot.watchlist = JSON.parse(JSON.stringify(rows))
   debug.log('Watchlist Loaded', 'info')
@@ -316,16 +317,16 @@ function priceCheck(bot, obj, item) {
  */
 function sendPriceAlert(bot, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
+  let link = (obj.link || obj.full_link) + parseParams(bot.url_params)
   let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`Price alert for "${item.full_title}"`)
     .setAuthor(item.seller ? item.seller:'Amazon')
-    .setDescription(`Old Price: ${item.symbol} ${exports.priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
+    .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('GREEN')
 
   if(channel) channel.send(embed)
@@ -355,10 +356,10 @@ function pushPriceChange(obj, item) {
  */
 function sendInStockAlert(bot, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
-  let link = (obj.link || obj.full_link) + exports.parseParams(bot.url_params)
+  let link = (obj.link || obj.full_link) + parseParams(bot.url_params)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${exports.parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new MessageEmbed()
     .setTitle(`"${item.full_title}" is now in stock!`)

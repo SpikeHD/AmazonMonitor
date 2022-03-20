@@ -1,16 +1,19 @@
-const util = require('../common/util')
-const amazon = require('../common/Amazon')
-const { addWatchlistItem } = require('../common/data')
-const { cache_limit, tld } = require('../config.json')
+import fs from 'fs'
+import * as util from '../common/util.js'
+import * as amazon from '../common/Amazon.js'
+import { addWatchlistItem } from '../common/data.js'
 
-module.exports = {
+const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json'))
+
+export default {
   name: 'watch',
   desc: 'Add and watch a single Amazon link',
   usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: -p for price limit ]',
-  type: 'edit'
+  type: 'edit',
+  run
 }
 
-module.exports.run = async (bot, guild, message, args) => {
+async function run(bot, guild, message, args) {
   // Get an array of all existing entries to make sure we don't have a duplicate
   let existing = Array.isArray(bot.watchlist) ? bot.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
   let asin, itld, obj, mContents

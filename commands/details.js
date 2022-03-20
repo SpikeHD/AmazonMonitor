@@ -1,14 +1,15 @@
-const { MessageEmbed } = require('discord.js')
-const amazon = require('../common/Amazon')
+import { MessageEmbed } from 'discord.js'
+import * as amazon from'../common/Amazon.js'
 
-module.exports = {
+export default {
   name: 'details',
   desc: 'Return details using an amazon link',
   usage: 'details [amazon link]',
-  type: 'view'
+  type: 'view',
+  run
 }
 
-module.exports.run = async (bot, guild, message, args) => {
+async function run(bot, guild, message, args) {
   let asin
   let tld
 

@@ -1,15 +1,16 @@
-const { MessageEmbed, Util } = require('discord.js')
-const { trim } = require('../common/util')
-const { getWatchlist } = require('../common/data')
+import { MessageEmbed, Util } from 'discord.js'
+import { trim } from '../common/util.js'
+import { getWatchlist } from '../common/data.js'
 
-module.exports = {
+export default {
   name: 'watchlist',
   desc: 'Display a list of each Amazon link currenty being watched in this server',
   usage: 'watchlist',
-  type: 'view'
+  type: 'view',
+  run
 }
 
-module.exports.run = async (bot, guild, message) => {
+async function run(bot, guild, message) {
   getWatchlist().then(async rows => {
     let links = rows.map((x, i) => {
       if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}`:''}`

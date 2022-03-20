@@ -1,20 +1,22 @@
-require('colors')
-const { debug_enabled } = require('../config.json')
+import fs from 'fs'
+import chalk from 'chalk'
 
-exports.log = (message, type = 'debug', override = false) => {
+const { debug_enabled } = JSON.parse(fs.readFileSync('./config.json'))
+
+export function log(message, type = 'debug', override = false) {
   let t
   /* eslint-disable indent */
   switch(type.toLowerCase()) {
     default:
-    case 'log': t = '[LOG] '.blue
+    case 'log': t = chalk.blue('[LOG] ')
       break
-    case 'debug': t = '[DEBUG] '.green
+    case 'debug': t = chalk.green('[DEBUG] ')
       break
-    case 'warn': t = '[WARNING] '.yellow
+    case 'warn': t = chalk.yellow('[WARNING] ')
       break
-    case 'error': t = '[ERROR] '.red
+    case 'error': t = chalk.red('[ERROR] ')
       break
-    case 'info': t = '[MESSAGE] '.magenta
+    case 'info': t = chalk.magenta('[MESSAGE] ')
   }
 
   if(debug_enabled || override) console.log(t, message)

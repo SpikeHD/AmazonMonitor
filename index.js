@@ -1,15 +1,17 @@
-const Discord = require('discord.js')
+import Discord from 'discord.js'
 const bot = new Discord.Client()
-const fs = require('fs')
-const debug = require('./common/debug')
-let config = require('./config.json')
+import fs from 'fs'
+import * as debug from './common/debug.js'
+
+const config = JSON.parse(fs.readFileSync('./config.json'))
+
 bot.commands = new Discord.Collection()
 bot.itemLimit = config.guild_item_limit
 
 bot.login(config.token)
 
-bot.on('ready', () => {
-  bot.util = require('./common/util')
+bot.on('ready', async () => {
+  bot.util = await import('./common/util.js')
   bot.debug = debug
   bot.proxylist = fs.existsSync('./proxylist.txt')
   bot.required_perms = config.required_perms
@@ -31,10 +33,10 @@ bot.on('ready', () => {
   console.log(str)
 
   // Load commands
-  fs.readdirSync('./commands/').forEach(command => {
+  fs.readdirSync('./commands/').forEach(async command => {
     debug.log(`Loading command: ${command}`, 'info')
 
-    let props = require(`./commands/${command}`)
+    let props = await import(`./commands/${command}`)
     bot.commands.set(command.replace('.js', ''), props)
   })
 
@@ -57,7 +59,7 @@ bot.on('message', function (message) {
 
   let command = message.content.split(config.prefix)[1].split(' ')[0],
     args = message.content.split(' '),
-    cmd = bot.commands.get(command)
+    cmd = bot.commands.get(command)?.default
 
   if (cmd) {
     switch(cmd.type) {

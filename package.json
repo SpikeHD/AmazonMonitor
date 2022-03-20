@@ -3,6 +3,7 @@
   "version": "1.6.0",
   "description": "A Discord bot that monitors Amazon items for price drops/restocks",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest --coverage tests/"
   },
@@ -17,8 +18,8 @@
   },
   "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
+    "chalk": "^5.0.1",
     "cheerio": "^1.0.0-rc.5",
-    "colors": "^1.4.0",
     "discord.js": "^12.5.1",
     "puppeteer": "^5.5.0",
     "puppeteer-page-proxy": "^1.2.8",
