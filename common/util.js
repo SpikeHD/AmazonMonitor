@@ -128,9 +128,8 @@ export const getPage = async (url, opts) => {
   if (proxy) {
     debug.log('Selected proxy URL: ' + proxy, 'info')
     page.setRequestInterception(true)
-    page.on('request', (request) => {
-      useProxy(request, proxy)
-    })
+    
+    await useProxy(page, 'https://' + proxy)
   }
 
   await page.setUserAgent(uAgent)
