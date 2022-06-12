@@ -101,7 +101,9 @@ export const parseParams = (obj) => {
  * Start a puppeteer instance
  */
 export const startPup = async () => {
-  browser = await pup.launch()
+  browser = await pup.launch({
+    args: ['--disable-web-security'],
+  })
   debug.log('Puppeteer Launched', 'info')
 }
 
@@ -128,8 +130,10 @@ export const getPage = async (url, opts) => {
   if (proxy) {
     debug.log('Selected proxy URL: ' + proxy, 'info')
     page.setRequestInterception(true)
-    
-    await useProxy(page, 'https://' + proxy)
+
+    page.on('request', async (req) => {
+      await useProxy(req, 'http://' + proxy)
+    })
   }
 
   await page.setUserAgent(uAgent)

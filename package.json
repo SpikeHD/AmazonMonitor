@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "chalk": "^5.0.1",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^12.5.1",
+    "got": "^12.1.0",
+    "hpagent": "^1.0.0",
+    "https-proxy-agent": "^5.0.1",
     "puppeteer": "^14.3.0",
     "puppeteer-page-proxy": "^1.2.8",
     "puppeteer-proxy": "^2.1.1",
