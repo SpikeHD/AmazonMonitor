@@ -145,7 +145,7 @@ export const getPage = async (url, opts) => {
   let html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
   let $ = await load(html).catch(e => debug.log(e, 'error'))
 
-  await page.close()
+  setTimeout(() => page.close(), 1000)
 
   debug.log(`Got page in ${new Date().getTime() - now}ms`, 'debug')
 
