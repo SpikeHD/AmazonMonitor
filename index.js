@@ -42,7 +42,7 @@ bot.on('ready', async () => {
   })
 
   // Start services
-  bot.util.startPup()
+  await bot.util.startPup()
   await bot.util.startWatcher(bot)
 
   debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
@@ -54,7 +54,7 @@ bot.on('ready', async () => {
   }
 
   // Run initial check when the bot first starts
-  doCheck(bot)
+  doCheck(bot, 0)
 })
 
 bot.on('message', function (message) {

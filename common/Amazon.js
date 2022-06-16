@@ -254,12 +254,12 @@ function getRegularItem($, l) {
     if(s.length > 0) obj.shipping = s
   })
 
-  debug.log('Full object: ', 'debug')
-  debug.log(obj, 'debug')
-
   // Finalization
   if (!obj.symbol) obj.symbol = '$'
   if (obj.comparePrice && parseFloat(obj.price) > parseFloat(obj.comparePrice)) obj.price = obj.comparePrice
+
+  debug.log('Full object: ', 'debug')
+  debug.log(obj, 'debug')
 
   return obj
 }
