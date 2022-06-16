@@ -119,7 +119,7 @@ If set to `true`, the console window will spit out all kinds of information rela
 
 # Proxies
 
-To make use of your fancy-dancey proxylist, you simply need to create a file named `proxylist.txt` in the main bot folder. Each ip/url should be separated by a new line. Each one should be formatted like so: `http://username:password@ip:port`. An example of some are listed below in the same format yours should be listed:
+To make use of your fancy-dancey proxylist, you simply need to create a file named `proxylist.txt` in the main bot folder. Each ip/url should be separated by a new line. Each one should be formatted like so: `username:password@ip:port`. An example of some are listed below in the same format yours should be listed:
 
 ```
 http://myuser:password123@127.0.0.1:12345
