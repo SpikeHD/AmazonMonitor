@@ -216,43 +216,40 @@ function getRegularItem($, l) {
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image',
   }
 
-  priceElms.forEach(p => {
-    if (p.length > 0 &&
-      !isNaN(parseFloat(util.priceFormat(p))) &&
-      (!obj.price || parseFloat(util.priceFormat(p) < parseFloat(obj.price)))) {
+  // Get other offer prices
+  const aodOffers = $('#aod-offer').toArray()
 
+  aodOffers.forEach(o => {
+    const price = $(o).find('.a-offscreen').text().trim()
+    if (parseFloat(util.priceFormat(price))) priceElms.push(price)
+  })
+
+  priceElms.forEach(p => {
+    const flt = parseFloat(util.priceFormat(p))
+    const cur = parseFloat(obj.price)
+
+    if (isNaN(cur) || cur === 0 || flt && flt < parseFloat(obj.price)) {
       obj.price = util.priceFormat(p)
       // Hacky but effective way to get currency symbol
       obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '') || $('.a-price-symbol').first().text().trim()
     }
   })
 
-  const soldByAmazon = $('.tabular-buybox-text.a-spacing-none').eq(1).text().trim().toLowerCase()?.includes('amazon')
-
   obj.symbol = priceElms[2].replace(/[,.]+/g, '').replace(/\d/g, '')
 
-  // Is the main display an Amaazon seller?
-  if (soldByAmazon) {
-    obj.price = util.priceFormat(priceElms[2])
-  } else {
-    const sellers = $('.pa_mbc_on_amazon_offer').toArray()
+  const sellers = $('.pa_mbc_on_amazon_offer').toArray()
 
-    // Scan for Amazon seller
-    for (let i = 0; i < sellers.length; i++) {
-      const seller = $(sellers[i])
+  // Scan for Amazon seller
+  for (let i = 0; i < sellers.length; i++) {
+    const seller = $(sellers[i])
 
-      // This is our Amazon seller, grab this price
-      const p = seller.find('.a-color-price').text().trim()
-      const s = seller.find('.mbc-delivery').text().trim()
+    // This is our Amazon seller, grab this price
+    const p = seller.find('.a-color-price').text().trim()
+    const s = seller.find('.mbc-delivery').text().trim()
 
-      obj.comparePrice = !obj.comparePrice || parseFloat(util.priceFormat(p)) < parseFloat(obj.comparePrice) ? util.priceFormat(p) : obj.comparePrice
-      shippingElms.push(s)
-    }
+    obj.comparePrice = !obj.comparePrice || parseFloat(util.priceFormat(p)) < parseFloat(obj.comparePrice) ? util.priceFormat(p) : obj.comparePrice
+    shippingElms.push(s)
   }
-
-  shippingElms.forEach(s => {
-    if(s.length > 0) obj.shipping = s
-  })
 
   // Finalization
   if (!obj.symbol) obj.symbol = '$'
