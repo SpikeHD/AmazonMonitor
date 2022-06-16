@@ -217,8 +217,6 @@ function getRegularItem($, l) {
   }
 
   priceElms.forEach(p => {
-    console.log(p)
-    console.log('pfmt: ' + util.priceFormat(p))
     if (p.length > 0 &&
       !isNaN(parseFloat(util.priceFormat(p))) &&
       (!obj.price || parseFloat(util.priceFormat(p) < parseFloat(obj.price)))) {
@@ -242,16 +240,13 @@ function getRegularItem($, l) {
     // Scan for Amazon seller
     for (let i = 0; i < sellers.length; i++) {
       const seller = $(sellers[i])
-      const merchantName = $(seller).find('.mbcMerchantName').text().trim()
 
-      if (merchantName.toLowerCase().includes('amazon')) {
-        // This is our Amazon seller, grab this price
-        const p = seller.find('.a-color-price').text().trim()
-        const s = seller.find('.mbc-delivery').text().trim()
+      // This is our Amazon seller, grab this price
+      const p = seller.find('.a-color-price').text().trim()
+      const s = seller.find('.mbc-delivery').text().trim()
 
-        obj.amznPrice = util.priceFormat(p)
-        shippingElms.push(s)
-      }
+      obj.comparePrice = !obj.comparePrice || parseFloat(util.priceFormat(p)) < parseFloat(obj.comparePrice) ? util.priceFormat(p) : obj.comparePrice
+      shippingElms.push(s)
     }
   }
 
@@ -261,6 +256,10 @@ function getRegularItem($, l) {
 
   debug.log('Full object: ', 'debug')
   debug.log(obj, 'debug')
+
+  // Finalization
+  if (!obj.symbol) obj.symbol = '$'
+  if (obj.comparePrice && parseFloat(obj.price) > parseFloat(obj.comparePrice)) obj.price = obj.comparePrice
 
   return obj
 }
