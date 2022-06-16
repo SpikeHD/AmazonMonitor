@@ -112,6 +112,8 @@ export const details = async (bot, l) => {
 }
 
 function parse($, l) {
+  if (!$) return null
+
   let category = $('#wayfinding-breadcrumbs_container').find('.a-list-item').find('a').text().trim().toLowerCase()
   let emptyVals = 0
   let obj
@@ -180,11 +182,13 @@ function category($, l) {
  * @param {String} l 
  */
 function getRegularItem($, l) {
+  debug.log('Detected as a regular item', 'debug')
   let priceElms = [
     $('#priceblock_ourprice').text().trim(),
     $('#priceblock_saleprice').text().trim(),
+    $('#sns-base-price').text().trim(),
     $('.a-price').find('.a-offscreen').eq(0).text().trim(),
-    $('.a-price-whole').text().trim() + $('.a-price-fraction').text().trim(),
+    $('.a-price-whole').first().text().trim() + $('.a-price-fraction').first().text().trim(),
   ]
   let shippingElms = [
     $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
@@ -213,12 +217,43 @@ function getRegularItem($, l) {
   }
 
   priceElms.forEach(p => {
-    if(p.length > 0) {
+    console.log(p)
+    console.log('pfmt: ' + util.priceFormat(p))
+    if (p.length > 0 &&
+      !isNaN(parseFloat(util.priceFormat(p))) &&
+      (!obj.price || parseFloat(util.priceFormat(p) < parseFloat(obj.price)))) {
+
       obj.price = util.priceFormat(p)
       // Hacky but effective way to get currency symbol
-      obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
+      obj.symbol = p.replace(/[,.]+/g, '').replace(/\d/g, '') || $('.a-price-symbol').first().text().trim()
     }
   })
+
+  const soldByAmazon = $('.tabular-buybox-text.a-spacing-none').eq(1).text().trim().toLowerCase()?.includes('amazon')
+
+  obj.symbol = priceElms[2].replace(/[,.]+/g, '').replace(/\d/g, '')
+
+  // Is the main display an Amaazon seller?
+  if (soldByAmazon) {
+    obj.price = util.priceFormat(priceElms[2])
+  } else {
+    const sellers = $('.pa_mbc_on_amazon_offer').toArray()
+
+    // Scan for Amazon seller
+    for (let i = 0; i < sellers.length; i++) {
+      const seller = $(sellers[i])
+      const merchantName = $(seller).find('.mbcMerchantName').text().trim()
+
+      if (merchantName.toLowerCase().includes('amazon')) {
+        // This is our Amazon seller, grab this price
+        const p = seller.find('.a-color-price').text().trim()
+        const s = seller.find('.mbc-delivery').text().trim()
+
+        obj.amznPrice = util.priceFormat(p)
+        shippingElms.push(s)
+      }
+    }
+  }
 
   shippingElms.forEach(s => {
     if(s.length > 0) obj.shipping = s

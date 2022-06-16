@@ -137,7 +137,9 @@ export const getPage = async (url, opts) => {
   }
 
   await page.setUserAgent(uAgent)
-  await page.goto(url)
+  await page.goto(url, {
+    waitUntil: 'domcontentloaded',
+  })
 
   debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
   await page.waitForTimeout(2000)
@@ -200,7 +202,7 @@ export const startWatcher = async (bot) => {
 /**
  * Loops through all watchlist items, looking for price drops
  */
-async function doCheck(bot, i) {
+export async function doCheck(bot, i) {
   if (i < bot.watchlist.length) {
     const obj = bot.watchlist[i]
 

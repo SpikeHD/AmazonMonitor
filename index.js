@@ -2,6 +2,7 @@ import Discord from 'discord.js'
 const bot = new Discord.Client()
 import fs from 'fs'
 import * as debug from './common/debug.js'
+import { doCheck } from './common/util.js'
 
 const config = JSON.parse(fs.readFileSync('./config.json'))
 
@@ -42,7 +43,7 @@ bot.on('ready', async () => {
 
   // Start services
   bot.util.startPup()
-  bot.util.startWatcher(bot)
+  await bot.util.startWatcher(bot)
 
   debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
 
@@ -51,6 +52,9 @@ bot.on('ready', async () => {
     debug.log('If you experience heightened RAM usage, CPU usage, or general slowness, bring this value back up a reasonable amount.', 'warn', true)
     debug.log('This message is not an error, and the bot is still running.', 'warn', true)
   }
+
+  // Run initial check when the bot first starts
+  doCheck(bot)
 })
 
 bot.on('message', function (message) {
