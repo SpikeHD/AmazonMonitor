@@ -146,7 +146,7 @@ export const getPage = async (url, opts) => {
   // Click the other offers section to load it
   await page.click('.olp-text-box')
 
-  await page.waitForTimeout(2000)
+  await page.waitForTimeout(1500)
 
   let html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
   let $ = await load(html).catch(e => debug.log(e, 'error'))
@@ -287,7 +287,7 @@ export async function doCheck(bot, i) {
     }
 
     // Do check with next item
-    setTimeout(() => doCheck(bot, i + 1), 6000)
+    setTimeout(() => doCheck(bot, i + 1), fs.existsSync('./proxylist.txt') ? 0 : 6000)
   }
 
   getWatchlist().then(rows => {
