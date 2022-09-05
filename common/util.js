@@ -144,7 +144,7 @@ export const getPage = async (url, opts) => {
   debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
 
   // Click the other offers section to load it
-  await page.click('.olp-text-box')
+  if (await page.$('.olp-text-box') !== null) await page.click('.olp-text-box')
 
   await page.waitForTimeout(1500)
 
