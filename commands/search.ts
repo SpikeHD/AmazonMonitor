@@ -42,6 +42,8 @@ async function run(cfg, guild: Guild, message: Message, args) {
     })
   }
 
+  embed.addFields(fields)
+
   const m = await message.channel.send({
     embeds: [embed]
   })
@@ -49,7 +51,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
   // Message must be from original author and in the same channel
   let filter = (msg => msg.author.id === message.author.id &&
     msg.channel.id === message.channel.id &&
-    msg.member.hasPermission(cfg.required_perms))
+    msg.member.permissions.has(cfg.required_perms))
 
   cfg.debug.log('Watching for messages...', 'debug')
 
@@ -88,7 +90,8 @@ async function run(cfg, guild: Guild, message: Message, args) {
 
           // Execute the 'watch' command
           message.channel.sendTyping()
-          await cfg.commands.get('watch').run(cfg, message.guild, m, [command, '-l', link]).catch(e => {
+          console.log(cfg.commands.get('watch').default)
+          await cfg.commands.get('watch').default.run(cfg, message.guild, m, [command, '-l', link]).catch(e => {
             console.log(e)
           })
           break

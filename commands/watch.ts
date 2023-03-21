@@ -132,7 +132,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
 
     mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else {
-    return message.channel.send('Not a valid link, category, or search query')
+    return message.channel.send(`Not a valid link, category, or search query. Did you mean \`${cfg.prefix}watch -l ${args[1]}?\``)
   }
 
   // Push the values to storage
