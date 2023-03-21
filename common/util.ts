@@ -192,26 +192,26 @@ async function load(html) {
 /**
  * Inits a watcher that'll check all of the items for price drops
  */
-export const startWatcher = async (cfg) => {
+export const startWatcher = async (bot, cfg) => {
   const rows = await getWatchlist()
   cfg.watchlist = JSON.parse(JSON.stringify(rows))
   debug.log('Watchlist Loaded', 'info')
 
-  cfg.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, {
+  bot.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, {
     type: 'WATCHING'
   })
 
   // Set an interval with an offset so we don't decimate Amazon with requests
   setInterval(() => {
     debug.log('Checking item prices...', 'message')
-    if (cfg.watchlist.length > 0) doCheck(cfg, 0)
+    if (cfg.watchlist.length > 0) doCheck(bot, cfg, 0)
   }, (minutes_per_check * 60000) || 120000)
 }
 
 /**
  * Loops through all watchlist items, looking for price drops
  */
-export async function doCheck(cfg, i) {
+export async function doCheck(bot, cfg, i) {
   if (i < cfg.watchlist.length) {
     const obj = cfg.watchlist[i]
 
@@ -292,13 +292,13 @@ export async function doCheck(cfg, i) {
     }
 
     // Do check with next item
-    setTimeout(() => doCheck(cfg, i + 1), fs.existsSync('./proxylist.txt') ? 0 : 6000)
+    setTimeout(() => doCheck(bot, cfg, i + 1), fs.existsSync('./proxylist.txt') ? 0 : 6000)
   }
 
   getWatchlist().then(rows => {
     cfg.watchlist = JSON.parse(JSON.stringify(rows))
 
-    cfg.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, { type: 'WATCHING' })
+    bot.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, { type: 'WATCHING' })
   })
 }
 
@@ -339,7 +339,9 @@ function sendPriceAlert(cfg, obj, item) {
 
   let embed = new EmbedBuilder()
     .setTitle(`Price alert for "${item.full_title}"`)
-    .setAuthor(item.seller ? item.seller:'Amazon')
+    .setAuthor({
+      name: item.seller ? item.seller:'Amazon'
+    })
     .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('Green')
 
@@ -377,7 +379,9 @@ function sendInStockAlert(cfg, obj, item) {
 
   let embed = new EmbedBuilder()
     .setTitle(`"${item.full_title}" is now in stock!`)
-    .setAuthor(item.seller)
+    .setAuthor({
+      name: item.seller
+    })
     .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('Green')
 

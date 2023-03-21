@@ -1,12 +1,18 @@
-import Discord from 'discord.js'
+import Discord, { IntentsBitField, Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
 import { doCheck } from './common/util.js'
 
 const bot = new Discord.Client({
   intents: [
+    'Guilds',
     'GuildMembers',
-    'GuildMessages'
+    'GuildMessages',
+    'MessageContent',
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.Message
   ]
 })
 const config = JSON.parse(fs.readFileSync('./config.json').toString())
@@ -44,12 +50,12 @@ bot.on('ready', async () => {
     debug.log(`Loading command: ${command}`, 'info')
 
     let props = await import(`./commands/${command}`)
-    cfg.commands.set(command.replace('.js', ''), props)
+    cfg.commands.set(command.split('.')[0], props)
   })
 
   // Start services
   await cfg.util.startPup()
-  await cfg.util.startWatcher(bot)
+  await cfg.util.startWatcher(bot, cfg)
 
   debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
 
@@ -60,10 +66,10 @@ bot.on('ready', async () => {
   }
 
   // Run initial check when the bot first starts
-  doCheck(bot, 0)
+  doCheck(bot, cfg, 0)
 })
 
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
   if (message.author.bot) return
   if (!message.content.startsWith(config.prefix)) return
 
@@ -74,20 +80,21 @@ bot.on('message', function (message) {
 
   if (cmd) {
     switch(cmd.type) {
-    case 'view': exec(bot, message, args, cmd)
+    case 'view': exec(cfg, message, args, cmd)
       break
     case 'edit':
-      if (message.member.hasPermission(cfg.required_perms)) exec(cfg, message, args, cmd)
+      if (message.member.permissions.has(cfg.required_perms)) exec(cfg, message, args, cmd)
       break
     }
   }
 })
 
-async function exec(bot, message, args, cmd) {
-  message.channel.startTyping()
-  await cmd.run(bot, message.guild, message, args).catch(e => {
+async function exec(cfg, message: Discord.Message, args, cmd) {
+  const ch = await message.channel.fetch()
+  ch.sendTyping()
+
+  await cmd.run(cfg, message.guild, message, args).catch(e => {
     message.channel.send(e)
     debug.log(e, 'error')
   })
-  message.channel.stopTyping(true)
 }

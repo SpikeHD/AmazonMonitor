@@ -2,6 +2,7 @@ import fs from 'fs'
 import * as util from '../common/util.js'
 import * as amazon from '../common/Amazon.js'
 import { addWatchlistItem } from '../common/data.js'
+import { Guild, Message } from 'discord.js'
 
 const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json').toString())
 
@@ -13,7 +14,7 @@ export default {
   run
 }
 
-async function run(cfg, guild, message, args) {
+async function run(cfg, guild: Guild, message: Message, args) {
   // Get an array of all existing entries to make sure we don't have a duplicate
   let existing = Array.isArray(cfg.watchlist) ? cfg.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
   let asin, itld, obj, mContents
@@ -76,14 +77,15 @@ async function run(cfg, guild, message, args) {
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
     // We store the items and refresh the cache about once a day.
-    const items = await amazon.categoryDetails(cfg, clArgs.category).catch(e => {
-      cfg.debug.log(e.message, 'error')
-      return message.channel.send('Invalid category!')
+    const items = await amazon.categoryDetails(cfg, clArgs.category).catch(async e => {
+      cfg.debug.log(await e.message, 'error')
     })
+
+    if (!items) return message.channel.send('Invalid category!')
 
     // Check for existing
     existing.forEach(itm => {
-      if (itm.link && itm.link.includes(items.node)) {
+      if (itm.link && items.node && itm.link.includes(items.node)) {
         exists = true
       }
     })

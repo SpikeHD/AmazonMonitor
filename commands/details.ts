@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js'
+import { EmbedBuilder, Guild, Message } from 'discord.js'
 import * as amazon from'../common/Amazon.js'
 
 export default {
@@ -9,9 +9,9 @@ export default {
   run
 }
 
-async function run(cfg, guild, message, args) {
-  let asin
-  let tld
+async function run(cfg, guild: Guild, message: Message, args) {
+  let asin: string
+  let tld: string
 
   // Try to see if there is a valid asin
   try {
@@ -32,10 +32,14 @@ async function run(cfg, guild, message, args) {
       item[k].length < 1) item[k] = 'none'
   })
 
+  console.log(item)
+
   let embed = new EmbedBuilder()
     .setColor('Orange')
     .setTitle(item.full_title)
-    .setAuthor(item.seller.includes('\n') ? 'invalid' : item.seller)
+    .setAuthor({
+      name: item.seller.includes('\n') ? 'invalid' : item.seller,
+    })
     .setImage(item.image)
     .setDescription(`${item.full_link}\n${item.features != 'none' ? item.features.join('\n\n'):''}`)
     .addFields([{
@@ -60,5 +64,7 @@ async function run(cfg, guild, message, args) {
       }
     ])
 
-  message.channel.send(embed)
+  message.channel.send({
+    embeds: [embed]
+  })
 }

@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js'
+import { EmbedBuilder, Guild, Message } from 'discord.js'
 import { trim } from '../common/util.js'
 import { getWatchlist } from '../common/data.js'
 
@@ -10,7 +10,7 @@ export default {
   run
 }
 
-async function run(cfg, guild, message) {
+async function run(cfg, guild: Guild, message: Message) {
   getWatchlist().then(async rows => {
     let links = rows.map((x, i) => {
       if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}`:''}`
@@ -41,7 +41,10 @@ async function run(cfg, guild, message) {
 
     for (const desc of splitDescriptions) {
       embed.setDescription(desc)
-      await message.channel.send(embed)
+
+      await message.channel.send({
+        embeds: [embed]
+      })
     }
   })
 }

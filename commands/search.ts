@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { EmbedBuilder } from 'discord.js'
+import { EmbedBuilder, Guild, Message } from 'discord.js'
 import { trim } from '../common/util.js'
 import * as amazon from '../common/Amazon.js'
 
@@ -13,7 +13,7 @@ export default {
   run
 }
 
-async function run(cfg, guild, message, args) {
+async function run(cfg, guild: Guild, message: Message, args) {
   args.splice(0, 1)
   let phrase = args.join(' ')
 
@@ -42,7 +42,10 @@ async function run(cfg, guild, message, args) {
     })
   }
 
-  const m = await message.channel.send(embed)
+  const m = await message.channel.send({
+    embeds: [embed]
+  })
+
   // Message must be from original author and in the same channel
   let filter = (msg => msg.author.id === message.author.id &&
     msg.channel.id === message.channel.id &&
@@ -50,7 +53,8 @@ async function run(cfg, guild, message, args) {
 
   cfg.debug.log('Watching for messages...', 'debug')
 
-  const col = await m.channel.awaitMessages(filter, {
+  const col = await m.channel.awaitMessages({
+    filter,
     max: 1,
     time: search_response_ms || 30000
   })
@@ -70,12 +74,11 @@ async function run(cfg, guild, message, args) {
         cfg.debug.log(link, 'info')
 
         // Execute the 'details' command
-        message.channel.startTyping()
+        message.channel.sendTyping()
 
         await cfg.commands.get('details')?.default.run(cfg, message.guild, m, [command, link]).catch(e => {
           console.log(e)
         })
-        message.channel.stopTyping(true)
 
         return
       } else {
@@ -84,11 +87,10 @@ async function run(cfg, guild, message, args) {
           link = item[parseInt(col.first().content.split(' ')[1]) - 1].full_link
 
           // Execute the 'watch' command
-          message.channel.startTyping()
+          message.channel.sendTyping()
           await cfg.commands.get('watch').run(cfg, message.guild, m, [command, '-l', link]).catch(e => {
             console.log(e)
           })
-          message.channel.stopTyping(true)
           break
         default:
           break
