@@ -6,6 +6,8 @@
         "jest": true
     },
     "extends": "eslint:recommended",
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
     "parserOptions": {
         "ecmaVersion": 11,
         "sourceType": "module"

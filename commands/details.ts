@@ -43,25 +43,25 @@ async function run(cfg, guild: Guild, message: Message, args) {
     .setImage(item.image)
     .setDescription(`${item.full_link}\n${item.features != 'none' ? item.features.join('\n\n'):''}`)
     .addFields([{
-        name: 'Price',
-        value: item.symbol + item.price,
-        inline: true
-      },
-      {
-        name: 'Rating',
-        value: item.rating,
-        inline: true
-      },
-      {
-        name: 'Shipping',
-        value: item.shipping,
-        inline: true
-      },
-      {
-        name: 'Availability',
-        value: item.availability,
-        inline: true
-      }
+      name: 'Price',
+      value: item.symbol + item.price,
+      inline: true
+    },
+    {
+      name: 'Rating',
+      value: item.rating,
+      inline: true
+    },
+    {
+      name: 'Shipping',
+      value: item.shipping,
+      inline: true
+    },
+    {
+      name: 'Availability',
+      value: item.availability,
+      inline: true
+    }
     ])
 
   message.channel.send({

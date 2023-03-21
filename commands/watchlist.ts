@@ -30,7 +30,7 @@ async function run(cfg, guild: Guild, message: Message) {
 
     const description = links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!'
     const maxLen = 2048
-    const splitDescriptions = description.split("")
+    const splitDescriptions = description.split('')
 
     const chunks = []
 

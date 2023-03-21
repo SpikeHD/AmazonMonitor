@@ -1,4 +1,4 @@
-import Discord, { IntentsBitField, Partials } from 'discord.js'
+import Discord, { Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
 import { doCheck } from './common/util.js'
