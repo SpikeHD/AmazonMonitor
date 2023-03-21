@@ -3,7 +3,7 @@ import * as util from '../common/util.js'
 import * as amazon from '../common/Amazon.js'
 import { addWatchlistItem } from '../common/data.js'
 
-const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json'))
+const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json').toString())
 
 export default {
   name: 'watch',
@@ -13,9 +13,9 @@ export default {
   run
 }
 
-async function run(bot, guild, message, args) {
+async function run(cfg, guild, message, args) {
   // Get an array of all existing entries to make sure we don't have a duplicate
-  let existing = Array.isArray(bot.watchlist) ? bot.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
+  let existing = Array.isArray(cfg.watchlist) ? cfg.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
   let asin, itld, obj, mContents
   let priceLimit = 0
   let exists = false
@@ -29,9 +29,9 @@ async function run(bot, guild, message, args) {
 
   priceLimit = clArgs.priceLimit
 
-  bot.debug.log(existing, 'debug')
-  bot.debug.log(clArgs, 'debug')
-  bot.debug.log(`Price Limit: ${priceLimit}`, 'debug')
+  cfg.debug.log(existing, 'debug')
+  cfg.debug.log(clArgs, 'debug')
+  cfg.debug.log(`Price Limit: ${priceLimit}`, 'debug')
 
   if (clArgs.link.length > 0) {
     // Compare asins for duplicate
@@ -39,13 +39,13 @@ async function run(bot, guild, message, args) {
       asin = (clArgs.link.split('/dp/')[1] || clArgs.link.split('/gp/product/')[1]).match(/^[a-zA-Z0-9]+/)[0]
       itld = clArgs.link.split('amazon.')[1].split('/')[0]
     } catch (e) {
-      return bot.debug.log(e, 'warning')
+      return cfg.debug.log(e, 'warning')
     }
   
     if (parseFloat(args[2])) priceLimit = parseFloat(util.priceFormat(args[2]))
   
     // If there isn't one, it's probably just a bad URL
-    if (!asin) return bot.debug.log('Not a valid asin', 'error')
+    if (!asin) return cfg.debug.log('Not a valid asin', 'error')
     else {
       // Loop through existing entries, check if they include the asin somewhere
       existing.forEach(itm => {
@@ -57,10 +57,10 @@ async function run(bot, guild, message, args) {
   
     if (exists) {
       return message.channel.send('I\'m already watching that link somewhere else!')
-    } else if (existing.length >= bot.itemLimit) {
+    } else if (existing.length >= cfg.itemLimit) {
       return message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
     } else {
-      let item = await amazon.details(bot, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => bot.debug.log(e.message, 'error'))
+      let item = await amazon.details(cfg, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => cfg.debug.log(e.message, 'error'))
       obj = {
         guild_id: guild.id,
         channel_id: message.channel.id,
@@ -76,8 +76,8 @@ async function run(bot, guild, message, args) {
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
     // We store the items and refresh the cache about once a day.
-    const items = await amazon.categoryDetails(bot, clArgs.category).catch(e => {
-      bot.debug.log(e.message, 'error')
+    const items = await amazon.categoryDetails(cfg, clArgs.category).catch(e => {
+      cfg.debug.log(e.message, 'error')
       return message.channel.send('Invalid category!')
     })
 
@@ -113,7 +113,7 @@ async function run(bot, guild, message, args) {
     })
 
     // Add query to watchlist
-    let items = await amazon.find(bot, clArgs.query, tld)
+    let items = await amazon.find(cfg, clArgs.query, tld)
 
     if (items.length < 1) {
       return message.channel.send('I couldn\'t find anything using this query. Try something more generic!')
@@ -136,7 +136,7 @@ async function run(bot, guild, message, args) {
   // Push the values to storage
   addWatchlistItem(obj).then(() => {
     // Also add it to the existing watchlist obj so we don't have to re-do the request that gets them all
-    bot.watchlist.push(obj)
+    cfg.watchlist.push(obj)
   
     message.channel.send(mContents)
   })

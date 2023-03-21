@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
 import * as amazon from'../common/Amazon.js'
 
 export default {
@@ -9,7 +9,7 @@ export default {
   run
 }
 
-async function run(bot, guild, message, args) {
+async function run(cfg, guild, message, args) {
   let asin
   let tld
 
@@ -19,10 +19,10 @@ async function run(bot, guild, message, args) {
     asin = asin.match(/^[a-zA-Z0-9]+/)[0]
     tld = args[1].split('amazon.')[1].split('/')[0]
   } catch (e) {
-    return bot.debug.log(e, 'warning')
+    return cfg.debug.log(e, 'warning')
   }
 
-  let item = await amazon.details(bot, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(() => {
+  let item = await amazon.details(cfg, `https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(() => {
     return 'Got an error retrieving the Amazon item'
   })
 
@@ -32,16 +32,33 @@ async function run(bot, guild, message, args) {
       item[k].length < 1) item[k] = 'none'
   })
 
-  let embed = new MessageEmbed()
-    .setColor('ORANGE')
+  let embed = new EmbedBuilder()
+    .setColor('Orange')
     .setTitle(item.full_title)
     .setAuthor(item.seller.includes('\n') ? 'invalid' : item.seller)
     .setImage(item.image)
     .setDescription(`${item.full_link}\n${item.features != 'none' ? item.features.join('\n\n'):''}`)
-    .addField('Price', item.symbol + item.price, true)
-    .addField('Rating', item.rating, true)
-    .addField('Shipping', item.shipping, true)
-    .addField('Availability', item.availability)
+    .addFields([{
+        name: 'Price',
+        value: item.symbol + item.price,
+        inline: true
+      },
+      {
+        name: 'Rating',
+        value: item.rating,
+        inline: true
+      },
+      {
+        name: 'Shipping',
+        value: item.shipping,
+        inline: true
+      },
+      {
+        name: 'Availability',
+        value: item.availability,
+        inline: true
+      }
+    ])
 
   message.channel.send(embed)
 }

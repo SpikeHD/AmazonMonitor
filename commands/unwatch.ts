@@ -8,11 +8,11 @@ export default {
   run
 }
 
-async function run(bot, guild, message, args) {
+async function run(cfg, guild, message, args) {
   if (!args[1]) {
-    message.channel.send(`Use \`${bot.prefix}unwatch [num]\` to unwatch one of the following links`)
+    message.channel.send(`Use \`${cfg.prefix}unwatch [num]\` to unwatch one of the following links`)
     message.channel.startTyping()
-    await bot.commands.get('watchlist').run(bot, message.guild, message, args).catch(e => {
+    await cfg.commands.get('watchlist').run(cfg, message.guild, message, args).catch(e => {
       console.log(e)
     })
     message.channel.stopTyping(true)
@@ -26,7 +26,7 @@ async function run(bot, guild, message, args) {
 
       if (!item) return message.channel.send('Not an existing item!')
       else {
-        removeWatchlistItem(bot, item.link).then(() => {
+        removeWatchlistItem(cfg, item.link).then(() => {
           message.channel.send('Successfully removed item: ' + item.link)
         })
       }
