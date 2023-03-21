@@ -8,14 +8,14 @@ import * as util from './util.js'
  * 
  * @returns {Array}
  */
-export const find = async (bot, q, suffix = 'com') => {
+export const find = async (cfg, q, suffix = 'com') => {
   const sanq = q.replace(' ', '+')
   const url = `https://www.amazon.${suffix}/s?k=${sanq}/`
   let results = []
 
   // Get parsed page with puppeteer/cheerio
-  let $ = await bot.util.getPage(url, {
-    type: bot.proxylist ? 'proxy' : 'headless'
+  let $ = await cfg.util.getPage(url, {
+    type: cfg.proxylist ? 'proxy' : 'headless'
   }).catch(e => debug.log(e, 'error'))
   let lim = $('.s-result-list').find('.s-result-item').length
 
@@ -51,7 +51,7 @@ export const find = async (bot, q, suffix = 'com') => {
   return results || []
 }
 
-export const categoryDetails = async (bot, l) => {
+export const categoryDetails = async (cfg, l) => {
   let node, ie, tld, path
 
   try {
@@ -67,8 +67,8 @@ export const categoryDetails = async (bot, l) => {
   }
 
   // Get parsed page with puppeteer/cheerio
-  const page = await bot.util.getPage(`https://www.amazon.${tld}/${path}/?ie=${ie}&node=${node}`, {
-    type: bot.proxylist ? 'proxy' : 'headless'
+  const page = await cfg.util.getPage(`https://www.amazon.${tld}/${path}/?ie=${ie}&node=${node}`, {
+    type: cfg.proxylist ? 'proxy' : 'headless'
   }).catch(e => {
     debug.log(e, 'error')
     return
@@ -86,7 +86,7 @@ export const categoryDetails = async (bot, l) => {
  * 
  * @param {String} l 
  */
-export const details = async (bot, l) => {
+export const details = async (cfg, l) => {
   let asin, tld
 
   // Try to see if there is a valid asin
@@ -98,11 +98,11 @@ export const details = async (bot, l) => {
     return
   }
 
-  l += bot.util.parseParams(bot.url_params)
+  l += cfg.util.parseParams(cfg.url_params)
 
   // Get parsed page with puppeteer/cheerio
-  const page = await bot.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {
-    type: bot.proxylist ? 'proxy' : 'headless'
+  const page = await cfg.util.getPage(`https://www.amazon.${tld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`, {
+    type: cfg.proxylist ? 'proxy' : 'headless'
   }).catch(e => {
     debug.log(e, 'error')
     return
@@ -147,8 +147,10 @@ function category($, l) {
   debug.log('Detected category', 'debug')
   let tld = l.split('amazon.')[1].split('/')[0]
   let obj = {
+    name: null,
     link: l,
-    list: []
+    list: [],
+    node: null
   }
   let topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray()
   
@@ -166,7 +168,8 @@ function category($, l) {
       price: price.includes('NaN') ? '':price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceFull.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
-      image: $(i).find('.octopus-pc-item-image').attr('src')
+      image: $(i).find('.octopus-pc-item-image').attr('src'),
+      node: null
     }
   })
 
@@ -214,6 +217,7 @@ function getRegularItem($, l) {
     features: parsedFeatures,
     availability: $('#availability').first().find('span').text().trim(),
     image: $('#landingImage').attr('data-old-hires') || 'https://via.placeholder.com/300x300.png?text=No+Image',
+    comparePrice: '',
   }
 
   // Get other offer prices

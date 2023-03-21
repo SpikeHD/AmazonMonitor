@@ -3,21 +3,21 @@ const watchFile = './watchlist.json'
 
 // Setup
 ;(function () {
-  if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile))) fs.writeFileSync(watchFile, '[]', 'utf-8')
+  if (!fs.existsSync(watchFile) || !JSON.parse(fs.readFileSync(watchFile).toString())) fs.writeFileSync(watchFile, '[]', 'utf-8')
 })()
 
 /**
  * Retrieve watchlist.
  */
 export const getWatchlist = async () => {
-  return JSON.parse(fs.readFileSync(watchFile))
+  return JSON.parse(fs.readFileSync(watchFile).toString())
 }
 
 /**
  * Add new item.
  */
 export const addWatchlistItem = async (obj) => {
-  const data = JSON.parse(fs.readFileSync(watchFile))
+  const data = JSON.parse(fs.readFileSync(watchFile).toString())
   data.push(obj)
   fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
 }
@@ -25,19 +25,19 @@ export const addWatchlistItem = async (obj) => {
 /**
  * Remove item.
  */
-export const removeWatchlistItem = async (bot, link) => {
-  const data = JSON.parse(fs.readFileSync(watchFile))
+export const removeWatchlistItem = async (cfg, link) => {
+  const data = JSON.parse(fs.readFileSync(watchFile).toString())
   const item = data.find(x => x.link === link || (x.query && x.query === link))
   if (item) data.splice(data.indexOf(item), 1)
   fs.writeFileSync(watchFile, JSON.stringify(data), 'utf-8')
-  bot.watchlist.splice(bot.watchlist.indexOf(item), 1)
+  cfg.watchlist.splice(cfg.watchlist.indexOf(item), 1)
 }
 
 /**
  * Update item.
  */
 export const updateWatchlistItem = async (obj, condition) => {
-  let data = JSON.parse(fs.readFileSync(watchFile))
+  let data = JSON.parse(fs.readFileSync(watchFile).toString())
   /**
    * The stuff ahead doesn't make a lot of sense so I'll try my best to explain:
    */

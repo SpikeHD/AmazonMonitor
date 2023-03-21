@@ -1,24 +1,36 @@
-import Discord from 'discord.js'
-const bot = new Discord.Client()
+import Discord, { Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
 import { doCheck } from './common/util.js'
 
-const config = JSON.parse(fs.readFileSync('./config.json'))
-
-bot.commands = new Discord.Collection()
-bot.itemLimit = config.guild_item_limit
+const bot = new Discord.Client({
+  intents: [
+    'Guilds',
+    'GuildMembers',
+    'GuildMessages',
+    'MessageContent',
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.Message
+  ]
+})
+const config = JSON.parse(fs.readFileSync('./config.json').toString())
+const cfg = {
+  commands: new Discord.Collection(),
+  itemLimit: config.guild_item_limit,
+  util: null,
+  debug: debug,
+  proxylist: fs.existsSync('./proxylist.txt'),
+  required_perms: config.required_perms,
+  url_params: config.url_params || {},
+  prefix: config.prefix
+}
 
 bot.login(config.token)
 
 bot.on('ready', async () => {
-  bot.util = await import('./common/util.js')
-  bot.debug = debug
-  bot.proxylist = fs.existsSync('./proxylist.txt')
-  bot.required_perms = config.required_perms
-  bot.url_params = config.url_params || {}
-  bot.prefix = config.prefix
-  const str = `
+  console.log(`
   ##########################################################################
    _____                                        __      __         __         .__                  
   /  _  \\   _____ _____  ____________   ____   /  \\    /  \\_____ _/  |_  ____ |  |__   ___________ 
@@ -29,21 +41,24 @@ bot.on('ready', async () => {
 
   by SpikeHD#3336
   ##########################################################################
-  `
+  `)
 
-  console.log(str)
+  cfg.util = await import('./common/util.js')
+
+  if (cfg.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warning')
+  if (cfg.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warning')
 
   // Load commands
   fs.readdirSync('./commands/').forEach(async command => {
     debug.log(`Loading command: ${command}`, 'info')
 
     let props = await import(`./commands/${command}`)
-    bot.commands.set(command.replace('.js', ''), props)
+    cfg.commands.set(command.split('.')[0], props)
   })
 
   // Start services
-  await bot.util.startPup()
-  await bot.util.startWatcher(bot)
+  await cfg.util.startPup()
+  await cfg.util.startWatcher(bot, cfg)
 
   debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
 
@@ -54,33 +69,35 @@ bot.on('ready', async () => {
   }
 
   // Run initial check when the bot first starts
-  doCheck(bot, 0)
+  doCheck(bot, cfg, 0)
 })
 
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
   if (message.author.bot) return
   if (!message.content.startsWith(config.prefix)) return
 
   let command = message.content.split(config.prefix)[1].split(' ')[0],
     args = message.content.split(' '),
-    cmd = bot.commands.get(command)?.default
+    // @ts-expect-error This is fine, it's just how the import works
+    cmd = cfg.commands.get(command)?.default
 
   if (cmd) {
     switch(cmd.type) {
-    case 'view': exec(bot, message, args, cmd)
+    case 'view': exec(cfg, message, args, cmd)
       break
     case 'edit':
-      if (message.member.hasPermission(bot.required_perms)) exec(bot, message, args, cmd)
+      if (message.member.permissions.has(cfg.required_perms)) exec(cfg, message, args, cmd)
       break
     }
   }
 })
 
-async function exec(bot, message, args, cmd) {
-  message.channel.startTyping()
-  await cmd.run(bot, message.guild, message, args).catch(e => {
+async function exec(cfg, message: Discord.Message, args, cmd) {
+  const ch = await message.channel.fetch()
+  ch.sendTyping()
+
+  await cmd.run(cfg, message.guild, message, args).catch(e => {
     message.channel.send(e)
     debug.log(e, 'error')
   })
-  message.channel.stopTyping(true)
 }

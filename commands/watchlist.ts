@@ -1,4 +1,4 @@
-import { MessageEmbed, Util } from 'discord.js'
+import { EmbedBuilder, Guild, Message } from 'discord.js'
 import { trim } from '../common/util.js'
 import { getWatchlist } from '../common/data.js'
 
@@ -10,7 +10,7 @@ export default {
   run
 }
 
-async function run(bot, guild, message) {
+async function run(cfg, guild: Guild, message: Message) {
   getWatchlist().then(async rows => {
     let links = rows.map((x, i) => {
       if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}`:''}`
@@ -18,20 +18,33 @@ async function run(bot, guild, message) {
       else if (x.type === 'query') return `${i+1}. Query: "${x.query}"`
     })
 
-    bot.debug.log('Raw database output:', 'debug')
-    bot.debug.log(rows, 'debug')
+    cfg.debug.log('Raw database output:', 'debug')
+    cfg.debug.log(rows, 'debug')
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setTitle('List of Amazon items currently being watched')
-      .setColor('BLUE')
-      .setFooter(`Currently watching ${rows.length} items in this server`)
+      .setColor('Blue')
+      .setFooter({
+        text: `Currently watching ${rows.length} items in this server`
+      })
 
     const description = links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!'
-    const splitDescriptions = Util.splitMessage(description, { maxLength: 2048 })
+    const maxLen = 2048
+    const splitDescriptions = description.split('')
+
+    const chunks = []
+
+    // Split description into chunks of size maxLen
+    while (splitDescriptions.length > 0) {
+      chunks.push(splitDescriptions.splice(0, maxLen))
+    }
 
     for (const desc of splitDescriptions) {
       embed.setDescription(desc)
-      await message.channel.send(embed)
+
+      await message.channel.send({
+        embeds: [embed]
+      })
     }
   })
 }

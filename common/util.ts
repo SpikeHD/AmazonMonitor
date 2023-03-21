@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
 import pup from 'puppeteer'
 import useProxy from 'puppeteer-page-proxy'
 import cheerio from 'cheerio'
@@ -7,7 +7,7 @@ import * as amazon from './Amazon.js'
 import * as debug from './debug.js'
 import { getWatchlist, updateWatchlistItem, addWatchlistItem, removeWatchlistItem } from './data.js'
 
-const { auto_cart_link, cache_limit, tld, minutes_per_check } = JSON.parse(fs.readFileSync('./config.json'))
+const { auto_cart_link, cache_limit, tld, minutes_per_check } = JSON.parse(fs.readFileSync('./config.json').toString())
 
 let browser
 let userAgents = [
@@ -60,12 +60,17 @@ export const argParser = (opts, avblArgs) => {
       let argVal = opts[i].split('-')[opts[i].lastIndexOf('-') + 1]
       // Get matching argument in avblArgs
       let avblArg = Object.keys(avblArgs).filter(x => x.startsWith(argVal[0]))
+
+      console.log(avblArg)
       
+      // @ts-expect-error test
       if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith('-') || !opts[i + 1])) {
         // If the argument has no value associated with it, assume boolean
+      // @ts-expect-error test
         avblArgs[avblArg] = true
   
         // Otherwise, assume actual
+      // @ts-expect-error test
       } else avblArgs[avblArg] = opts[i + 1]
     }
   }
@@ -187,40 +192,40 @@ async function load(html) {
 /**
  * Inits a watcher that'll check all of the items for price drops
  */
-export const startWatcher = async (bot) => {
+export const startWatcher = async (bot, cfg) => {
   const rows = await getWatchlist()
-  bot.watchlist = JSON.parse(JSON.stringify(rows))
+  cfg.watchlist = JSON.parse(JSON.stringify(rows))
   debug.log('Watchlist Loaded', 'info')
 
-  bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, {
+  bot.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, {
     type: 'WATCHING'
   })
 
   // Set an interval with an offset so we don't decimate Amazon with requests
   setInterval(() => {
     debug.log('Checking item prices...', 'message')
-    if (bot.watchlist.length > 0) doCheck(bot, 0)
+    if (cfg.watchlist.length > 0) doCheck(bot, cfg, 0)
   }, (minutes_per_check * 60000) || 120000)
 }
 
 /**
  * Loops through all watchlist items, looking for price drops
  */
-export async function doCheck(bot, i) {
-  if (i < bot.watchlist.length) {
-    const obj = bot.watchlist[i]
+export async function doCheck(bot, cfg, i) {
+  if (i < cfg.watchlist.length) {
+    const obj = cfg.watchlist[i]
 
     if (obj.type === 'link') {
       // Get details
-      const item = await amazon.details(bot, obj.link)
+      const item = await amazon.details(cfg, obj.link)
       const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
-      priceCheck(bot, obj, item)
+      priceCheck(cfg, obj, item)
       if (obj.lastPrice !== curPrice) pushPriceChange(obj, item)
     } else if (obj.type === 'category') {
       let total = 0
       // First, get current items in category for comparison
-      const newItems = await amazon.categoryDetails(bot, obj.link)
+      const newItems = await amazon.categoryDetails(cfg, obj.link)
 
       // Match items in both arrays and only compare those prices.
       const itemsToCompare = newItems.list.filter(ni => obj.cache.find(o => o.asin === ni.asin))
@@ -231,7 +236,7 @@ export async function doCheck(bot, i) {
 
         // Assign channel_id in case there is an alert to send
         matchingObj.channel_id = obj.channel_id
-        if (priceCheck(bot, matchingObj, item)) total++
+        if (priceCheck(cfg, matchingObj, item)) total++
       })
 
       // Push new list to watchlist
@@ -247,14 +252,14 @@ export async function doCheck(bot, i) {
       debug.log(`${total} item(s) changed`, 'debug')
 
       // Remove old stuff
-      await removeWatchlistItem(bot, obj.link)
+      await removeWatchlistItem(cfg, obj.link)
       // Add new stuff
       await addWatchlistItem(addition)
-      bot.watchlist.push(obj)
+      cfg.watchlist.push(obj)
     } else if (obj.type === 'query') {
       let total = 0
       // Same concept as category. Get new items...
-      const newItems = await amazon.find(bot, obj.query, tld)
+      const newItems = await amazon.find(cfg, obj.query, tld)
 
       // Match items for comparison, if there are no new items (due to error), just return an empty array
       const itemsToCompare = newItems ? newItems.filter(ni => obj.cache.find(o => o.asin === ni.asin)) : []
@@ -264,7 +269,7 @@ export async function doCheck(bot, i) {
 
         // Assign channel_id in case there is an alert to send
         matchingObj.channel_id = obj.channel_id
-        if (priceCheck(bot, matchingObj, item)) total++
+        if (priceCheck(cfg, matchingObj, item)) total++
       })
 
       debug.log(`${total} item(s) changed`, 'debug')
@@ -280,20 +285,20 @@ export async function doCheck(bot, i) {
       }
 
       // Remove old stuff
-      await removeWatchlistItem(bot, obj.link)
+      await removeWatchlistItem(cfg, obj.link)
       // Add new stuff
       await addWatchlistItem(addition) 
-      bot.watchlist.push(obj)
+      cfg.watchlist.push(obj)
     }
 
     // Do check with next item
-    setTimeout(() => doCheck(bot, i + 1), fs.existsSync('./proxylist.txt') ? 0 : 6000)
+    setTimeout(() => doCheck(bot, cfg, i + 1), fs.existsSync('./proxylist.txt') ? 0 : 6000)
   }
 
   getWatchlist().then(rows => {
-    bot.watchlist = JSON.parse(JSON.stringify(rows))
+    cfg.watchlist = JSON.parse(JSON.stringify(rows))
 
-    bot.user.setActivity(`${rows.length} items! | ${bot.prefix}help`, { type: 'WATCHING' })
+    bot.user.setActivity(`${rows.length} items! | ${cfg.prefix}help`, { type: 'WATCHING' })
   })
 }
 
@@ -304,17 +309,17 @@ export async function doCheck(bot, i) {
  * @param {Object} obj 
  * @param {Object} item 
  */
-function priceCheck(bot, obj, item) {
+function priceCheck(cfg, obj, item) {
   const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
   const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit
 
   // Compare prices
   if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) {
-    sendInStockAlert(bot, obj, item)
+    sendInStockAlert(cfg, obj, item)
     return true
   }
   if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) {
-    sendPriceAlert(bot, obj, item)
+    sendPriceAlert(cfg, obj, item)
     return true
   }
 
@@ -324,19 +329,21 @@ function priceCheck(bot, obj, item) {
 /**
  * Sends an alert to the guildChannel specified in the DB entry
  */
-function sendPriceAlert(bot, obj, item) {
+function sendPriceAlert(cfg, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
-  let link = (obj.link || obj.full_link) + parseParams(bot.url_params)
-  let channel = bot.channels.cache.get(obj.channel_id)
+  let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
+  let channel = cfg.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
-  let embed = new MessageEmbed()
+  let embed = new EmbedBuilder()
     .setTitle(`Price alert for "${item.full_title}"`)
-    .setAuthor(item.seller ? item.seller:'Amazon')
+    .setAuthor({
+      name: item.seller ? item.seller:'Amazon'
+    })
     .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
-    .setColor('GREEN')
+    .setColor('Green')
 
   if(channel) channel.send(embed)
 }
@@ -363,18 +370,20 @@ function pushPriceChange(obj, item) {
 /**
  * Sends an alert that an item that wasn't in stock now is
  */
-function sendInStockAlert(bot, obj, item) {
-  let channel = bot.channels.cache.get(obj.channel_id)
-  let link = (obj.link || obj.full_link) + parseParams(bot.url_params)
+function sendInStockAlert(cfg, obj, item) {
+  let channel = cfg.channels.cache.get(obj.channel_id)
+  let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(bot.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
-  let embed = new MessageEmbed()
+  let embed = new EmbedBuilder()
     .setTitle(`"${item.full_title}" is now in stock!`)
-    .setAuthor(item.seller)
+    .setAuthor({
+      name: item.seller
+    })
     .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${link}`)
-    .setColor('GREEN')
+    .setColor('Green')
 
   if(channel) channel.send(embed)
 }

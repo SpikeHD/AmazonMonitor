@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest --coverage tests/"
+    "test": "jest --coverage tests/",
+    "compile": "tsc",
+    "start": "ts-node --esm index",
+    "lint": "yarn eslint index.ts commands/**/*.ts common/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -19,8 +22,8 @@
   "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
     "chalk": "^5.0.1",
-    "cheerio": "^1.0.0-rc.5",
-    "discord.js": "^12.5.1",
+    "cheerio": "1.0.0-rc.10",
+    "discord.js": "^14",
     "puppeteer": "^14.3.0",
     "puppeteer-page-proxy": "^1.2.8",
     "puppeteer-proxy": "^2.1.1",
@@ -29,8 +32,12 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
     "eslint": "^7.19.0",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
   },
   "jest": {
     "testEnvironment": "node",
