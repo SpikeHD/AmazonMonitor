@@ -45,6 +45,9 @@ bot.on('ready', async () => {
 
   cfg.util = await import('./common/util.js')
 
+  if (cfg.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warning')
+  if (cfg.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warning')
+
   // Load commands
   fs.readdirSync('./commands/').forEach(async command => {
     debug.log(`Loading command: ${command}`, 'info')

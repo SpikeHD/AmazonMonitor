@@ -1,10 +1,16 @@
-![](https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor) ![](https://img.shields.io/david/SpikeHD/AmazonMonitor) ![](https://img.shields.io/github/workflow/status/SpikeHD/AmazonMonitor/ESLint)
+<div align="center">
+  <h1>AmazonMonitor</h1>
+  <h3>Now updated for Discord.js v14 (<i>and typescript)</i>!</h3>
+
+  <img src="https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor" />
+  <img src="https://img.shields.io/david/SpikeHD/AmazonMonitor" />
+  <img src="https://img.shields.io/github/workflow/status/SpikeHD/AmazonMonitor/ESLint" />
+</div>
 
 # TODO
 
 * Take advantage of the fact that this kind of link: https://www.amazon.com/gp/aws/cart/add.html?ASIN.1=B073VPS15N
-  will output the prices of ALL items, as well as say which do not have prices currently.
-    * May not require headless browser too!
+  * Will output the prices of ALL items, as well as say which do not have prices currently.
 
 # Description
 
@@ -41,7 +47,7 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
 
 # Requirements
 
-- [NodeJS v12.2 or above](https://nodejs.org/en/)
+- [NodeJS v16 or above](https://nodejs.org/en/)
 
 # Configuration
 
@@ -142,7 +148,7 @@ To start the bot, simply open a terminal and run these commands:
   ```
 * Run the main file:
   ```sh
-  node index
+  npm run start
   ```
   
 To restart the bot after a config change:
@@ -150,12 +156,12 @@ To restart the bot after a config change:
 * Press Ctrl+C
 * Start it the same as before:
   ```sh
-  node index
+  npm run start
   ```
  
 # Commands
 
-Like explained before, commands can only be run with users that have the permissions in the `required_perms` section of the config.
+Like explained before, commands can only be run with users that have the permissions in the `required_perms` section of the config. All examples assume a prefix of `!`, but, again, you can set it to whatever you want.
 
 ## help
 
