@@ -11,40 +11,39 @@ export default {
 }
 
 async function run(cfg, guild: Guild, message: Message) {
-  getWatchlist().then(async rows => {
-    let links = rows.map((x, i) => {
-      if (x.type === 'link') return `${i+1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}`:''}`
-      else if (x.type === 'category') return `${i+1}. Category: "${x.name}"`
-      else if (x.type === 'query') return `${i+1}. Query: "${x.query}"`
+  const rows = await getWatchlist()
+  let links = rows.map((x, i) => {
+    if (x.type === 'link') return `${i + 1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}` : ''}`
+    else if (x.type === 'category') return `${i + 1}. Category: "${x.name}"`
+    else if (x.type === 'query') return `${i + 1}. Query: "${x.query}"`
+  })
+
+  cfg.debug.log('Raw database output:', 'debug')
+  cfg.debug.log(rows, 'debug')
+
+  let embed = new EmbedBuilder()
+    .setTitle('List of Amazon items currently being watched')
+    .setColor('Blue')
+    .setFooter({
+      text: `Currently watching ${rows.length} items in this server`
     })
 
-    cfg.debug.log('Raw database output:', 'debug')
-    cfg.debug.log(rows, 'debug')
+  const description = links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!'
+  const maxLen = 2048
+  const splitDescriptions = description.split('')
 
-    let embed = new EmbedBuilder()
-      .setTitle('List of Amazon items currently being watched')
-      .setColor('Blue')
-      .setFooter({
-        text: `Currently watching ${rows.length} items in this server`
-      })
+  const chunks = []
 
-    const description = links.length > 0 ? links.join('\n\n') : 'You haven\'t added any items yet!'
-    const maxLen = 2048
-    const splitDescriptions = description.split('')
+  // Split description into chunks of size maxLen
+  while (splitDescriptions.length > 0) {
+    chunks.push(splitDescriptions.splice(0, maxLen))
+  }
 
-    const chunks = []
+  for (const desc of chunks) {
+    embed.setDescription(desc.join(''))
 
-    // Split description into chunks of size maxLen
-    while (splitDescriptions.length > 0) {
-      chunks.push(splitDescriptions.splice(0, maxLen))
-    }
-
-    for (const desc of splitDescriptions) {
-      embed.setDescription(desc)
-
-      await message.channel.send({
-        embeds: [embed]
-      })
-    }
-  })
+    await message.channel.send({
+      embeds: [embed]
+    })
+  }
 }

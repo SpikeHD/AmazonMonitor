@@ -27,7 +27,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
     if (!item) return message.channel.send('Not an existing item!')
     else {
       removeWatchlistItem(cfg, item.link).then(() => {
-        message.channel.send('Successfully removed item: ' + item.link)
+        message.channel.send('Successfully removed item: ' + (item.link || item.query)
       })
     }
   }
