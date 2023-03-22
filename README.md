@@ -18,6 +18,10 @@ AmazonMonitor is a self-hosted Discord bot designed for notifying you, or other 
 
 [FAQ (please read this before creating an issue. Thanks!)](https://github.com/SpikeHD/AmazonMonitor/blob/master/FAQ.md)
 
+# Demo
+
+https://user-images.githubusercontent.com/25207995/226811331-4b86a328-a93c-46da-98b2-737a082d3ea5.mp4
+
 # Jump to:
 
 * [Requirements](#requirements)
