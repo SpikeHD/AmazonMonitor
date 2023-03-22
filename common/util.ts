@@ -220,7 +220,7 @@ export async function doCheck(bot, cfg, i) {
       const item = await amazon.details(cfg, obj.link)
       const curPrice = parseFloat(item.price.replace(/,/g, '')) || 0
 
-      priceCheck(cfg, obj, item)
+      priceCheck(bot, cfg, obj, item)
       if (obj.lastPrice !== curPrice) pushPriceChange(obj, item)
     } else if (obj.type === 'category') {
       let total = 0
@@ -236,7 +236,7 @@ export async function doCheck(bot, cfg, i) {
 
         // Assign channel_id in case there is an alert to send
         matchingObj.channel_id = obj.channel_id
-        if (priceCheck(cfg, matchingObj, item)) total++
+        if (priceCheck(bot, cfg, matchingObj, item)) total++
       })
 
       // Push new list to watchlist
@@ -269,7 +269,7 @@ export async function doCheck(bot, cfg, i) {
 
         // Assign channel_id in case there is an alert to send
         matchingObj.channel_id = obj.channel_id
-        if (priceCheck(cfg, matchingObj, item)) total++
+        if (priceCheck(bot, cfg, matchingObj, item)) total++
       })
 
       debug.log(`${total} item(s) changed`, 'debug')
@@ -309,17 +309,17 @@ export async function doCheck(bot, cfg, i) {
  * @param {Object} obj 
  * @param {Object} item 
  */
-function priceCheck(cfg, obj, item) {
+function priceCheck(bot, cfg, obj, item) {
   const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
   const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit
 
   // Compare prices
   if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) {
-    sendInStockAlert(cfg, obj, item)
+    sendInStockAlert(bot, cfg, obj, item)
     return true
   }
   if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) {
-    sendPriceAlert(cfg, obj, item)
+    sendPriceAlert(bot, cfg, obj, item)
     return true
   }
 
@@ -329,10 +329,10 @@ function priceCheck(cfg, obj, item) {
 /**
  * Sends an alert to the guildChannel specified in the DB entry
  */
-function sendPriceAlert(cfg, obj, item) {
+function sendPriceAlert(bot, cfg, obj, item) {
   // Yeah yeah, I'll fix the inconsistant link props later
   let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
-  let channel = cfg.channels.cache.get(obj.channel_id)
+  let channel = bot.channels.cache.get(obj.channel_id)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
@@ -370,8 +370,8 @@ function pushPriceChange(obj, item) {
 /**
  * Sends an alert that an item that wasn't in stock now is
  */
-function sendInStockAlert(cfg, obj, item) {
-  let channel = cfg.channels.cache.get(obj.channel_id)
+function sendInStockAlert(bot, cfg, obj, item) {
+  let channel = bot.channels.cache.get(obj.channel_id)
   let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
 
   // Rework the link to automatically add it to the cart of the person that clicked it
