@@ -3,8 +3,8 @@
   <h3>Now updated for Discord.js v14 (<i>and typescript)</i>!</h3>
 
   <img src="https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor" />
-  <img src="https://img.shields.io/david/SpikeHD/AmazonMonitor" />
-  <img src="https://img.shields.io/github/workflow/status/SpikeHD/AmazonMonitor/ESLint" />
+  <img src="https://img.shields.io/github/repo-size/SpikeHD/AmazonMonitor" />
+  <img src="https://img.shields.io/github/stars/SpikeHD/AmazonMonitor?style=social" />
 </div>
 
 # TODO
