@@ -42,7 +42,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
     })
   }
 
-  embed.addFields(fields)
+  embed.addFields(fields.slice(0, 24))
 
   const m = await message.channel.send({
     embeds: [embed]
