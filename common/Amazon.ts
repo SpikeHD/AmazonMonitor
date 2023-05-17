@@ -186,20 +186,34 @@ function category($, l) {
  */
 function getRegularItem($, l) {
   debug.log('Detected as a regular item', 'debug')
+
+  let couponDiscount = 0
+  
+  // Get the coupon price, if it exists
+  if ($('label[id*="couponTextpctch"]').text().trim() !== '') {
+    couponDiscount = parseInt($('label[id*="couponTextpctch"]').text().trim().match(/(\d+)/)[0], 10) || 0
+  }
+
   let priceElms = [
     $('#priceblock_ourprice').text().trim(),
     $('#priceblock_saleprice').text().trim(),
     $('#sns-base-price').text().trim(),
-    $('.a-price').find('.a-offscreen').eq(0).text().trim(),
-    $('.a-price-whole').first().text().trim() + $('.a-price-fraction').first().text().trim(),
+    String(
+      parseFloat(util.priceFormat($('.a-price').find('.a-offscreen').eq(0).text().trim())) - couponDiscount
+    ),
+    String(
+      parseFloat(util.priceFormat($('.a-price-whole').first().text().trim() + $('.a-price-fraction').first().text().trim())) - couponDiscount
+    ),
   ]
   let shippingElms = [
     $('#ourprice_shippingmessage').find('.a-icon-prime') ? 'Free with prime' : $('#ourprice_shippingmessage').find('.a-color-secondary').text().trim(),
     $('#saleprice_shippingmessage').find('b').text().trim()
   ]
+
   // Most items have feature lists
   let features = $('#feature-bullets').find('li').find('span').toArray()
   let parsedFeatures = []
+
   features.forEach(f => {
     // Get features in a more normal format
     parsedFeatures.push(` - ${$(f).text().trim()}`)
