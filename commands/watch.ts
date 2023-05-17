@@ -9,7 +9,7 @@ const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json').toStrin
 export default {
   name: 'watch',
   desc: 'Add and watch a single Amazon link',
-  usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link OR category link OR search query] [optional: -p for price limit ]',
+  usage: 'watch [argument type (eg, -q for query, -c for category, -l for link)] [amazon link, category link, or search query] [optional: -p for price limit]',
   type: 'edit',
   run
 }
@@ -132,7 +132,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
 
     mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else {
-    return message.channel.send(`Not a valid link, category, or search query. Did you mean \`${cfg.prefix}watch -l ${args[1]}?\``)
+    return message.channel.send(`Not a valid link, category, or search query. Refer to \`${cfg.prefix}help\` for more info!`)
   }
 
   // Push the values to storage

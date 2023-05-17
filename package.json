@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --coverage tests/",
     "compile": "tsc",
-    "start": "ts-node --esm index",
+    "start": "ts-node --esm index.ts",
     "lint": "yarn eslint index.ts commands/**/*.ts common/**/*.ts"
   },
   "repository": {
