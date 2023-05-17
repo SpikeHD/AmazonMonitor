@@ -117,8 +117,13 @@ export const startPup = async () => {
  */
 export const getPage = async (url, opts) => {
   debug.log('Type: ' + opts.type, 'info')
+  debug.log('URL: ' + url, 'info')
+
+  let page = await browser.newPage()
+  let uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
   let now = new Date().getTime()
   let proxy
+
   if (opts.type === 'proxy') {
     let l = fs.readFileSync('proxylist.txt', 'utf8')
     let proxies = l.split('\n')
@@ -130,8 +135,6 @@ export const getPage = async (url, opts) => {
     }
   }
 
-  let page = await browser.newPage()
-  let uAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
   if (proxy) {
     debug.log('Selected proxy URL: ' + proxy, 'info')
     page.setRequestInterception(true)
@@ -327,28 +330,6 @@ function priceCheck(bot, cfg, obj, item) {
 }
 
 /**
- * Sends an alert to the guildChannel specified in the DB entry
- */
-function sendPriceAlert(bot, cfg, obj, item) {
-  // Yeah yeah, I'll fix the inconsistant link props later
-  let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
-  let channel = bot.channels.cache.get(obj.channel_id)
-
-  // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
-
-  let embed = new EmbedBuilder()
-    .setTitle(`Price alert for "${item.full_title}"`)
-    .setAuthor({
-      name: item.seller ? item.seller:'Amazon'
-    })
-    .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
-    .setColor('Green')
-
-  if(channel) channel.send(embed)
-}
-
-/**
  * Pushes a change in price to the DB
  */
 function pushPriceChange(obj, item) {
@@ -367,12 +348,41 @@ function pushPriceChange(obj, item) {
   })
 }
 
+
+/**
+ * Sends an alert to the guildChannel specified in the DB entry
+ */
+function sendPriceAlert(bot, cfg, obj, item) {
+  // Yeah yeah, I'll fix the inconsistant link props later
+  let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
+  let channel = bot.channels.cache.get(obj.channel_id)
+
+  debug.log(`Sending price alert for ${item.full_title}`, 'info')
+  debug.log(item, 'info')
+
+  // Rework the link to automatically add it to the cart of the person that clicked it
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+
+  let embed = new EmbedBuilder()
+    .setTitle(`Price alert for "${item.full_title}"`)
+    .setAuthor({
+      name: item.seller ? item.seller:'Amazon'
+    })
+    .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
+    .setColor('Green')
+
+  if(channel) channel.send(embed)
+}
+
 /**
  * Sends an alert that an item that wasn't in stock now is
  */
 function sendInStockAlert(bot, cfg, obj, item) {
   let channel = bot.channels.cache.get(obj.channel_id)
   let link = (obj.link || obj.full_link) + parseParams(cfg.url_params)
+
+  debug.log(`Sending stock alert for ${item.full_title}`, 'info')
+  debug.log(item, 'info')
 
   // Rework the link to automatically add it to the cart of the person that clicked it
   if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
