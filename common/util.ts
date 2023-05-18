@@ -371,7 +371,7 @@ function sendPriceAlert(bot, cfg, obj, item) {
     .setDescription(`Old Price: ${item.symbol} ${priceFormat(obj.lastPrice)}\nNew Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('Green')
 
-  if(channel) channel.send(embed)
+  if(channel) channel.send({ embeds: [embed] })
 }
 
 /**
@@ -395,5 +395,5 @@ function sendInStockAlert(bot, cfg, obj, item) {
     .setDescription(`Current Price: ${item.symbol} ${item.price}\n\n${link}`)
     .setColor('Green')
 
-  if(channel) channel.send(embed)
+  if(channel) channel.send({ embeds: [embed] })
 }
