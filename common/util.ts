@@ -321,17 +321,17 @@ function priceCheck(bot, cfg, obj, item) {
     sendInStockAlert(bot, cfg, obj, item)
     return true
   }
-  const threshold = 1.50;
-  const priceDiff = obj.lastPrice - curPrice;
+  const threshold = 1.50
+  const priceDiff = obj.lastPrice - curPrice
   if(priceDiff > 0 && curPrice !== 0 && underLimit) {
     if(priceDiff >= threshold) {
       sendPriceAlert(bot, cfg, obj, item)
       return true
-   }
-   else {
-     debug.log('Difference between prices too small, not sending', 'warn');
-   }
-}
+    }
+    else {
+      debug.log('Difference between prices too small, not sending', 'warn')
+    }
+  }
   return false
 }
 
