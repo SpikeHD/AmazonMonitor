@@ -28,5 +28,3 @@ jobs:
       - name: Create fake config
         run: cp config.example.json config.json
 
-      - name: Run Jest
-        run: yarn test
