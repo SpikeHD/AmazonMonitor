@@ -11,7 +11,7 @@ const { auto_cart_link, cache_limit, tld, minutes_per_check } = JSON.parse(fs.re
 
 let browser
 let userAgents = [
-  'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Ubuntu/14.04.6 Chrome/81.0.3990.0 Safari/537.36',
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.3538.77 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.62 Safari/537.36 Edg/81.0.416.31'
@@ -321,11 +321,17 @@ function priceCheck(bot, cfg, obj, item) {
     sendInStockAlert(bot, cfg, obj, item)
     return true
   }
-  if (obj.lastPrice > curPrice && curPrice !== 0 && underLimit) {
-    sendPriceAlert(bot, cfg, obj, item)
-    return true
-  }
-
+  const threshold = 1.50;
+  const priceDiff = obj.lastPrice - curPrice;
+  if(priceDiff > 0 && curPrice !== 0 && underLimit) {
+    if(priceDiff >= threshold) {
+      sendPriceAlert(bot, cfg, obj, item)
+      return true
+   }
+   else {
+     debug.log('Difference between prices too small, not sending', 'warn');
+   }
+}
   return false
 }
 
