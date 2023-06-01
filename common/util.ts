@@ -385,7 +385,7 @@ function sendInStockAlert(bot, cfg, obj, item) {
   debug.log(item, 'info')
 
   // Rework the link to automatically add it to the cart of the person that clicked it
-  if(auto_cart_link) link = `${obj.link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
+  if(auto_cart_link) link = `${link.split('/dp/')[0]}/gp/aws/cart/add.html${parseParams(cfg.url_params)}&ASIN.1=${item.asin}&Quantity.1=1`
 
   let embed = new EmbedBuilder()
     .setTitle(`"${item.full_title}" is now in stock!`)
