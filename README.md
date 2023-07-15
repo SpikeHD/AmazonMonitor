@@ -5,6 +5,8 @@
   <img src="https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor" />
   <img src="https://img.shields.io/github/repo-size/SpikeHD/AmazonMonitor" />
   <img src="https://img.shields.io/github/stars/SpikeHD/AmazonMonitor?style=social" />
+
+  <a href="https://discord.gg/agQ9mRdHMZ">https://discord.gg/agQ9mRdHMZ</a>
 </div>
 
 # TODO
