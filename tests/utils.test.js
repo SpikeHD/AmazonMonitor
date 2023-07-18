@@ -1,5 +1,4 @@
 import * as util from '../common/utils'
-import pup from 'puppeteer'
 
 describe('utils test', () => {
   it('tests price formatting', () => {
