@@ -6,6 +6,7 @@
     "moduleResolution": "nodenext",
     "module": "NodeNext",
     "esModuleInterop": true,
+    "noImplicitAny": true
   },
   "include": [
     "./commands",

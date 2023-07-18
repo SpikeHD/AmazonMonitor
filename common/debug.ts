@@ -3,7 +3,15 @@ import chalk from 'chalk'
 
 const { debug_enabled }: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 
-export function log(message, type = 'debug', override = false) {
+interface LogTypes {
+  log: string
+  debug: string
+  warn: string
+  error: string
+  info: string
+}
+
+export function log(message, type: keyof LogTypes = 'debug', override = false) {
   let t
   /* eslint-disable indent */
   switch(type.toLowerCase()) {
@@ -20,4 +28,8 @@ export function log(message, type = 'debug', override = false) {
   }
 
   if(debug_enabled || override) console.log(t, message)
+}
+
+export default {
+  log,
 }

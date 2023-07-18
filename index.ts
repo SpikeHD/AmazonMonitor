@@ -1,6 +1,7 @@
 import Discord, { Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
+import { initBrowser } from './common/browser.js'
 
 const bot = new Discord.Client({
   intents: [
@@ -48,6 +49,9 @@ bot.on('ready', async () => {
     const cmd = await import(`./commands/${command}`)
     commands.set(cmd.default.name, cmd)
   }
+
+  // Initialize the globally accessible browser
+  initBrowser()
 })
 
 bot.on('messageCreate', function (message) {
