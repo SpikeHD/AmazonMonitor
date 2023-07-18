@@ -4,7 +4,7 @@ import { item } from '../common/amazon'
 
 export default {
   name: 'details',
-  desc: 'Return details using an amazon link',
+  description: 'Return details using an amazon link',
   usage: 'details [amazon link]',
   type: 'view',
   run

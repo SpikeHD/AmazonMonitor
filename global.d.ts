@@ -25,7 +25,7 @@ interface Command {
   description: string
   usage: string
   type: string
-  run: (guild: import('discord.js').Guild, message: import('discord.js').Message, args: string[]) => Promise<void>
+  run: (bot: import('discord.js').Client, message: import('discord.js').Message, args: string[]) => Promise<void>
 }
 
 interface NotificationData {

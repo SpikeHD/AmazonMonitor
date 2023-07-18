@@ -75,6 +75,11 @@ bot.on('messageCreate', function (message) {
     cmd = commands.get(command)?.default
 
   if (cmd) {
+    if (cmd.name === 'help') {
+      cmd.run(bot, message, commands)
+      return
+    }
+
     switch(cmd.type) {
     case 'view': exec(message, args, cmd)
       break
@@ -89,7 +94,7 @@ async function exec(message: Discord.Message, args: string[], cmd: Command) {
   const ch = await message.channel.fetch()
   ch.sendTyping()
 
-  await cmd.run(message.guild, message, args).catch((e: Error) => {
+  await cmd.run(bot, message, args).catch((e: Error) => {
     message.channel.send(e.message)
     debug.log(e, 'error')
   })
