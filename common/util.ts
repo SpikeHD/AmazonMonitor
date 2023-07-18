@@ -60,8 +60,6 @@ export const argParser = (opts, avblArgs) => {
       let argVal = opts[i].split('-')[opts[i].lastIndexOf('-') + 1]
       // Get matching argument in avblArgs
       let avblArg = Object.keys(avblArgs).filter(x => x.startsWith(argVal[0]))
-
-      console.log(avblArg)
       
       // @ts-expect-error test
       if(typeof(avblArgs[avblArg]) === 'boolean' && (opts[i + 1] && opts[i + 1].startsWith('-') || !opts[i + 1])) {

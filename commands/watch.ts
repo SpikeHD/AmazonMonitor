@@ -14,13 +14,20 @@ export default {
   run
 }
 
+interface Args {
+  link: string,
+  category: string,
+  query: string,
+  priceLimit: number
+}
+
 async function run(cfg, guild: Guild, message: Message, args) {
   // Get an array of all existing entries to make sure we don't have a duplicate
   let existing = Array.isArray(cfg.watchlist) ? cfg.watchlist.filter(x => x && x.guild_id === message.guild.id) : []
   let asin, itld, obj, mContents
   let priceLimit = 0
   let exists = false
-  let argsObj = {
+  let argsObj: Args = {
     link: '',
     category: '',
     query:'',
@@ -60,20 +67,20 @@ async function run(cfg, guild: Guild, message: Message, args) {
       return message.channel.send('I\'m already watching that link somewhere else!')
     } else if (existing.length >= cfg.itemLimit) {
       return message.channel.send('You\'re watching too many links! Remove one from your list and try again.')
-    } else {
-      let item = await amazon.details(cfg, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => cfg.debug.log(e.message, 'error'))
-      obj = {
-        guild_id: guild.id,
-        channel_id: message.channel.id,
-        link: item.full_link,
-        lastPrice: parseFloat(util.priceFormat(item.price)) || 0,
-        item_name: item.full_title,
-        priceLimit: priceLimit,
-        type: 'link'
-      }
-
-      mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
     }
+
+    let item = await amazon.details(cfg, `https://www.amazon.${itld}/dp/${asin.replace(/[^A-Za-z0-9]+/g, '')}/`).catch(e => cfg.debug.log(e.message, 'error'))
+    obj = {
+      guild_id: guild.id,
+      channel_id: message.channel.id,
+      link: item.full_link,
+      lastPrice: parseFloat(util.priceFormat(item.price)) || 0,
+      item_name: item.full_title,
+      priceLimit: priceLimit,
+      type: 'link'
+    }
+
+    mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
     // We store the items and refresh the cache about once a day.
