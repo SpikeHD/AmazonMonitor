@@ -28,13 +28,13 @@ export async function search(query: string, suffix: string) {
     const price = priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
 
     results.push({
-      full_title: $(this).find('span.a-text-normal').text().trim(),
+      fullTitle: $(this).find('span.a-text-normal').text().trim(),
       ratings: $(this).find('.a-icon-alt').text().trim(),
       price: price.includes('NaN') ? '' : price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
-      full_link: `https://www.amazon.${suffix}/dp/${asin}`,
+      fullLink: `https://www.amazon.${suffix}/dp/${asin}`,
       asin
     })
   })
@@ -79,8 +79,8 @@ export async function category(url: string) {
     const price = priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
 
     return {
-      full_title: name,
-      full_link: `https://amazon.${tld}/dp/${asin}/`,
+      fullTitle: name,
+      fullLink: `https://amazon.${tld}/dp/${asin}/`,
       asin: asin,
       price: price.includes('NaN') ? '' : price,
       lastPrice: parseFloat(price) || 0,
@@ -97,9 +97,6 @@ export async function category(url: string) {
 }
 
 export async function item(url: string) {
-  const asin = linkToAsin(url)
-  const tld = url.split('amazon.')[1].split('/')[0]
-
   // If config contains URL params, add them to the URL
   if (Object.keys(config.url_params).length > 0) {
     url += parseParams(config.url_params)
@@ -172,8 +169,8 @@ async function parseItem($: CheerioAPI, url: string): Promise<ProductInfo> {
 
   let comparePrice = ''
   const product: ProductInfo = {
-    full_title: $('#productTitle').text().trim(),
-    full_link: url,
+    fullTitle: $('#productTitle').text().trim(),
+    fullLink: url,
     asin: linkToAsin(url),
     seller: $('#bylineInfo').text().trim(),
     price: '',
@@ -249,8 +246,8 @@ async function parseBook($: CheerioAPI, url: string): Promise<ProductInfo> {
   })
 
   const book: ProductInfo = {
-    full_title: $('#productTitle').text().trim(),
-    full_link: url,
+    fullTitle: $('#productTitle').text().trim(),
+    fullLink: url,
     asin: linkToAsin(url),
     seller: $('#bylineInfo').find('.contributorNameID').text().trim(),
     price: mainPrice,

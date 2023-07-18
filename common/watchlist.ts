@@ -14,7 +14,7 @@ interface Conditions {
  * Retrieve watchlist.
  */
 export const getWatchlist = async () => {
-  return JSON.parse(fs.readFileSync(watchFile).toString())
+  return JSON.parse(fs.readFileSync(watchFile).toString()) as Watchlist
 }
 
 /**

@@ -28,9 +28,16 @@ interface Command {
   run: (guild: import('discord.js').Guild, message: import('discord.js').Message, args: string[]) => Promise<void>
 }
 
+interface NotificationData {
+  itemName: string
+  oldPrice: number
+  newPrice: number
+  link: string
+}
+
 interface PartialWatchlistItem {
-  guild_id: string
-  channel_id: string
+  guildId: string
+  channelId: string
   priceLimit: number
   type: 'link' | 'category' | 'query'
 }
@@ -38,7 +45,7 @@ interface PartialWatchlistItem {
 interface LinkItem extends PartialWatchlistItem {
   link: string
   lastPrice: number
-  item_name: string
+  itemName: string
 }
 
 interface CategoryItem extends PartialWatchlistItem {
@@ -55,14 +62,14 @@ interface QueryItem extends PartialWatchlistItem {
 type Watchlist = Array<LinkItem | CategoryItem | QueryItem>
 
 interface SearchData {
-  full_title: string;
+  fullTitle: string;
   ratings: string;
   price: string;
   lastPrice: number;
   symbol: string;
   sale: string;
   asin: string;
-  full_link: string;
+  fullLink: string;
 }
 
 interface Category {
@@ -73,8 +80,8 @@ interface Category {
 }
 
 interface CategoryData {
-  full_title: string;
-  full_link: string;
+  fullTitle: string;
+  fullLink: string;
   asin: string;
   price: string;
   lastPrice: number;
@@ -84,8 +91,8 @@ interface CategoryData {
 }
 
 interface PartialProductInfo {
-  full_title: string;
-  full_link: string;
+  fullTitle: string;
+  fullLink: string;
   asin: string;
   price: string;
   lastPrice: number;
