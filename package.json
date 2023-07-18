@@ -1,6 +1,6 @@
 {
   "name": "amazonmonitor",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A Discord bot that monitors Amazon items for price drops/restocks",
   "main": "index.js",
   "type": "module",
@@ -25,10 +25,7 @@
     "cheerio": "1.0.0-rc.10",
     "discord.js": "^14",
     "puppeteer": "^14.3.0",
-    "puppeteer-page-proxy": "^1.2.8",
-    "puppeteer-proxy": "^2.1.1",
-    "request-promise": "^4.2.5",
-    "simple-proxy-agent": "^1.1.0"
+    "puppeteer-proxy": "^2.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",

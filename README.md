@@ -193,13 +193,17 @@ Spits out details on an item from Amazon. Useful in conjunction with `search`.
 
 ## watch
 
-* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`. Include `-p` for a price limit (can be a numner like `5` or a percentage like `10%`), eg. `watch -q toothbrush -p 100`.
+* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`.
+  * Extra options:
+  * `-p [price limit]` - Sets a price limit for the item. If the price drops below this, it will notify you.
+  * `-e [price percentage]` - Set the difference between the stored price and a new detected price as a percentage before it notifies you. For example, setting this to `25` means the new detected price must be 25% lower than the stored price.
+  * `-d [difference]` - Set the minimum difference between the stored price and a new detected price before it notifies you. Useful for preventing 5-cent differences.
 * Examples:
   * `!watch -l https://www.amazon.it/dp/B08C76W2WM/`
   * `!watch -c https://www.amazon.ca/b/?_encoding=UTF8&node=677244011`
   * `!watch -q iphone+12`
   * `!watch -l https://www.amazon.co.jp/-/en/dp/B07D1H7CW3/ -p 6000`
-  * `!watch -q airpods -p 20%`
+  * `!watch -q airpods -e 25`
 
 Adds an item, category, or search query to the watchlist.
 
