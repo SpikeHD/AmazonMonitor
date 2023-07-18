@@ -11,7 +11,7 @@ interface LogTypes {
   info: string
 }
 
-export function log(message, type: keyof LogTypes = 'debug', override = false) {
+export function log(message: string | object, type: keyof LogTypes = 'debug', override = false) {
   let t
   /* eslint-disable indent */
   switch(type.toLowerCase()) {

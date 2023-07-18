@@ -3,6 +3,10 @@ import fs from 'fs'
 import * as debug from './common/debug.js'
 import { initBrowser } from './common/browser.js'
 
+declare global {
+  var browser: import('puppeteer').Browser
+}
+
 const bot = new Discord.Client({
   intents: [
     'Guilds',
@@ -35,8 +39,8 @@ bot.on('ready', async () => {
   ##########################################################################
   `)
 
-  if (config.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warning')
-  if (config.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warning')
+  if (config.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warn')
+  if (config.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warn')
 
   if (config.minutes_per_check < 1) {
     debug.log('You have set minutes_per_check to something lower than a minute. This can cause the bot to start new checks before the previous cycle has finshed.', 'warn', true)
@@ -57,7 +61,7 @@ bot.on('ready', async () => {
 bot.on('messageCreate', function (message) {
   if (message.author.bot || !message.content.startsWith(config.prefix)) return
 
-  let command = message.content.split(config.prefix)[1].split(' ')[0],
+  const command = message.content.split(config.prefix)[1].split(' ')[0],
     args = message.content.split(' '),
     // @ts-expect-error This is fine, it's just how the import works
     cmd = commands.get(command)?.default
@@ -73,7 +77,7 @@ bot.on('messageCreate', function (message) {
   }
 })
 
-async function exec(message: Discord.Message, args, cmd) {
+async function exec(message: Discord.Message, args: string[], cmd) {
   const ch = await message.channel.fetch()
   ch.sendTyping()
 

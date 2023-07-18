@@ -20,35 +20,39 @@ interface Config {
   debug_enabled: boolean
 }
 
-type Watchlist = [
-  {
-    guild_id: string;
-    channel_id: string;
-    link: string;
-    lastPrice: number;
-    item_name: string;
-    priceLimit: string;
-    type: 'link';
-  } |
-  {
-    guild_id: string;
-    channel_id: string;
-    name: string;
-    link: string;
-    cache: CategoryData[];
-    priceLimit: number;
-    type: 'category';
-  } |
-  {
-    guild_id: string;
-    channel_id: string;
-    query: string;
-    cache: SearchData[];
-    priceLimit: number;
-    type: 'query';
-  }
-]
+interface Command {
+  name: string
+  description: string
+  usage: string
+  type: string
+  run: (guild: import('discord.js').Guild, message: import('discord.js').Message, args: string[]) => Promise<void>
+}
 
+interface PartialWatchlistItem {
+  guild_id: string
+  channel_id: string
+  priceLimit: number
+  type: 'link' | 'category' | 'query'
+}
+
+interface LinkItem extends PartialWatchlistItem {
+  link: string
+  lastPrice: number
+  item_name: string
+}
+
+interface CategoryItem extends PartialWatchlistItem {
+  name: string
+  link: string
+  cache: CategoryData[]
+}
+
+interface QueryItem extends PartialWatchlistItem {
+  query: string
+  cache: SearchData[]
+}
+
+type Watchlist = Array<LinkItem | CategoryItem | QueryItem>
 
 interface SearchData {
   full_title: string;
@@ -96,4 +100,3 @@ interface ProductInfo extends PartialProductInfo {
   features: string[];
   availability: string;
 }
-

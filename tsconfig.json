@@ -3,7 +3,7 @@
     "outDir": "./built",
     "allowJs": true,
     "target": "es2021",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "module": "NodeNext",
     "esModuleInterop": true,
     "noImplicitAny": true

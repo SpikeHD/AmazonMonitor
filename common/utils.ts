@@ -10,9 +10,11 @@ export function trim(str: string, toLength: 2000) {
 /**
  * Format a price
  */
-export const priceFormat = (p) => {
+export const priceFormat = (p: string) => {
   p = '' + p
-  let currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
+  
+  const currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
+
   if (currencySymbol) p = p.replace(currencySymbol, '')
 
   if (!p.includes('.') && !p.includes(',')) {
@@ -42,7 +44,7 @@ export const priceFormat = (p) => {
  * 
  * @param {Object} obj 
  */
-export const parseParams = (obj) => {
+export const parseParams = (obj: { [key:string]: string }) => {
   if(Object.keys(obj).length === 0) return '?'
   let str = '?'
   Object.keys(obj).forEach(k => {
