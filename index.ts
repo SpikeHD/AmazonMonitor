@@ -2,10 +2,13 @@ import Discord, { Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
 import { initBrowser } from './common/browser.js'
+import { startWatcher } from './common/watcher.js'
 
 declare global {
   var browser: import('puppeteer').Browser
 }
+
+const __dirname = import.meta.url.split('/').slice(0, -1).join('/')
 
 const bot = new Discord.Client({
   intents: [
@@ -49,13 +52,18 @@ bot.on('ready', async () => {
   }
 
   // Read all files in commands/ and add them to the commands collection
-  for (const command of fs.readdirSync('./commands').filter(file => file.endsWith('.js'))) {
-    const cmd = await import(`./commands/${command}`)
+  for (const command of fs.readdirSync(__dirname.replace('file:///', '') + '/commands/')) {
+    const cmd = await import(`${__dirname}/commands/${command}`)
+
+    debug.log(`Loaded command ${cmd.default.name}`, 'debug')
+
     commands.set(cmd.default.name, cmd)
   }
 
   // Initialize the globally accessible browser
   initBrowser()
+
+  startWatcher(bot)
 })
 
 bot.on('messageCreate', function (message) {
@@ -77,12 +85,12 @@ bot.on('messageCreate', function (message) {
   }
 })
 
-async function exec(message: Discord.Message, args: string[], cmd) {
+async function exec(message: Discord.Message, args: string[], cmd: Command) {
   const ch = await message.channel.fetch()
   ch.sendTyping()
 
-  await cmd.run(message.guild, message, args).catch(e => {
-    message.channel.send(e)
+  await cmd.run(message.guild, message, args).catch((e: Error) => {
+    message.channel.send(e.message)
     debug.log(e, 'error')
   })
 }
