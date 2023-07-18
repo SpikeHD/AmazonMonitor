@@ -20,10 +20,10 @@ export async function search(query: string, suffix: string) {
     if (results.length >= limit) return
 
     const link = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
-    const asin = linkToAsin(link)
 
     if (!link) return
 
+    const asin = linkToAsin(link)
     const priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
     const price = priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
 
