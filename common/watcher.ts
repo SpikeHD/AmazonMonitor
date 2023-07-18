@@ -8,14 +8,17 @@ import { item, category, search } from './amazon'
 const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 
 export async function startWatcher(bot: Client) {
-  const rows = await getWatchlist()
+  const curRows = await getWatchlist()
 
-  bot.user.setActivity(`${rows.length} items! | ${config.prefix}help`, {
+  bot.user.setActivity(`${curRows.length} items! | ${config.prefix}help`, {
     type: ActivityType.Watching,
   })
 
-  setInterval(() => {
+  setInterval(async () => {
+    const rows = await getWatchlist()
+
     debug.log('Checking prices...')
+
     if (rows.length > 0) doCheck(bot, 0)
   }, config.minutes_per_check * 60 * 1000)
 }
@@ -42,6 +45,14 @@ export async function doCheck(bot: Client, i: number) {
       result = queryCheck(item)
       break
   }
+
+  if (!result) {
+    setTimeout(() => {
+      doCheck(bot, i + 1)
+    }, fs.existsSync('proxylist.txt') ? 0 : 5000)
+
+    return
+  }
 }
 
 async function itemCheck(product: LinkItem) {
@@ -66,6 +77,12 @@ async function itemCheck(product: LinkItem) {
         oldPrice: product.lastPrice,
         newPrice,
         link: product.link,
+        guildId: product.guildId,
+        channelId: product.channelId,
+        priceLimit: product.priceLimit || null,
+        pricePercentage: product.pricePercentage || null,
+        difference: product.difference || null,
+        symbol: newData.symbol,
       }
     ] as NotificationData[]
   }
@@ -99,6 +116,12 @@ async function categoryCheck(cat: CategoryItem) {
         oldPrice: matchingObj.lastPrice,
         newPrice: item.lastPrice,
         link: item.fullLink,
+        guildId: cat.guildId,
+        channelId: cat.channelId,
+        priceLimit: cat.priceLimit || null,
+        pricePercentage: cat.pricePercentage || null,
+        difference: cat.difference || null,
+        symbol: item.symbol,
       })
     }
   })
@@ -139,6 +162,12 @@ async function queryCheck(query: QueryItem) {
         oldPrice: matchingObj.lastPrice,
         newPrice: item.lastPrice,
         link: item.fullLink,
+        guildId: query.guildId,
+        channelId: query.channelId,
+        priceLimit: query.priceLimit || null,
+        pricePercentage: query.pricePercentage || null,
+        difference: query.difference || null,
+        symbol: item.symbol,
       })
     }
   })

@@ -10,9 +10,9 @@ export function trim(str: string, toLength: 2000) {
 /**
  * Format a price
  */
-export const priceFormat = (p: string) => {
+export const priceFormat = (p: string | number) => {
   p = '' + p
-  
+
   const currencySymbol = p.replace(/[,.]+/g, '').replace(/\d/g, '')
 
   if (currencySymbol) p = p.replace(currencySymbol, '')
