@@ -13,7 +13,7 @@ export default {
 async function run(cfg, guild: Guild, message: Message) {
   const rows = await getWatchlist()
   let links = rows.map((x, i) => {
-    if (x.type === 'link') return `${i + 1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be $${x.priceLimit}` : ''}`
+    if (x.type === 'link') return `${i + 1}. ${trim(x.item_name, 100)}\n${x.link.substring(0, x.link.lastIndexOf('/')) + '/'}${x.priceLimit != 0 ? `\nMust be ${String(x.priceLimit).endsWith('%') ? x.priceLimit + ' off' : '$' + x.priceLimit}` : ''}`
     else if (x.type === 'category') return `${i + 1}. Category: "${x.name}"`
     else if (x.type === 'query') return `${i + 1}. Query: "${x.query}"`
   })

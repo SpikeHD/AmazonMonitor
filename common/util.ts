@@ -312,7 +312,10 @@ export async function doCheck(bot, cfg, i) {
  */
 function priceCheck(bot, cfg, obj, item) {
   const curPrice = parseFloat(item.price.replace(/,/g, '')) || item.lastPrice || 0
-  const underLimit = !obj.priceLimit || obj.priceLimit === 0 || curPrice < obj.priceLimit
+  const underLimit = !obj.priceLimit || obj.priceLimit === 0 || (
+    // This is so stupidly ugly.
+    String(obj.priceLimit).endsWith('%') ? curPrice < (obj.lastPrice - (obj.lastPrice * (parseInt(obj.priceLimit) / 100))) : curPrice < obj.priceLimit
+  )
 
   // Compare prices
   if (obj.lastPrice === 0 && curPrice !== 0 && underLimit) {

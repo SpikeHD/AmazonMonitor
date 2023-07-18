@@ -18,7 +18,7 @@ interface Args {
   link: string,
   category: string,
   query: string,
-  priceLimit: number
+  priceLimit: number | string
 }
 
 async function run(cfg, guild: Guild, message: Message, args) {
@@ -31,7 +31,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
     link: '',
     category: '',
     query:'',
-    priceLimit: 0
+    priceLimit: 0,
   }
   let clArgs = util.argParser(args, argsObj)
 
@@ -80,7 +80,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
       type: 'link'
     }
 
-    mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
+    mContents = `Now watching ${item.full_link}, ${priceLimit != 0 ? `\nI'll only send a message if the item is under ${String(priceLimit).endsWith('%') ? priceLimit + ' off' : '$' + priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else if (clArgs.category.length > 0) {
     // Make sure it is a proper category by grabbing some items.
     // We store the items and refresh the cache about once a day.
@@ -112,7 +112,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
       type: 'category'
     }
 
-    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
+    mContents = `Now watching the category "${items.name}", ${priceLimit != 0 ? `\nI'll only send a message if an item is under ${String(priceLimit).endsWith('%') ? priceLimit + ' off' : '$' + priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else if (clArgs.query.length > 0) {
     // Check for existing
     existing.forEach(itm => {
@@ -137,7 +137,7 @@ async function run(cfg, guild: Guild, message: Message, args) {
       type: 'query'
     }
 
-    mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under $${priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
+    mContents = `I am now watching items under the "${clArgs.query}" query. ${priceLimit != 0 ? `\nI'll only send a message if an item is under ${String(priceLimit).endsWith('%') ? priceLimit + ' off' : '$' + priceLimit}!`:'I\'ll send updates in this channel from now on!'}`
   } else {
     return message.channel.send(`Not a valid link, category, or search query. Refer to \`${cfg.prefix}help\` for more info!`)
   }

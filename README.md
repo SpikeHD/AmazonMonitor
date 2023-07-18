@@ -193,11 +193,13 @@ Spits out details on an item from Amazon. Useful in conjunction with `search`.
 
 ## watch
 
-* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`. Include `-p` for a price limit, eg. `watch -q toothbrush -p 100`.
+* Format: `watch -l [Amazon link]` OR `watch -c [Amazon category]` OR `watch -q [search query]`. Include `-p` for a price limit (can be a numner like `5` or a percentage like `10%`), eg. `watch -q toothbrush -p 100`.
 * Examples:
   * `!watch -l https://www.amazon.it/dp/B08C76W2WM/`
   * `!watch -c https://www.amazon.ca/b/?_encoding=UTF8&node=677244011`
   * `!watch -q iphone+12`
+  * `!watch -l https://www.amazon.co.jp/-/en/dp/B07D1H7CW3/ -p 6000`
+  * `!watch -q airpods -p 20%`
 
 Adds an item, category, or search query to the watchlist.
 
