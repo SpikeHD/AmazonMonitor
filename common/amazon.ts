@@ -224,6 +224,9 @@ async function parseItem($: CheerioAPI, url: string): Promise<ProductInfo> {
   if (!product.symbol) product.symbol = '$'
   if (comparePrice && parseFloat(product.price) > parseFloat(comparePrice)) product.price = comparePrice
 
+  // Finalize the price
+  product.price = priceFormat(product.price)
+
   debug.log('Full object', 'debug')
   debug.log(product, 'debug')
 
