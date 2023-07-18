@@ -9,8 +9,8 @@
     "noImplicitAny": true
   },
   "include": [
-    "./commands",
-    "./common",
+    "commands/**/*.ts",
+    "common/**/*.ts",
     "index.ts",
     "global.d.ts"
   ]
