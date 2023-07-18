@@ -3,7 +3,7 @@ import { addWatchlistItem, getWatchlist } from '../common/watchlist'
 import { Client, Message } from 'discord.js'
 import { category, item, search } from '../common/amazon'
 
-const { cache_limit, tld } = JSON.parse(fs.readFileSync('./config.json').toString())
+const { cache_limit, tld, guild_item_limit }: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 
 interface WatchArgs {
   type: 'link' | 'category' | 'query'
@@ -122,6 +122,11 @@ async function run(bot: Client, message: Message, args: string[]) {
   const watchlist: Watchlist = await getWatchlist()
   const processed = argsToWatchArgs(args)
 
+  if (watchlist.length >= guild_item_limit) {
+    message.channel.send(`You have reached the maximum amount of items (${cache_limit})`)
+    return
+  }
+
   if (!processed.link) {
     message.channel.send('Please provide a valid link or query')
     return
@@ -202,7 +207,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       difference: processed.difference,
       symbol: results.list[0].symbol,
       name: results.name,
-      cache: results.list
+      cache: results.list.splice(0, cache_limit)
     })
 
     response = `Successfully added category: ${processed.link}`
@@ -234,7 +239,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       priceLimit: processed.priceLimit,
       pricePercentage: processed.pricePercentage,
       difference: processed.difference,
-      cache: results,
+      cache: results.splice(0, cache_limit),
       symbol: results[0].symbol
     })
     
