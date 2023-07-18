@@ -19,7 +19,7 @@ async function run(bot: Client, message: Message) {
       let str = `**${i + 1}. ${trim(row.itemName, 100)}\n${row.link.substring(0, row.link.lastIndexOf('/')) + '/'}**`
 
       if (row.priceLimit) {
-        str += `\nPrice must be below ${row.symbol}${row.priceLimit}`
+        str += `\nPrice must be below ${row.symbol || '$'}${row.priceLimit}`
       }
 
       if (row.pricePercentage) {
@@ -38,7 +38,7 @@ async function run(bot: Client, message: Message) {
       let str = `**${i + 1}. ${trim(row.query, 100)}**`
 
       if (row.priceLimit) {
-        str += `\nPrice must be below ${row.symbol}${row.priceLimit}`
+        str += `\nPrice must be below ${row.symbol || '$'}${row.priceLimit}`
       }
 
       if (row.pricePercentage) {
@@ -65,7 +65,7 @@ async function run(bot: Client, message: Message) {
       }
 
       if (row.difference) {
-        str += `\nPrice must be more than ${row.symbol}${row.difference} off previous detected price`
+        str += `\nPrice must be more than ${row.symbol || '$'}${row.difference} off previous detected price`
       }
 
       return str
