@@ -2,9 +2,10 @@
   "compilerOptions": {
     "outDir": "./built",
     "allowJs": true,
-    "target": "es6",
+    "target": "es2021",
     "moduleResolution": "nodenext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "esModuleInterop": true,
   },
   "include": ["./commands", "./common", "index.ts"]
 }
