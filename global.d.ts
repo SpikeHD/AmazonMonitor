@@ -44,9 +44,10 @@ interface NotificationData {
 interface PartialWatchlistItem {
   guildId: string
   channelId: string
-  priceLimit: number // Must be below this price
-  pricePercentage: number // Must be this percentage off or more
-  difference: number // Difference between prices must be this amount or more
+  priceLimit: number | null // Must be below this price
+  pricePercentage: number | null // Must be this percentage off or more
+  difference: number | null// Difference between prices must be this amount or more
+  symbol: string
   type: 'link' | 'category' | 'query'
 }
 

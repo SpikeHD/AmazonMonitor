@@ -3,7 +3,7 @@ import { getWatchlist, removeWatchlistItem } from '../common/watchlist'
 
 export default {
   name: 'unwatch',
-  desc: 'Removes from the watchlist using at number. If no number is provided, returns the watchlist',
+  description: 'Removes from the watchlist using at number. If no number is provided, returns the watchlist',
   usage: 'unwatch [number]',
   type: 'edit',
   run

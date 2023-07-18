@@ -3,7 +3,7 @@ export function linkToAsin(link: string) {
 }
 
 export function trim(str: string, toLength: number = 128) {
-  if (str.length > toLength) return str.slice(0, toLength - 3) + '...'
+  if (str?.length > toLength) return str.slice(0, toLength - 3) + '...'
   return str
 }
 
