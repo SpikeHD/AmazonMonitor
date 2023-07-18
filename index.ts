@@ -1,7 +1,6 @@
 import Discord, { Partials } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
-import { doCheck } from './common/util.js'
 
 const bot = new Discord.Client({
   intents: [
@@ -15,17 +14,9 @@ const bot = new Discord.Client({
     Partials.Message
   ]
 })
-const config = JSON.parse(fs.readFileSync('./config.json').toString())
-const cfg = {
-  commands: new Discord.Collection(),
-  itemLimit: config.guild_item_limit,
-  util: null,
-  debug: debug,
-  proxylist: fs.existsSync('./proxylist.txt'),
-  required_perms: config.required_perms,
-  url_params: config.url_params || {},
-  prefix: config.prefix
-}
+
+const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
+const commands = new Discord.Collection()
 
 bot.login(config.token)
 
@@ -43,24 +34,8 @@ bot.on('ready', async () => {
   ##########################################################################
   `)
 
-  cfg.util = await import('./common/util.js')
-
-  if (cfg.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warning')
-  if (cfg.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warning')
-
-  // Load commands
-  fs.readdirSync('./commands/').forEach(async command => {
-    debug.log(`Loading command: ${command}`, 'info')
-
-    let props = await import(`./commands/${command}`)
-    cfg.commands.set(command.split('.')[0], props)
-  })
-
-  // Start services
-  await cfg.util.startPup()
-  await cfg.util.startWatcher(bot, cfg)
-
-  debug.log(`Data storage type: ${!config.storage_type ? 'json':config.storage_type}`, 'DEBUG')
+  if (config.prefix.length > 3) debug.log('Your prefix is more than 3 characters long. Are you sure you set it properly?', 'warning')
+  if (config.prefix.length === 0) debug.log('You do not have a prefix set, you should definitely set one.', 'warning')
 
   if (config.minutes_per_check < 1) {
     debug.log('You have set minutes_per_check to something lower than a minute. This can cause the bot to start new checks before the previous cycle has finshed.', 'warn', true)
@@ -68,35 +43,37 @@ bot.on('ready', async () => {
     debug.log('This message is not an error, and the bot is still running.', 'warn', true)
   }
 
-  // Run initial check when the bot first starts
-  doCheck(bot, cfg, 0)
+  // Read all files in commands/ and add them to the commands collection
+  for (const command of fs.readdirSync('./commands').filter(file => file.endsWith('.js'))) {
+    const cmd = await import(`./commands/${command}`)
+    commands.set(cmd.default.name, cmd)
+  }
 })
 
 bot.on('messageCreate', function (message) {
-  if (message.author.bot) return
-  if (!message.content.startsWith(config.prefix)) return
+  if (message.author.bot || !message.content.startsWith(config.prefix)) return
 
   let command = message.content.split(config.prefix)[1].split(' ')[0],
     args = message.content.split(' '),
     // @ts-expect-error This is fine, it's just how the import works
-    cmd = cfg.commands.get(command)?.default
+    cmd = commands.get(command)?.default
 
   if (cmd) {
     switch(cmd.type) {
-    case 'view': exec(cfg, message, args, cmd)
+    case 'view': exec(message, args, cmd)
       break
     case 'edit':
-      if (message.member.permissions.has(cfg.required_perms)) exec(cfg, message, args, cmd)
+      if (message.member.permissions.has(config.required_perms)) exec(message, args, cmd)
       break
     }
   }
 })
 
-async function exec(cfg, message: Discord.Message, args, cmd) {
+async function exec(message: Discord.Message, args, cmd) {
   const ch = await message.channel.fetch()
   ch.sendTyping()
 
-  await cmd.run(cfg, message.guild, message, args).catch(e => {
+  await cmd.run(message.guild, message, args).catch(e => {
     message.channel.send(e)
     debug.log(e, 'error')
   })

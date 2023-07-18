@@ -7,5 +7,10 @@
     "module": "NodeNext",
     "esModuleInterop": true,
   },
-  "include": ["./commands", "./common", "index.ts"]
+  "include": [
+    "./commands",
+    "./common",
+    "index.ts",
+    "global.d.ts"
+  ]
 }

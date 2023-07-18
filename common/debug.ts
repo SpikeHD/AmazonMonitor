@@ -1,7 +1,7 @@
 import fs from 'fs'
 import chalk from 'chalk'
 
-const { debug_enabled } = JSON.parse(fs.readFileSync('./config.json').toString())
+const { debug_enabled }: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 
 export function log(message, type = 'debug', override = false) {
   let t

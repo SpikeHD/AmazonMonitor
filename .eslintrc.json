@@ -25,8 +25,7 @@
             "error",
             "never"
         ],
-        "no-unused-vars": [
-            "error"
-        ]
+        "no-unused-vars": 0,
+        "no-undef": 0
     }
 }
