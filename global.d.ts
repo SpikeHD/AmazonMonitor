@@ -95,6 +95,5 @@ interface ProductInfo extends PartialProductInfo {
   rating: string;
   features: string[];
   availability: string;
-  comparePrice: string;
 }
 

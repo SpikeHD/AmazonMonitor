@@ -65,4 +65,6 @@ export async function getPage(url: string) {
     debug.log('Failed to load page.', 'error')
     return null
   }
+
+  return $
 }
