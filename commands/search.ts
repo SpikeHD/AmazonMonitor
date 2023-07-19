@@ -3,20 +3,35 @@ import { Client, EmbedBuilder, Message } from 'discord.js'
 import { trim } from '../common/utils'
 import debug from '../common/debug'
 import { search } from '../common/amazon'
+import { parseArgs } from '../common/arguments'
 
 const { tld, search_response_ms } = JSON.parse(fs.readFileSync('./config.json').toString())
 
 export default {
   name: 'search',
   description: 'Search and return the top 10 items using a search term',
-  usage: 'search [search term]',
+  usage: 'search [search term] [optional: -p for price limit]',
   type: 'view',
   run
+}
+
+const argDef = {
+  priceLimit: {
+    name: 'priceLimit',
+    aliases: ['p'],
+    type: 'number'
+  },
+  pricePercentage: {
+    name: 'pricePercentage',
+    aliases: ['e'],
+    type: 'number'
+  }
 }
 
 async function run(bot: Client, message: Message, args: string[]) {
   args.splice(0, 1)
   const phrase = args.join(' ')
+  const parsedArgs = parseArgs(args, argDef)
 
   if (!phrase) {
     message.channel.send('Please provide a search term')
@@ -40,6 +55,8 @@ async function run(bot: Client, message: Message, args: string[]) {
     if (!results[i]) break
 
     const result = results[i]
+
+    if (parsedArgs.priceLimit && parseFloat(result.price) > (parsedArgs.priceLimit as number)) continue
 
     embed.addFields([{
       name: trim(result.fullTitle, 50),
