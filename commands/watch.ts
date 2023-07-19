@@ -2,16 +2,9 @@ import fs from 'fs'
 import { addWatchlistItem, getWatchlist } from '../common/watchlist'
 import { Client, Message } from 'discord.js'
 import { category, item, search } from '../common/amazon'
+import { parseArgs } from '../common/arguments'
 
 const { cache_limit, tld, guild_item_limit }: Config = JSON.parse(fs.readFileSync('./config.json').toString())
-
-interface WatchArgs {
-  type: 'link' | 'category' | 'query'
-  link: string
-  priceLimit: number | null
-  pricePercentage: number | null
-  difference: number | null
-}
 
 export default {
   name: 'watch',
@@ -21,106 +14,44 @@ export default {
   run
 }
 
-const potentialArgs: {
-  [key:string]: {
-    arg: keyof WatchArgs
-    type: string
-  }
-} = {
-  // link
-  l: {
-    arg: 'link',
+const argDef = {
+  link: {
+    name: 'link',
+    aliases: ['l'],
     type: 'string'
   },
-  // query
-  q: {
-    arg: 'link',
+  query: {
+    name: 'query',
+    aliases: ['q'],
     type: 'string'
   },
-  // category
-  c: {
-    arg: 'link',
+  category: {
+    name: 'category',
+    aliases: ['c'],
     type: 'string'
   },
-  // price limit
-  p: {
-    arg: 'priceLimit',
+  priceLimit: {
+    name: 'priceLimit',
+    aliases: ['p'],
     type: 'number'
   },
-  // price difference
-  d: {
-    arg: 'difference',
+  pricePercentage: {
+    name: 'pricePercentage',
+    aliases: ['e'],
     type: 'number'
   },
-  // price percentage
-  e: {
-    arg: 'pricePercentage',
+  difference: {
+    name: 'difference',
+    aliases: ['d'],
     type: 'number'
-  }
-}
-
-function argsToWatchArgs(args: string[]) {
-  const watchArgs: WatchArgs = {
-    type: 'link',
-    link: '',
-    priceLimit: null,
-    pricePercentage: null,
-    difference: null
-  }
-
-  for (const arg of args) {
-    if (arg.startsWith('-')) {
-      const argName = arg.substring(1)
-      const argData = potentialArgs[argName]
-
-      if (!argData) continue
-
-      if (argData.type === 'number') {
-        const nextArg = args[args.indexOf(arg) + 1]
-
-        if (!nextArg) continue
-
-        const parsed = parseFloat(nextArg)
-
-        if (isNaN(parsed)) continue
-
-        // @ts-ignore argName is a valid key
-        watchArgs[argData.arg] = parsed
-        continue
-      }
-
-      if (argData.type === 'string') {
-        const nextArg = args[args.indexOf(arg) + 1]
-
-        if (!nextArg) continue
-
-        // @ts-ignore argName is a valid key
-        watchArgs[argData.arg] = nextArg
-
-        if (argData.arg === 'link') {
-          if (argName === 'l') {
-            watchArgs.type = 'link'
-          } else if (argName === 'c') {
-            watchArgs.type = 'category'
-          } else if (argName === 'q') {
-            watchArgs.type = 'query'
-          }
-        }
-        continue
-      }
-    } else {
-      if (args[1].startsWith('http')) {
-        watchArgs.link = args[1]
-      }
-    }
-  }
-
-  return watchArgs
+  },
 }
 
 async function run(bot: Client, message: Message, args: string[]) {
   const watchlist: Watchlist = await getWatchlist()
-  const processed = argsToWatchArgs(args)
+  const processed = parseArgs(args, argDef)
+
+  console.log(parseArgs(args, argDef))
 
   if (watchlist.length >= guild_item_limit) {
     message.channel.send(`You have reached the maximum amount of items (${cache_limit})`)
@@ -134,10 +65,13 @@ async function run(bot: Client, message: Message, args: string[]) {
 
   let response = ''
 
+  processed.type = processed.link ? 'link' : processed.query ? 'query' : processed.category ? 'category' : null
+
   // Process the results
   switch(processed.type) {
   case 'link': {
-    if (!processed.link.startsWith('http')) {
+    // @ts-ignore this is guaranteed to be a link
+    if (!processed.link?.startsWith('http')) {
       message.channel.send('Please provide a valid link')
       return
     }
@@ -151,6 +85,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       return
     }
 
+    // @ts-ignore this is guaranteed to be a link
     const product = await item(processed.link)
 
     if (!product) {
@@ -162,10 +97,10 @@ async function run(bot: Client, message: Message, args: string[]) {
       guildId: message.guildId,
       channelId: message.channelId,
       type: 'link',
-      link: processed.link,
-      priceLimit: processed.priceLimit,
-      pricePercentage: processed.pricePercentage,
-      difference: processed.difference,
+      link: processed.link as string,
+      priceLimit: processed.priceLimit as number,
+      pricePercentage: processed.pricePercentage as number,
+      difference: processed.difference as number,
       symbol: product.symbol,
       itemName: product.fullTitle,
       lastPrice: parseFloat(product.price)
@@ -176,7 +111,8 @@ async function run(bot: Client, message: Message, args: string[]) {
     break
   }
   case 'category': {
-    if (!processed.link.startsWith('http')) {
+    // @ts-ignore this is guaranteed to be a category
+    if (!processed.link?.startsWith('http')) {
       message.channel.send('Please provide a valid link')
       return
     }
@@ -190,6 +126,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       return
     }
 
+    // @ts-ignore this is guaranteed to be a category
     const results = await category(processed.link)
 
     if (!results) {
@@ -201,10 +138,10 @@ async function run(bot: Client, message: Message, args: string[]) {
       guildId: message.guildId,
       channelId: message.channelId,
       type: 'category',
-      link: processed.link,
-      priceLimit: processed.priceLimit,
-      pricePercentage: processed.pricePercentage,
-      difference: processed.difference,
+      link: processed.link as string,
+      priceLimit: processed.priceLimit as number,
+      pricePercentage: processed.pricePercentage as number,
+      difference: processed.difference as number,
       symbol: results.list[0].symbol,
       name: results.name,
       cache: results.list.splice(0, cache_limit)
@@ -224,6 +161,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       return
     }
 
+    // @ts-ignore this is guaranteed to be a query
     const results = await search(processed.link, tld)
 
     if (!results || results.length < 1) {
@@ -235,10 +173,10 @@ async function run(bot: Client, message: Message, args: string[]) {
       guildId: message.guildId,
       channelId: message.channelId,
       type: 'query',
-      query: processed.link,
-      priceLimit: processed.priceLimit,
-      pricePercentage: processed.pricePercentage,
-      difference: processed.difference,
+      query: processed.link as string,
+      priceLimit: processed.priceLimit as number,
+      pricePercentage: processed.pricePercentage as number,
+      difference: processed.difference as number,
       cache: results.splice(0, cache_limit),
       symbol: results[0].symbol
     })
