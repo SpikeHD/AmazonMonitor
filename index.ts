@@ -51,6 +51,11 @@ bot.on('ready', async () => {
     debug.log('This message is not an error, and the bot is still running.', 'warn', true)
   }
 
+  if (__dirname.indexOf(' ') !== -1) {
+    debug.log('The current path the bot resides in contains spaces. Please move it somewhere that does not contain spaces.', 'error', true)
+    process.exit()
+  }
+
   // Read all files in commands/ and add them to the commands collection
   for (const command of fs.readdirSync(__dirname.replace('file:///', '') + '/commands/')) {
     const cmd = await import(`${__dirname}/commands/${command}`)
