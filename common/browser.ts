@@ -14,7 +14,7 @@ const userAgents = [
 
 export async function initBrowser() {
   const browser = await pup.launch({
-    headless: true,
+    headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   })
 
