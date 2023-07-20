@@ -1,12 +1,13 @@
 {
   "ts-node": {
-    "files": true
+    "files": true,
+    "esm": true
   },
   "compilerOptions": {
     "outDir": "./built",
     "allowJs": true,
     "target": "es2021",
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "module": "es2020",
     "esModuleInterop": true,
     "noImplicitAny": true
