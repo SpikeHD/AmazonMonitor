@@ -51,21 +51,19 @@ async function run(bot: Client, message: Message, args: string[]) {
   const watchlist: Watchlist = await getWatchlist()
   const processed = parseArgs(args, argDef)
 
-  console.log(parseArgs(args, argDef))
+  processed.type = processed.link ? 'link' : processed.query ? 'query' : processed.category ? 'category' : null
 
   if (watchlist.length >= guild_item_limit) {
     message.channel.send(`You have reached the maximum amount of items (${cache_limit})`)
     return
   }
 
-  if (!processed.link) {
+  if (!processed.type) {
     message.channel.send('Please provide a valid link or query')
     return
   }
 
   let response = ''
-
-  processed.type = processed.link ? 'link' : processed.query ? 'query' : processed.category ? 'category' : null
 
   // Process the results
   switch(processed.type) {
@@ -112,14 +110,14 @@ async function run(bot: Client, message: Message, args: string[]) {
   }
   case 'category': {
     // @ts-ignore this is guaranteed to be a category
-    if (!processed.link?.startsWith('http')) {
+    if (!processed.category?.startsWith('http')) {
       message.channel.send('Please provide a valid link')
       return
     }
 
     // Get if the category is already there
     // @ts-ignore this is guaranteed to be a category
-    const existing = watchlist.find(item => item.link === processed.link)
+    const existing = watchlist.find(item => item.link === processed.category)
 
     if (existing) {
       message.channel.send('Category already exists in watchlist')
@@ -127,7 +125,7 @@ async function run(bot: Client, message: Message, args: string[]) {
     }
 
     // @ts-ignore this is guaranteed to be a category
-    const results = await category(processed.link)
+    const results = await category(processed.category)
 
     if (!results) {
       message.channel.send('Invalid link')
@@ -138,7 +136,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       guildId: message.guildId,
       channelId: message.channelId,
       type: 'category',
-      link: processed.link as string,
+      link: processed.category as string,
       priceLimit: processed.priceLimit as number,
       pricePercentage: processed.pricePercentage as number,
       difference: processed.difference as number,
@@ -147,14 +145,14 @@ async function run(bot: Client, message: Message, args: string[]) {
       cache: results.list.splice(0, cache_limit)
     })
 
-    response = `Successfully added category: ${processed.link}`
+    response = `Successfully added category: ${processed.category}`
 
     break
   }
   case 'query': {
     // Check if the query is already there
     // @ts-ignore this is guaranteed to be a query
-    const existing = watchlist.find(item => item.query === processed.link)
+    const existing = watchlist.find(item => item.query === processed.query)
 
     if (existing) {
       message.channel.send('Query already exists in watchlist')
@@ -162,10 +160,10 @@ async function run(bot: Client, message: Message, args: string[]) {
     }
 
     // @ts-ignore this is guaranteed to be a query
-    const results = await search(processed.link, tld)
+    const results = await search(processed.query, tld)
 
     if (!results || results.length < 1) {
-      message.channel.send(`No results found for "${processed.link}"`)
+      message.channel.send(`No results found for "${processed.query}"`)
       return
     }
 
@@ -173,7 +171,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       guildId: message.guildId,
       channelId: message.channelId,
       type: 'query',
-      query: processed.link as string,
+      query: processed.query as string,
       priceLimit: processed.priceLimit as number,
       pricePercentage: processed.pricePercentage as number,
       difference: processed.difference as number,
@@ -181,7 +179,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       symbol: results[0].symbol
     })
     
-    response = `Successfully added query: ${processed.link}`
+    response = `Successfully added query: ${processed.query}`
 
     break
   }}
