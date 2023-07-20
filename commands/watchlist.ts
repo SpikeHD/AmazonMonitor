@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Message } from 'discord.js'
-import { trim } from '../common/utils'
-import { getWatchlist } from '../common/watchlist'
-import debug from '../common/debug'
+import { trim } from '../common/utils.js'
+import { getWatchlist } from '../common/watchlist.js'
+import debug from '../common/debug.js'
 
 export default {
   name: 'watchlist',

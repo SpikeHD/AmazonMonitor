@@ -1,8 +1,8 @@
 import fs from 'fs'
-import { addWatchlistItem, getWatchlist } from '../common/watchlist'
+import { addWatchlistItem, getWatchlist } from '../common/watchlist.js'
 import { Client, Message } from 'discord.js'
-import { category, item, search } from '../common/amazon'
-import { parseArgs } from '../common/arguments'
+import { category, item, search } from '../common/amazon.js'
+import { parseArgs } from '../common/arguments.js'
 
 const { cache_limit, tld, guild_item_limit }: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 

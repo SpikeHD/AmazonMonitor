@@ -1,5 +1,5 @@
 import { Client, Message } from 'discord.js'
-import { getWatchlist, removeWatchlistItem } from '../common/watchlist'
+import { getWatchlist, removeWatchlistItem } from '../common/watchlist.js'
 
 export default {
   name: 'unwatch',

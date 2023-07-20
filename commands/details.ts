@@ -1,6 +1,6 @@
 import { EmbedBuilder, Guild, Message } from 'discord.js'
-import { linkToAsin, priceFormat } from '../common/utils'
-import { item } from '../common/amazon'
+import { linkToAsin, priceFormat } from '../common/utils.js'
+import { item } from '../common/amazon.js'
 
 export default {
   name: 'details',

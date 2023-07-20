@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 import { ActivityType, Client } from 'discord.js'
 import fs from 'fs'
-import { addWatchlistItem, getWatchlist, removeWatchlistItem } from './watchlist'
-import debug from './debug'
-import { item, category, search } from './amazon'
+import { addWatchlistItem, getWatchlist, removeWatchlistItem } from './watchlist.js'
+import debug from './debug.js'
+import { item, category, search } from './amazon.js'
 
 const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 

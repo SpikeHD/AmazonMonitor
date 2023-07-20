@@ -1,4 +1,4 @@
-import * as util from '../common/utils'
+import * as util from '../common/utils.js'
 
 describe('utils test', () => {
   it('tests price formatting', () => {

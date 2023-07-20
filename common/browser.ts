@@ -2,7 +2,7 @@
 import pup, { Browser } from 'puppeteer'
 import useProxy from 'puppeteer-page-proxy'
 import fs from 'fs'
-import debug from './debug'
+import debug from './debug.js'
 import { load } from 'cheerio'
 
 const userAgents = [

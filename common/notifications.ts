@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder } from 'discord.js'
-import { priceFormat } from './utils'
+import { priceFormat } from './utils.js'
 
 export async function sendNotifications(bot: Client, notifications: NotificationData[]) {
   for (const notif of notifications) {

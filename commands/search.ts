@@ -1,9 +1,9 @@
 import fs from 'fs'
 import { Client, EmbedBuilder, Message } from 'discord.js'
-import { trim } from '../common/utils'
-import debug from '../common/debug'
-import { search } from '../common/amazon'
-import { parseArgs } from '../common/arguments'
+import { trim } from '../common/utils.js'
+import debug from '../common/debug.js'
+import { search } from '../common/amazon.js'
+import { parseArgs } from '../common/arguments.js'
 
 const { tld, search_response_ms } = JSON.parse(fs.readFileSync('./config.json').toString())
 
