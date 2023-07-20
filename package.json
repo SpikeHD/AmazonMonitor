@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --coverage tests/",
     "compile": "tsc",
-    "start": "yarn compile && node --experimental-modules --es-module-specifier-resolution=node built/index.js",
+    "start": "yarn compile && node --experimental-modules --experimental-specifier-resolution=node --es-module-specifier-resolution=node built/index.js",
     "lint": "yarn eslint index.ts commands/**/*.ts common/**/*.ts"
   },
   "repository": {
