@@ -57,10 +57,10 @@ bot.on('ready', async () => {
   }
 
   // Read all files in commands/ and add them to the commands collection
-  for (const command of fs.readdirSync(__dirname.replace('file:///', '') + '/commands/')) {
-    const cmd = await import(`${__dirname}/commands/${command}`)
+  for (const command of fs.readdirSync('./commands/')) {
+    const cmd = await import(`./commands/${command}`)
 
-    debug.log(`Loaded command ${cmd.default.name}`, 'debug')
+    debug.log(`Loaded command ${cmd.default.name}`, 'info')
 
     commands.set(cmd.default.name, cmd)
   }
@@ -69,6 +69,8 @@ bot.on('ready', async () => {
   initBrowser()
 
   startWatcher(bot)
+
+  debug.log('Bot is ready!', 'info')
 })
 
 bot.on('messageCreate', function (message) {

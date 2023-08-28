@@ -54,7 +54,7 @@ https://user-images.githubusercontent.com/25207995/226811331-4b86a328-a93c-46da-
 # Requirements
 
 - [NodeJS v16 or above](https://nodejs.org/en/)
-- `Yarn` - Run `npm install -g yarn`
+- [pnpm](https://pnpm.io/installation)
 - A [bot user](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot). Ensure it has the "Server Members" and "Message Content" intents enabled in the "Bot" page once it is created.
 
 # Configuration

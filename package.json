@@ -7,8 +7,8 @@
   "scripts": {
     "test": "jest --coverage tests/",
     "compile": "tsc",
-    "start": "tsc && node --experimental-specifier-resolution=node built/index.js",
-    "lint": "yarn eslint index.ts commands/**/*.ts common/**/*.ts"
+    "start": "node --loader ts-node/esm index.ts",
+    "lint": "eslint index.ts commands/**/*.ts common/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   "dependencies": {
     "chalk": "^5.0.1",
     "cheerio": "1.0.0-rc.10",
-    "discord.js": "^14",
+    "discord.js": "^14.13.0",
     "puppeteer": "^20.3.0",
     "puppeteer-page-proxy": "^1.2.8"
   },
