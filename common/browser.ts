@@ -1,4 +1,3 @@
-
 import pup, { Browser } from 'puppeteer'
 import useProxy from 'puppeteer-page-proxy'
 import fs from 'fs'
@@ -58,6 +57,9 @@ export async function getPage(url: string) {
   await page.waitForTimeout(1500)
 
   const html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
+
+  // No need for page to continue to exist
+  page.close()
 
   if (!html) {
     debug.log('Failed to load page.', 'error')
