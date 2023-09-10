@@ -16,7 +16,7 @@ async function run(bot: Client, message: Message) {
   const links = rows.map((row, i) => {
     if (row.type === 'link') {
       // @ts-ignore This is fine
-      let str = `**${i + 1}. ${trim(row.itemName, 100)}\n${row.link.substring(0, row.link.lastIndexOf('/')) + '/'}**`
+      let str = `**${i + 1}. ${trim(row.itemName, 100)}\n${row.link}**`
 
       if (row.priceLimit) {
         str += `Price must be below ${row.symbol || '$'}${row.priceLimit}\n`
