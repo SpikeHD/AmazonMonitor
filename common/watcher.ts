@@ -46,12 +46,11 @@ export async function doCheck(bot: Client, i: number) {
       break
   }
 
-  if (!result) {
+  // If this is not the last index in the array, run the next check
+  if (i < watchlist.length - 1) {
     setTimeout(() => {
       doCheck(bot, i + 1)
     }, fs.existsSync('proxylist.txt') ? 0 : 5000)
-
-    return
   }
 }
 
