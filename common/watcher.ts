@@ -56,7 +56,8 @@ export async function doCheck(bot: Client, i: number) {
 
 async function itemCheck(product: LinkItem) {
   const newData = await item(product.link)
-  const newPrice = parseFloat(newData.price.replace(/,/g, '')) || 0
+  // It's possible the item does not have a price, so we gotta anticipate that
+  const newPrice = parseFloat(newData?.price?.replace(/,/g, '')) || 0
 
   // Push the price change to the watchlist
   if (newPrice !== product.lastPrice) {
