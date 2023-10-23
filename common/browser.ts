@@ -43,7 +43,10 @@ export async function getPage(url: string) {
     page.on('request', async (req) => {
       if (!proxy?.startsWith('http')) proxy = 'http://' + proxy
 
-      await useProxy(req, proxy)
+      await useProxy(req, proxy).catch(e => {
+        debug.log('Failed to apply proxy, request won\'t go through', 'error')
+        debug.log(e, 'error')
+      })
     })
   }
 
