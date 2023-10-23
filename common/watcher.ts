@@ -57,7 +57,7 @@ export async function doCheck(bot: Client, i: number) {
 async function itemCheck(product: LinkItem) {
   const newData = await item(product.link)
   // It's possible the item does not have a price, so we gotta anticipate that
-  const newPrice = parseFloat(newData?.price?.replace(/,/g, '')) || 0
+  const newPrice = parseFloat(newData?.price?.replace(/,/g, '')) || -1
 
   // Push the price change to the watchlist
   if (newPrice !== product.lastPrice) {
@@ -70,10 +70,10 @@ async function itemCheck(product: LinkItem) {
 
   const underPriceLimit = newPrice <= product.priceLimit
 
-  if (underPriceLimit && product.lastPrice > newPrice) {
+  if (newPrice !== -1 && underPriceLimit && product.lastPrice > newPrice) {
     return [
       {
-        itemName: newData.fullTitle,
+        itemName: newData?.fullTitle || 'N/A',
         oldPrice: product.lastPrice,
         newPrice,
         link: product.link,
@@ -82,7 +82,7 @@ async function itemCheck(product: LinkItem) {
         priceLimit: product.priceLimit || null,
         pricePercentage: product.pricePercentage || null,
         difference: product.difference || null,
-        symbol: newData.symbol,
+        symbol: newData?.symbol,
       }
     ] as NotificationData[]
   }
