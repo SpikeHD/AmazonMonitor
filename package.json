@@ -25,7 +25,7 @@
     "cheerio": "1.0.0-rc.10",
     "discord.js": "^14.13.0",
     "puppeteer": "^20.9.0",
-    "puppeteer-page-proxy": "^1.3.0"
+    "puppeteer-page-proxy": "github:ok-go/puppeteer-page-proxy"
   },
   "devDependencies": {
     "@types/jest": "^29.5.6",
