@@ -25,6 +25,7 @@ export async function sendInStock(bot: Client, notification: NotificationData) {
     .setAuthor({
       name: 'AmazonMonitor'
     })
+    .setThumbnail(notification.image)
     .setDescription(`New Price: ${notification.symbol} ${notification.newPrice}\n\n${notification.link}`)
     .setColor('Green')
     
@@ -40,6 +41,7 @@ export async function sendPriceChange(bot: Client, notification: NotificationDat
     .setAuthor({
       name: 'AmazonMonitor'
     })
+    .setThumbnail(notification.image)
     .setDescription(`Old Price: ${notification.symbol} ${priceFormat(notification.oldPrice)}\nNew Price: ${notification.symbol} ${notification.newPrice}\n\n${notification.link}`)
     .setColor('Green')
 

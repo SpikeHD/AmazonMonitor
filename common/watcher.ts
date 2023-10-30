@@ -94,6 +94,7 @@ async function itemCheck(product: LinkItem) {
         pricePercentage: product.pricePercentage || null,
         difference: product.difference || null,
         symbol: newData?.symbol,
+        image: newData?.image,
       }
     ] as NotificationData[]
   }
@@ -133,6 +134,7 @@ async function categoryCheck(cat: CategoryItem) {
         pricePercentage: cat.pricePercentage || null,
         difference: cat.difference || null,
         symbol: item.symbol,
+        image: item?.image,
       })
     }
   })
@@ -179,6 +181,7 @@ async function queryCheck(query: QueryItem) {
         pricePercentage: query.pricePercentage || null,
         difference: query.difference || null,
         symbol: item.symbol,
+        image: item?.image,
       })
     }
   })

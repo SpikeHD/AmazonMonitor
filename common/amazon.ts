@@ -35,6 +35,7 @@ export async function search(query: string, suffix: string) {
       symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
       sale: $(this).find('.a.text.price').find('.a-offscreen').eq(1).text().trim(),
       fullLink: `https://www.amazon.${suffix}/dp/${asin}`,
+      image: $(this).find('.s-image').attr('src'),
       asin
     })
   })

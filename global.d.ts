@@ -37,6 +37,7 @@ interface NotificationData {
   pricePercentage: number | null
   difference: number | null
   link: string
+  image: string
   guildId: string
   channelId: string
 }
@@ -79,6 +80,7 @@ interface SearchData {
   sale: string;
   asin: string;
   fullLink: string;
+  image: string;
 }
 
 interface Category {
