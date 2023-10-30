@@ -4,6 +4,7 @@ import fs from 'fs'
 import { addWatchlistItem, getWatchlist, removeWatchlistItem } from './watchlist.js'
 import debug from './debug.js'
 import { item, category, search } from './amazon.js'
+import { sendNotifications } from './notifications.js'
 
 const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
 
@@ -34,16 +35,20 @@ export async function doCheck(bot: Client, i: number) {
   switch (item.type) {
     case 'link':
       // @ts-ignore we are properly checking the type
-      result = itemCheck(item)
+      result = await itemCheck(item)
       break
     case 'category':
       // @ts-ignore we are properly checking the type
-      result = categoryCheck(item)
+      result = await categoryCheck(item)
       break
     case 'query':
       // @ts-ignore we are properly checking the type
-      result = queryCheck(item)
+      result = await queryCheck(item)
       break
+  }
+
+  if (result) {
+    sendNotifications(bot, result)
   }
 
   // If this is not the last index in the array, run the next check
@@ -68,9 +73,15 @@ async function itemCheck(product: LinkItem) {
     })
   }
 
-  const underPriceLimit = newPrice <= product.priceLimit
+  const underPriceLimit = product.priceLimit ? newPrice <= product.priceLimit : true
+
+  debug.log(`Under price limit? ${underPriceLimit}...`, 'debug')
+  debug.log(`New price: ${newPrice}...`, 'debug')
+  debug.log(`Old price: ${product.lastPrice}...`, 'debug')
 
   if (newPrice !== -1 && underPriceLimit && product.lastPrice > newPrice) {
+    debug.log('Sending notification...', 'debug')
+
     return [
       {
         itemName: newData?.fullTitle || 'N/A',
