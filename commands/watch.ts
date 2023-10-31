@@ -54,7 +54,7 @@ async function run(bot: Client, message: Message, args: string[]) {
   processed.type = processed.link ? 'link' : processed.query ? 'query' : processed.category ? 'category' : null
 
   if (watchlist.length >= guild_item_limit) {
-    message.channel.send(`You have reached the maximum amount of items (${cache_limit})`)
+    message.channel.send(`You have reached the maximum amount of items (${guild_item_limit})`)
     return
   }
 
