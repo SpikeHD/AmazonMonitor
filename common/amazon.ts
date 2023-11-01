@@ -147,10 +147,10 @@ async function parseItem($: CheerioAPI, url: string): Promise<ProductInfo> {
     $('#priceblock_saleprice').text().trim(),
     $('#sns-base-price').text().trim(),
     String(
-      parseFloat(priceFormat($('.a-price').find('.a-offscreen').eq(0).text().trim())) - couponDiscount
+      parseFloat(priceFormat($('#corePriceDisplay_desktop_feature_div').find('.a-price').find('.a-offscreen').eq(0).text().trim())) - couponDiscount
     ),
     String(
-      parseFloat(priceFormat($('.a-price-whole').first().text().trim() + $('.a-price-fraction').first().text().trim())) - couponDiscount
+      parseFloat(priceFormat($('#corePriceDisplay_desktop_feature_div').find('.a-price-whole').first().text().trim() + $('#corePriceDisplay_desktop_feature_div').find('.a-price-fraction').first().text().trim())) - couponDiscount
     ),
   ]
 
