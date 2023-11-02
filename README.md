@@ -105,7 +105,7 @@ The guild item limit is used to control how many items the bot can keep track of
 
 ## cache_limit
 
-A newer addition, the cache limit is the amount of items that will be watched in a category or search query.
+This is the cache limit is the amount of items that will be watched in a category or search query. For example, if set to 10, then only the first 10 results will be tracked when watching an item iwth `-q` and `-c`.
 
 ## required_perms
 
@@ -148,7 +148,7 @@ To start the bot, simply open a terminal and run these commands:
   ```sh
   cd "C:/Path/To/Bot/Folder"
   ```
-* Install the dependancies (you only have to do this once):
+* Install the dependencies (you only have to do this once):
   ```sh
   npm install
   ```
