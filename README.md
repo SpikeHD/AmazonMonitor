@@ -57,7 +57,7 @@ https://user-images.githubusercontent.com/25207995/226811331-4b86a328-a93c-46da-
 - (Optional) [pnpm](https://pnpm.io/installation)
 - A [bot user](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot). Ensure it has the "Server Members" and "Message Content" intents enabled in the "Bot" page once it is created.
 - The bot files, of course
-  - You can click the green "Code" button near the top of the GitHub page to download the files. Or, if you're already a `git` user, you probably know how to clone, so just do that.
+  - You can click the green "Code" button near the top of the GitHub page to download the files as a ZIP. Or, if you're already a `git` user, you probably know how to clone, so just do that.
 
 # Configuration
 
