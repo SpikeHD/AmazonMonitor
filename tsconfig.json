@@ -9,7 +9,7 @@
     "allowJs": true,
     "target": "es2021",
     "moduleResolution": "nodenext",
-    "module": "es2020",
+    "module": "nodenext",
     "esModuleInterop": true,
     "noImplicitAny": true
   },
