@@ -79,11 +79,9 @@ The token is the login information of the bot. If you don't know how to set up a
 
 The amount of minutes before each check cycle is run. A good number is around 2 or 3.
 
-## search_response_ms
+## ~~search_response_ms~~
 
-**Introduced in [!65](https://github.com/SpikeHD/AmazonMonitor/issues/65)**
-
-Amount of time to pass before the response window expires when running the `search` command.
+DEPRECATED
 
 ## url_params
 
