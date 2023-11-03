@@ -176,7 +176,7 @@ async function run(bot: Client, message: Message, args: string[]) {
       pricePercentage: processed.pricePercentage as number,
       difference: processed.difference as number,
       cache: results.splice(0, cache_limit),
-      symbol: results[0].symbol
+      symbol: results[0]?.symbol
     })
     
     response = `Successfully added query: ${processed.query}`
