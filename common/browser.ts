@@ -57,7 +57,7 @@ export async function getPage(url: string) {
 
   if (await page.$('.olp-text-box') !== null) await page.click('.olp-text-box')
 
-  await page.waitForTimeout(1500)
+  await new Promise(r => setTimeout(r, 1500))
 
   const html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
 
