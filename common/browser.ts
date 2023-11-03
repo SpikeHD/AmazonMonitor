@@ -41,7 +41,7 @@ export async function getPage(url: string) {
     page.setRequestInterception(true)
 
     page.on('request', async (req) => {
-      if (!proxy?.startsWith('http')) proxy = 'http://' + proxy
+      if (!proxy?.startsWith('http')) proxy = 'https://' + proxy
 
       await useProxy(req, proxy).catch(e => {
         debug.log('Failed to apply proxy, request won\'t go through', 'error')
