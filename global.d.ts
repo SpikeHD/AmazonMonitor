@@ -9,7 +9,6 @@ interface Config {
   token: string
   minutes_per_check: number
   seconds_between_check: number
-  search_reponse_ms: number
   url_params: {
     [key:string]: string
   }

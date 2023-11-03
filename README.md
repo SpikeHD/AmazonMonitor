@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/25207995/226811331-4b86a328-a93c-46da-
   * [prefix](#prefix)
   * [token](#token)
   * [minutes_per_check](#minutes_per_check)
-  * [search_response_ms](#search_response_ms)
+  * [seconds_between_check](#seconds_between_check)
   * [url_params](#url_params)
   * [guild_item_limit](#guild_item_limit)
   * [cache_limit](#cache_limit)
@@ -83,10 +83,6 @@ The amount of minutes before each check cycle is run. A good number is around 2 
 
 The amount of second to pause in between each item in the check cycle. This defaults to 5 seconds, which is a perfectly fine number. If you increase this,
 make sure you increase the `minutes_per_check` as well, or else check cycles may overlap and cause issues.
-
-## ~~search_response_ms~~
-
-DEPRECATED
 
 ## url_params
 
