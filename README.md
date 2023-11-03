@@ -5,8 +5,6 @@
   <img src="https://img.shields.io/github/package-json/v/SpikeHD/AmazonMonitor" />
   <img src="https://img.shields.io/github/repo-size/SpikeHD/AmazonMonitor" />
   <img src="https://img.shields.io/github/stars/SpikeHD/AmazonMonitor?style=social" />
-
-  <a href="https://discord.gg/agQ9mRdHMZ">https://discord.gg/agQ9mRdHMZ</a>
 </div>
 
 # TODO
@@ -80,6 +78,11 @@ The token is the login information of the bot. If you don't know how to set up a
 ## minutes_per_check
 
 The amount of minutes before each check cycle is run. A good number is around 2 or 3.
+
+## seconds_between_check
+
+The amount of second to pause in between each item in the check cycle. This defaults to 5 seconds, which is a perfectly fine number. If you increase this,
+make sure you increase the `minutes_per_check` as well, or else check cycles may overlap and cause issues.
 
 ## ~~search_response_ms~~
 

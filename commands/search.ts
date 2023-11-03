@@ -5,7 +5,7 @@ import debug from '../common/debug.js'
 import { search } from '../common/amazon.js'
 import { parseArgs } from '../common/arguments.js'
 
-const { tld, search_response_ms } = JSON.parse(fs.readFileSync('./config.json').toString())
+const { tld } = JSON.parse(fs.readFileSync('./config.json').toString())
 
 export default {
   name: 'search',

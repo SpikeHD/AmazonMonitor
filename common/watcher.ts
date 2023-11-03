@@ -55,7 +55,7 @@ export async function doCheck(bot: Client, i: number) {
   if (i < watchlist.length - 1) {
     setTimeout(() => {
       doCheck(bot, i + 1)
-    }, 5000)
+    }, (config?.seconds_between_check || 5) * 1000)
   }
 }
 
