@@ -106,7 +106,7 @@ The guild item limit is used to control how many items the bot can keep track of
 
 ## cache_limit
 
-This is the cache limit is the amount of items that will be watched in a category or search query. For example, if set to 10, then only the first 10 results will be tracked when watching an item iwth `-q` and `-c`.
+This is the cache limit is the amount of items that will be watched in a category or search query. For example, if set to 10, then only the first 10 results will be tracked when watching an item with `-q` and `-c`.
 
 ## required_perms
 
