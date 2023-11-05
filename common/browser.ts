@@ -12,9 +12,11 @@ const userAgents = [
 ]
 
 export async function initBrowser() {
+  const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
   const browser = await pup.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    ...(config.custom_chromium_exec && { executablePath: config.custom_chromium_exec })
   })
 
   global.browser = browser

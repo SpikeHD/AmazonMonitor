@@ -127,6 +127,10 @@ A TLD, or *Top-Level Domain*, is the little `.com` or `.ca` of a URL. Each regio
 
 If you're the efficient type, setting this to `true` will make sure that the links in stock/price notifications will bring you to a page that will automatically add the item to your cart.
 
+## custom_chromium_exec
+
+If you are on a platform that does not properly install Chromium when running `npm install`, you can install Chromium manually, and then set that path here. Most users can just leave this blank
+
 ## debug_enabled
 
 If set to `true`, the console window will spit out all kinds of information related to what it's doing, in order to give you a better understanding of what's going on in case you're having trouble.

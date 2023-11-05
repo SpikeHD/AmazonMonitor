@@ -18,6 +18,7 @@ interface Config {
   tld: string
   auto_cart_link: boolean
   debug_enabled: boolean
+  custom_chromium_exec: string
 }
 
 interface Command {

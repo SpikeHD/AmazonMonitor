@@ -9,5 +9,6 @@
   "required_perms":["permission_1", "permission_2"],
   "tld":"com",
   "auto_cart_link":true,
-  "debug_enabled":false
+  "debug_enabled":false,
+  "custom_chromium_exec":""
 }
