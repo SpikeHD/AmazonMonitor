@@ -6,7 +6,7 @@ Problems with something? Here's where you might find some answers!
 
 Looks like you're missing some Puppeteer dependencies! See [this Medium article](https://medium.com/@ssmak/how-to-fix-puppetteer-error-while-loading-shared-libraries-libx11-xcb-so-1-c1918b75acc3) for a solution
 
-### I'm on a Raspberry Pi!
+### I'm on an ARM machine!
 
 Noted in [this issue](https://github.com/SpikeHD/AmazonMonitor/issues/44), you're going to need to set your Chromium path manually. To do so:
 
