@@ -8,22 +8,7 @@ Looks like you're missing some Puppeteer dependencies! See [this Medium article]
 
 ### I'm on an ARM machine!
 
-Noted in [this issue](https://github.com/SpikeHD/AmazonMonitor/issues/44), you're going to need to set your Chromium path manually. To do so:
-
-* Install Chromium
-  ```sh
-  sudo apt-get install chromium-browser
-  ```
-* In `common/util.js`, change this line (you can CTRL+F to find it):
-  ```js
-  browser = await pup.launch()
-  ```
-  to this:
-  ```js
-  browser = await pup.launch({
-    executablePath: '/usr/bin/chromium-browser'
-  })
-  ```
+Noted in [this issue](https://github.com/SpikeHD/AmazonMonitor/issues/44), you're going to need to set your Chromium path manually. To do so, set a `custom_chromium_exec` in your `config.json`.
   
 ### Items will sometimes have empty data/show no price when there is one/etc!
 
