@@ -1,8 +1,16 @@
 import { Client, EmbedBuilder } from 'discord.js'
-import { priceFormat } from './utils.js'
+import fs from 'fs'
+import { parseParams, priceFormat } from './utils.js'
 
 export async function sendNotifications(bot: Client, notifications: NotificationData[]) {
+  const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
+
   for (const notif of notifications) {
+    // If we have url_params, add them to the URL
+    if (Object.keys(config.url_params).length > 0) {
+      notif.link += parseParams(config.url_params)
+    }
+
     if (notif.oldPrice === 0 && notif.newPrice !== 0) {
       // Old price was 0 but new price isn't? Item is now in stock!
       await sendInStock(bot, notif)
