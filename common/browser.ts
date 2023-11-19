@@ -23,6 +23,12 @@ export async function initBrowser() {
 }
 
 export async function getPage(url: string) {
+  // IF it's a product link, append aod=1 to the URL
+  if (url.includes('/dp/')) {
+    if (url.includes('?')) url += '&aod=1'
+    else url += '?aod=1'
+  }
+
   debug.log(`URL: ${url}`, 'info')
 
   const page = await global?.browser.newPage()
@@ -56,8 +62,6 @@ export async function getPage(url: string) {
   await page.goto(url, { waitUntil: 'domcontentloaded' })
 
   debug.log('Waiting a couple seconds for JavaScript to load...', 'info')
-
-  if (await page.$('.olp-text-box') !== null) await page.click('.olp-text-box')
 
   await new Promise(r => setTimeout(r, 1500))
 

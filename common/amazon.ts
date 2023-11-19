@@ -185,10 +185,11 @@ async function parseItem($: CheerioAPI, url: string): Promise<ProductInfo> {
   }
 
   // Get other offer prices
-  const aodOffers = $('#aod-offer').toArray()
+  const aodOffers = $('#aod-offer-price').toArray()
 
   aodOffers.forEach(o => {
-    const price = $(o).find('.a-offscreen').text().trim()
+    const price = $(o).find('.a-offscreen').first().text().trim()
+    console.log('AOD Price: ' + price)
     if (parseFloat(priceFormat(price))) priceElms.push(price)
   })
 
