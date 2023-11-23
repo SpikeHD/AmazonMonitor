@@ -21,7 +21,10 @@ export async function sendNotifications(bot: Client, notifications: Notification
     const meetsPricePercentage = notif.pricePercentage ? notif.newPrice <= (notif.oldPrice - (notif.oldPrice * (notif.pricePercentage / 100))) : true
     const meetsDifference = notif.difference ? notif.newPrice < (notif.oldPrice - notif.difference) : true
 
-    if (meetsPriceLimit && meetsPricePercentage && meetsDifference) {
+    // Prices being zero just means the item is out of stock
+    const priceNotZero = notif.newPrice !== 0
+
+    if (meetsPriceLimit && meetsPricePercentage && meetsDifference && priceNotZero) {
       await sendPriceChange(bot, notif)
     }
   }
