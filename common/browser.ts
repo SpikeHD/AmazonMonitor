@@ -104,9 +104,6 @@ export async function getPage(url: string) {
 
   const html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
 
-  // DEBUG save to file
-  fs.writeFileSync('page.html', html as string)
-
   // No need for page to continue to exist
   page.close()
 

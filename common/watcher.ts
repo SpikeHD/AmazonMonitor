@@ -172,7 +172,7 @@ async function queryCheck(query: QueryItem) {
     if (matchingObj.lastPrice === item.lastPrice) return
 
     // if the obj has a coupon, modify the lastprice to reflect that
-    if (matchingObj.coupon > 0) {
+    if (matchingObj?.coupon > 0) {
       matchingObj.lastPrice -= matchingObj.coupon
     }
 
@@ -191,7 +191,7 @@ async function queryCheck(query: QueryItem) {
         difference: query.difference || null,
         symbol: item.symbol,
         image: item?.image,
-        coupon: matchingObj.coupon,
+        coupon: item.coupon,
       })
     }
   })
