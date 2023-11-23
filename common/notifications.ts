@@ -51,7 +51,7 @@ export async function sendPriceChange(bot: Client, notification: NotificationDat
     })
     .setThumbnail(notification.image)
     .setDescription(`Old Price: ${notification.symbol}${priceFormat(notification.oldPrice)}\nNew Price: ${notification.symbol}${notification.newPrice.toFixed(2) + (
-      notification.coupon > 0 ? ` (with ${notification.symbol}${notification.coupon.toFixed(2)} coupon)` : ''
+      notification.coupon > 0 ? ` (${notification.symbol}${notification.coupon.toFixed(2)} off with coupon)` : ''
     )}\n\n${notification.link}`)
     .setColor('Green')
 

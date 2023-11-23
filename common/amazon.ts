@@ -28,6 +28,7 @@ export async function search(query: string, suffix: string) {
     const priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
     const price = priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
     const maybeCoupon = priceFormat($(this).find('.s-coupon-unclipped span').first().text().trim().replace(/[a-zA-Z]/g, ''))
+    const isPct = $(this).find('.s-coupon-unclipped span').first().text().trim().includes('%')
 
     // prevent duplicates
     if (foundAsins.includes(asin)) return
@@ -36,7 +37,7 @@ export async function search(query: string, suffix: string) {
     results.push({
       fullTitle: $(this).find('span.a-text-normal').text().trim(),
       ratings: $(this).find('.a-icon-alt').text().trim(),
-      coupon: maybeCoupon.includes('NaN') ? -1 : parseFloat(maybeCoupon),
+      coupon: isPct ? parseFloat(price) * (parseFloat(maybeCoupon) / 100) : maybeCoupon.includes('NaN') ? 0 : parseFloat(maybeCoupon),
       price: price.includes('NaN') ? '' : price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
