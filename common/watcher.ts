@@ -95,6 +95,7 @@ async function itemCheck(product: LinkItem) {
         difference: product.difference || null,
         symbol: newData?.symbol,
         image: newData?.image,
+        coupon: 0
       }
     ] as NotificationData[]
   }
@@ -135,6 +136,7 @@ async function categoryCheck(cat: CategoryItem) {
         difference: cat.difference || null,
         symbol: item.symbol,
         image: item?.image,
+        coupon: 0,
       })
     }
   })
@@ -169,11 +171,18 @@ async function queryCheck(query: QueryItem) {
 
     if (matchingObj.lastPrice === item.lastPrice) return
 
-    if (item.lastPrice > matchingObj.lastPrice) {
+    // if the obj has a coupon, modify the lastprice to reflect that
+    if (matchingObj.coupon > 0) {
+      matchingObj.lastPrice -= matchingObj.coupon
+    }
+
+    const newPriceWithCoupon = item.coupon > 0 ? item.lastPrice - item.coupon : item.lastPrice
+
+    if (newPriceWithCoupon < matchingObj.lastPrice) {
       notifications.push({
         itemName: item.fullTitle,
         oldPrice: matchingObj.lastPrice,
-        newPrice: item.lastPrice,
+        newPrice: newPriceWithCoupon,
         link: item.fullLink,
         guildId: query.guildId,
         channelId: query.channelId,
@@ -182,6 +191,7 @@ async function queryCheck(query: QueryItem) {
         difference: query.difference || null,
         symbol: item.symbol,
         image: item?.image,
+        coupon: matchingObj.coupon,
       })
     }
   })

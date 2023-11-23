@@ -31,6 +31,7 @@ interface Command {
 
 interface NotificationData {
   itemName: string
+  coupon: number
   oldPrice: number
   newPrice: number
   symbol: string

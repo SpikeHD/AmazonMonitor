@@ -10,6 +10,7 @@ export async function search(query: string, suffix: string) {
   const sanq = query.replace(/ /g, '+')
   const url = `https://www.amazon.${suffix}/s?k=${sanq}`
   const results: SearchData[] = []
+  const foundAsins: string[] = []
 
   const $ = await getPage(url)
   const limit = $('.s-result-list').find('.s-result-item').length
@@ -27,6 +28,10 @@ export async function search(query: string, suffix: string) {
     const priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
     const price = priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
     const maybeCoupon = priceFormat($(this).find('.s-coupon-unclipped span').first().text().trim().replace(/[a-zA-Z]/g, ''))
+
+    // prevent duplicates
+    if (foundAsins.includes(asin)) return
+    foundAsins.push(asin)
 
     results.push({
       fullTitle: $(this).find('span.a-text-normal').text().trim(),
