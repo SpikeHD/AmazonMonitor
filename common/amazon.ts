@@ -206,7 +206,7 @@ async function parseItem($: CheerioAPI, url: string): Promise<ProductInfo> {
     const currentPrice = parseFloat(priceFormat(product.price))
 
     if (!currentPrice || flt < currentPrice) {
-      product.price = p
+      product.price = flt.toFixed(2)
       product.lastPrice = flt
       product.symbol = p.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, '')
     }
