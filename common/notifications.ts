@@ -18,7 +18,7 @@ export async function sendNotifications(bot: Client, notifications: Notification
 
     // Now we check if the price differences meet all of the provided criteria
     const meetsPriceLimit = notif.priceLimit ? notif.newPrice <= notif.priceLimit : true
-    const meetsPricePercentage = notif.pricePercentage ? notif.newPrice < (notif.oldPrice - (notif.oldPrice * (notif.priceLimit / 100))) : true
+    const meetsPricePercentage = notif.pricePercentage ? notif.newPrice <= (notif.oldPrice - (notif.oldPrice * (notif.pricePercentage / 100))) : true
     const meetsDifference = notif.difference ? notif.newPrice < (notif.oldPrice - notif.difference) : true
 
     if (meetsPriceLimit && meetsPricePercentage && meetsDifference) {
