@@ -19,17 +19,19 @@ export async function search(query: string, suffix: string) {
   $('.s-result-list').find('.s-result-item').each(function () {
     if (results.length >= limit) return
 
-    const link = $(this).find('.a-link-normal[href*="/dp/"]').attr('href')
+    const link = '/dp/' + $(this).find('.a-link-normal[href*="/dp/"]').first().attr('href')?.split('/dp/')[1].split('?')[0]
 
-    if (!link) return
+    if (!link || link.includes('undefined')) return
 
     const asin = linkToAsin(link)
     const priceString = $(this).find('.a-price').find('.a-offscreen').first().text().trim()
     const price = priceFormat($(this).find('.a-price').find('.a-offscreen').first().text().trim().replace(/[a-zA-Z]/g, ''))
+    const maybeCoupon = priceFormat($(this).find('.s-coupon-unclipped span').first().text().trim().replace(/[a-zA-Z]/g, ''))
 
     results.push({
       fullTitle: $(this).find('span.a-text-normal').text().trim(),
       ratings: $(this).find('.a-icon-alt').text().trim(),
+      coupon: maybeCoupon.includes('NaN') ? -1 : parseFloat(maybeCoupon),
       price: price.includes('NaN') ? '' : price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceString.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),

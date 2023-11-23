@@ -75,6 +75,7 @@ type Watchlist = Array<LinkItem | CategoryItem | QueryItem>
 interface SearchData {
   fullTitle: string;
   ratings: string;
+  coupon: number;
   price: string;
   lastPrice: number;
   symbol: string;

@@ -58,11 +58,17 @@ async function run(bot: Client, message: Message, args: string[]) {
 
     if (parsedArgs.priceLimit && parseFloat(result.price) > (parsedArgs.priceLimit as number)) continue
 
-    embed.addFields([{
-      name: trim(result.fullTitle, 50),
-      value: `${parseFloat(result.price) ? result.symbol + result.price : 'Not in stock'} - ${result.fullLink}`,
-      inline: false
-    }])
+    const priceWithCoupon = result.coupon > 0 ? parseFloat(result.price) - result.coupon : result.price
+
+    embed.addFields([
+      {
+        name: trim(result.fullTitle, 50),
+        value: `${parseFloat(result.price) ? `${result.symbol + (
+          result.coupon > 0 ? `${priceWithCoupon} (${result.symbol + result.coupon.toFixed(2)} coupon)` : result.price
+        )}` : 'Not in stock'} - ${result.fullLink}`,
+        inline: false
+      },
+    ])
   }
 
   message.channel.send({
