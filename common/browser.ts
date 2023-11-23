@@ -65,7 +65,47 @@ export async function getPage(url: string) {
 
   await new Promise(r => setTimeout(r, 1500))
 
+  // Just in ase there are misleading redirects, make sure we click the right "dimension-value" button
+  const useImgSwatch = (await page.$$('.dimension-values-list')).length === 0 && (await page.$$('.imageSwatches')).length > 0
+  const maybeDimensionValues = useImgSwatch ? await page.$$('.imageSwatches') : await page.$$('.dimension-values-list')
+
+  debug.log('Do we have dimension values? ' + String(maybeDimensionValues.length > 0), 'debug')
+  debug.log('Are they via img swatches? ' + String(useImgSwatch), 'debug')
+
+  if (maybeDimensionValues.length > 0) {
+    debug.log('Found dimension values, ensuring we are on the right one...', 'debug')
+
+    // For each <li> in the dimension values list, we can do a really sneaky trick where we compare image URLs
+    const firstSidebarImage = (await page.$eval('#altImages li.item img', (el: HTMLImageElement) => el.src)).split('/I/')[1]?.split('._')[0]
+    const dimensionValue = maybeDimensionValues[0]
+    const dimensionValueImages = await dimensionValue.$$('li img')
+
+    debug.log(`First sidebar image: ${firstSidebarImage}`, 'debug')
+
+    for (let i = 0; i < dimensionValueImages.length; i++) {
+      if (!firstSidebarImage) break
+
+      const image = dimensionValueImages[i]
+      const imageSrc = (await page.evaluate((el: HTMLImageElement) => el.src, image)).split('/I/')[1]?.split('._')[0]
+
+      debug.log(`Comparing first image ${firstSidebarImage} with button img ${imageSrc}...`)
+
+      if (!imageSrc) continue
+
+      if (imageSrc === firstSidebarImage) {
+        debug.log(`Found matching image at index ${i}, clicking and loading...`, 'debug')
+        await image.click()
+
+        await new Promise(r => setTimeout(r, 1500))
+        break
+      }
+    }
+  }
+
   const html = await page.evaluate(() => document.body.innerHTML).catch(e => debug.log(e, 'error'))
+
+  // DEBUG save to file
+  fs.writeFileSync('page.html', html as string)
 
   // No need for page to continue to exist
   page.close()
