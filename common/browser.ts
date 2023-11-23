@@ -3,6 +3,7 @@ import useProxy from 'puppeteer-page-proxy'
 import fs from 'fs'
 import debug from './debug.js'
 import { load } from 'cheerio'
+import { linkToAsin } from './utils.js'
 
 const userAgents = [
   'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
@@ -75,27 +76,23 @@ export async function getPage(url: string) {
   if (maybeDimensionValues.length > 0) {
     debug.log('Found dimension values, ensuring we are on the right one...', 'debug')
 
-    // For each <li> in the dimension values list, we can do a really sneaky trick where we compare image URLs
-    const firstSidebarImage = (await page.$eval('#altImages li.item img', (el: HTMLImageElement) => el.src)).split('/I/')[1]?.split('._')[0]
-    const dimensionValue = maybeDimensionValues[0]
-    const dimensionValueImages = await dimensionValue.$$('li img')
+    // Each <li> should have a data-csa-c-item-id attr which contains their ASIN. We need to compare this asin to the one we have in the URL
+    const asin = linkToAsin(url)
 
-    debug.log(`First sidebar image: ${firstSidebarImage}`, 'debug')
+    debug.log('ASIN: ' + asin, 'debug')
 
-    for (let i = 0; i < dimensionValueImages.length; i++) {
-      if (!firstSidebarImage) break
+    const dimensionValues = await maybeDimensionValues[0].$$('li')
 
-      const image = dimensionValueImages[i]
-      const imageSrc = (await page.evaluate((el: HTMLImageElement) => el.src, image)).split('/I/')[1]?.split('._')[0]
+    for (const dimensionValue of dimensionValues) {
+      const dataAsin = await page.evaluate(el => el.getAttribute('data-csa-c-item-id'), dimensionValue)
 
-      debug.log(`Comparing first image ${firstSidebarImage} with button img ${imageSrc}...`)
+      debug.log('data-csa-c-item-id (aka: the variant ASIN): ' + dataAsin, 'debug')
 
-      if (!imageSrc) continue
+      if (asin.includes(dataAsin)) {
+        debug.log('Found the correct dimension value, clicking...', 'debug')
+        await dimensionValue.click()
 
-      if (imageSrc === firstSidebarImage) {
-        debug.log(`Found matching image at index ${i}, clicking and loading...`, 'debug')
-        await image.click()
-
+        // Wait a couple seconds to let the new page load
         await new Promise(r => setTimeout(r, 1500))
         break
       }
