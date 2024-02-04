@@ -23,20 +23,20 @@
   "dependencies": {
     "chalk": "^5.3.0",
     "cheerio": "1.0.0-rc.10",
-    "discord.js": "^14.13.0",
-    "puppeteer": "^20.9.0",
+    "discord.js": "^14.14.1",
+    "puppeteer": "^21.11.0",
     "puppeteer-page-proxy": "github:ok-go/puppeteer-page-proxy",
     "tsx": "^3.14.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.6",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
-    "eslint": "^8.52.0",
+    "@types/jest": "^29.5.12",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
     "install": "^0.13.0",
     "jest": "^29.7.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "jest": {
     "testEnvironment": "node",
