@@ -1,5 +1,5 @@
 import pup, { Browser } from 'puppeteer'
-import useProxy from 'puppeteer-page-proxy'
+import useProxy from '@lem0-packages/puppeteer-page-proxy'
 import fs from 'fs'
 import debug from './debug.js'
 import { load } from 'cheerio'
