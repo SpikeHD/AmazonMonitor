@@ -36,4 +36,14 @@ async function run(bot: Client, message: Message, args: string[]) {
     message.channel.send('Successfully removed item: ' + item.query)
     return
   }
+
+  if (item.type === 'category') {
+    // @ts-ignore
+    const catName = item.category || item.link
+    // @ts-ignore
+    await removeWatchlistItem(item.category)
+    // @ts-ignore
+    message.channel.send('Successfully removed item: ' + catName)
+    return
+  }
 }
