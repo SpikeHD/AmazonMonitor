@@ -61,8 +61,9 @@ export async function category(url: string) {
   const tld = url.split('amazon.')[1].split('/')[0]
   const path = url.split(tld + '/')[1].split('?')[0]
 
+
   // Get parsed page with puppeteer/cheerio
-  const $ = await getPage(`https://www.amazon.${tld}/${path}/?ie=${ie}&node=${node}`).catch(e => {
+  const $ = await getPage(url).catch(e => {
     debug.log(e, 'error')
   })
 
@@ -71,35 +72,32 @@ export async function category(url: string) {
   debug.log('Detected category', 'debug')
 
   const categoryObj: Category = {
-    name: $('.bxw-pageheader__title h1').text().trim(),
+    name: $('#nav-search-label-id').text().trim(),
     link: url,
     list: [],
     node
-  }
+  }  
 
-  const topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray()
-  
-  // @ts-expect-error
-  categoryObj.list = topRated.map(() => {
-    const item = $(this).find('.octopus-pc-item-link')
-    const asin = item.attr('href').split('/dp/')[1].split('?')[0].replace(/\//g, '')
-    const name = item.attr('title')
-    const priceFull = $(this).find('.octopus-pc-asin-price').text().trim()
-    const price = priceFormat(priceFull.replace(/[a-zA-Z]/g, ''))
+  const topRated = $('.octopus-best-seller-card .octopus-pc-card-content li.octopus-pc-item').toArray();
 
-    return {
+  topRated.forEach((element) => {
+    const item = $(element);
+    const name = item.find('.octopus-pc-item-link').attr('title');
+    const asin = item.find('.octopus-pc-item-link').attr('href').split('/dp/')[1].split('?')[0].replace(/\//g, '');
+    const priceFull = item.find('.octopus-pc-asin-price .a-offscreen').text().trim();
+    const price = priceFormat(priceFull.replace(/[a-zA-Z]/g, ''));
+    categoryObj.list.push({
       fullTitle: name,
       fullLink: `https://amazon.${tld}/dp/${asin}/`,
-      asin: asin,
+      asin,
       price: price.includes('NaN') ? '' : price,
       lastPrice: parseFloat(price) || 0,
       symbol: priceFull.replace(/[,.]+/g, '').replace(/[\d a-zA-Z]/g, ''),
-      image: $(this).find('.octopus-pc-item-image').attr('src'),
+      image: item.find('.octopus-pc-item-image').attr('src'),
       node
-    }
-  })
-
-  // Node set for validation
+    });
+  });
+  
   categoryObj.node = node
   
   return categoryObj

@@ -105,7 +105,7 @@ async function itemCheck(product: LinkItem) {
 
 async function categoryCheck(cat: CategoryItem) {
   let total = 0
-
+  
   // First, get current items in category for comparison
   const newItems = await category(cat.link)
 

@@ -101,7 +101,7 @@ interface CategoryData {
   lastPrice: number;
   symbol: string;
   image: string;
-  node: null;
+  node: string;
 }
 
 interface PartialProductInfo {

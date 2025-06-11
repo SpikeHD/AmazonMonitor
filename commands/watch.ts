@@ -145,7 +145,8 @@ async function run(bot: Client, message: Message, args: string[]) {
       cache: results.list.splice(0, cache_limit)
     })
 
-    response = `Successfully added category: ${processed.category}`
+    // Cannot figure out processed.category fix
+    response = `Successfully added category: ${results.name}`
 
     break
   }

@@ -36,8 +36,11 @@ export const removeWatchlistItem = async (url: string) => {
     if (x.type === 'link') return x.link === url
     // @ts-ignore
     if (x.type === 'query') return x.query === url  
+    // @ts-ignore
+    if (x.type === 'category' && x.category === url) return x.category === url
+    // @ts-ignore
+    if (x.type === 'category' && x.link === url) return x.link === url
   })
-
   if (item) watchlist.splice(watchlist.indexOf(item), 1)
 
   fs.writeFileSync(watchFile, JSON.stringify(watchlist), 'utf-8')
