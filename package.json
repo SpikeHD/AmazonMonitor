@@ -21,22 +21,22 @@
   },
   "homepage": "https://github.com/SpikeHD/AmazonMonitor#readme",
   "dependencies": {
-    "chalk": "^5.3.0",
-    "cheerio": "1.0.0-rc.10",
-    "discord.js": "^14.15.2",
-    "puppeteer": "^22.8.0",
     "@lem0-packages/puppeteer-page-proxy": "1.4.1",
+    "chalk": "^5.6.2",
+    "cheerio": "1.0.0-rc.10",
+    "discord.js": "^14.25.1",
+    "puppeteer": "^24.34.0",
     "tsx": "^3.14.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "install": "^0.13.0",
     "jest": "^29.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   },
   "jest": {
     "testEnvironment": "node",

@@ -157,6 +157,7 @@ To start the bot, simply open a terminal and run these commands:
 * Install the dependencies (you only have to do this once):
   ```sh
   npm install
+  npx puppeteer browsers install chrome
   ```
 * Run the main file:
   ```sh

@@ -1,4 +1,4 @@
-import Discord, { Partials } from 'discord.js'
+import { Client, Collection, Message, Partials, TextChannel } from 'discord.js'
 import fs from 'fs'
 import * as debug from './common/debug.js'
 import { initBrowser } from './common/browser.js'
@@ -10,7 +10,7 @@ declare global {
 
 const __dirname = import.meta.url.split('/').slice(0, -1).join('/')
 
-const bot = new Discord.Client({
+const bot = new Client({
   intents: [
     'Guilds',
     'GuildMembers',
@@ -24,19 +24,19 @@ const bot = new Discord.Client({
 })
 
 const config: Config = JSON.parse(fs.readFileSync('./config.json').toString())
-const commands = new Discord.Collection()
+const commands = new Collection()
 
 bot.login(config.token)
 
-bot.on('ready', async () => {
+bot.on('clientReady', async () => {
   console.log(`
   ##########################################################################
-   _____                                        __      __         __         .__                  
-  /  _  \\   _____ _____  ____________   ____   /  \\    /  \\_____ _/  |_  ____ |  |__   ___________ 
+   _____                                        __      __         __         .__
+  /  _  \\   _____ _____  ____________   ____   /  \\    /  \\_____ _/  |_  ____ |  |__   ___________
  /  /_\\  \\ /     \\\\__  \\ \\___   /  _ \\ /    \\  \\   \\/\\/   /\\__  \\\\   __\\/ ___\\|  |  \\_/ __ \\_  __ \\
 /    |    \\  Y Y  \\/ __ \\_/    (  <_> )   |  \\  \\        /  / __ \\|  | \\  \\___|   Y  \\  ___/|  | \\/
-\\____|__  /__|_|  (____  /_____ \\____/|___|  /   \\__/\\  /  (____  /__|  \\___  >___|  /\\___  >__|   
-        \\/      \\/     \\/      \\/          \\/         \\/        \\/          \\/     \\/     \\/       
+\\____|__  /__|_|  (____  /_____ \\____/|___|  /   \\__/\\  /  (____  /__|  \\___  >___|  /\\___  >__|
+        \\/      \\/     \\/      \\/          \\/         \\/        \\/          \\/     \\/     \\/
 
   by SpikeHD
   ##########################################################################
@@ -66,14 +66,14 @@ bot.on('ready', async () => {
   }
 
   // Initialize the globally accessible browser
-  initBrowser()
+  await initBrowser()
 
   startWatcher(bot)
 
   debug.log('Bot is ready!', 'info')
 })
 
-bot.on('messageCreate', function (message) {
+bot.on('messageCreate', function (message: Message) {
   if (message.author.bot || !message.content.startsWith(config.prefix)) return
 
   const command = message.content.split(config.prefix)[1].split(' ')[0],
@@ -97,12 +97,12 @@ bot.on('messageCreate', function (message) {
   }
 })
 
-async function exec(message: Discord.Message, args: string[], cmd: Command) {
-  const ch = await message.channel.fetch()
+async function exec(message: Message, args: string[], cmd: Command) {
+  const ch = await message.channel.fetch() as TextChannel
   ch.sendTyping()
 
   await cmd.run(bot, message, args).catch((e: Error) => {
-    message.channel.send(e.message)
+    (message.channel as TextChannel).send(e.message)
     debug.log(e, 'error')
   })
 }

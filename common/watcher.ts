@@ -15,6 +15,10 @@ export async function startWatcher(bot: Client) {
     type: ActivityType.Watching,
   })
 
+  // Always start with a check
+  debug.log('Starting initial price check...', 'info')
+  if (curRows.length > 0) doCheck(bot, 0)
+
   setInterval(async () => {
     const rows = await getWatchlist()
 
